@@ -1,5 +1,6 @@
 using DotNetCoreAngular.DAL;
 using DotNetCoreAngular.Interfaces;
+using DotNetCoreAngular.Middleware;
 using DotNetCoreAngular.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -41,6 +42,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

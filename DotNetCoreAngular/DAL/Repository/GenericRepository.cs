@@ -6,59 +6,59 @@ namespace DotNetCoreAngular.DAL.Repository
 {
     public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
     {
-        internal DatabaseContext context;
-        internal DbSet<TEntity> dbSet;
+        internal DatabaseContext Context;
+        internal DbSet<TEntity> DbSet;
 
         public GenericRepository(DatabaseContext context)
         {
-            this.context = context;
-            dbSet = context.Set<TEntity>();
+            this.Context = context;
+            DbSet = context.Set<TEntity>();
         }
 
         public TEntity GetByID(object id)
         {
-            return dbSet.Find(id);
+            return DbSet.Find(id);
         }
 
         public void Add(TEntity entity)
         {
-            dbSet.Add(entity);
+            DbSet.Add(entity);
         }
 
         public IQueryable<TEntity> AsQueriable()
         {
-            return dbSet.AsQueryable();
+            return DbSet.AsQueryable();
         }
 
         public void Delete(object id)
         {
-            TEntity entityToDelete = dbSet.Find(id);
+            TEntity entityToDelete = DbSet.Find(id);
             Delete(entityToDelete);
         }
 
         public void Delete(TEntity entityToDelete)
         {
-            if (context.Entry(entityToDelete).State == EntityState.Detached)
+            if (Context.Entry(entityToDelete).State == EntityState.Detached)
             {
-                dbSet.Attach(entityToDelete);
+                DbSet.Attach(entityToDelete);
             }
-            dbSet.Remove(entityToDelete);
+            DbSet.Remove(entityToDelete);
         }
 
         public void Update(TEntity entityToUpdate)
         {
-            dbSet.Attach(entityToUpdate);
-            context.Entry(entityToUpdate).State = EntityState.Modified;
+            DbSet.Attach(entityToUpdate);
+            Context.Entry(entityToUpdate).State = EntityState.Modified;
         }
 
         public IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> filter)
         {
-            return dbSet.Where(filter).ToList();
+            return DbSet.Where(filter).ToList();
         }
 
         public IEnumerable<TEntity> GetAll()
         {
-            return dbSet.ToList();
+            return DbSet.ToList();
         }
     }
 }
