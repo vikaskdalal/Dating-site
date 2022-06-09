@@ -13,19 +13,20 @@ namespace DotNetCoreAngular.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly UnitOfWork _context;
+        private readonly IUnitOfWork _context;
         private readonly ITokenService _tokenService;
 
-        public AccountController(UnitOfWork context, ITokenService tokenService)
+        public AccountController(IUnitOfWork context, ITokenService tokenService)
         {
             _context = context;
             _tokenService = tokenService;
         }
+
         [HttpPost("register")]
         public async Task<IActionResult> RegisterAsync(RegisterDto registerDto)
         {
             if(await UserExistsAsync(registerDto.Username)) 
-                return BadRequest("UserName Is Already Taken.");
+                return BadRequest("Username is already taken.");
 
             var hmac = new HMACSHA512();
 
@@ -34,7 +35,7 @@ namespace DotNetCoreAngular.Controllers
                 UserName = registerDto.Username,
                 PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
                 PasswordSalt = hmac.Key,
-
+                DateOfBirth = registerDto.DateOfBirth
             };
 
             _context.UserRepository.Add(user);
@@ -52,8 +53,7 @@ namespace DotNetCoreAngular.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> LoginAsync(LoginDto loginDto)
         {
-            var user = await _context.UserRepository.AsQueriable()                
-                .SingleOrDefaultAsync(x => x.UserName == loginDto.Username);
+            var user = await _context.UserRepository.GetByUserNameAsync(loginDto.Username);
 
             if (user == null) 
                 return Unauthorized("Invalid UserName");
@@ -78,7 +78,7 @@ namespace DotNetCoreAngular.Controllers
 
         private async Task<bool> UserExistsAsync(string username)
         {
-            return await _context.UserRepository.AsQueriable().AnyAsync(x => x.UserName == username.ToLower());
+            return await _context.UserRepository.GetByUserNameAsync(username) != null;
         }
     }
 }

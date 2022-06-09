@@ -1,4 +1,5 @@
 ﻿using DotNetCoreAngular.DAL;
+using DotNetCoreAngular.Interfaces;
 using DotNetCoreAngular.Models.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,16 +10,17 @@ namespace DotNetCoreAngular.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly UnitOfWork _context;
+        private readonly IUnitOfWork _context;
 
-        public UserController(UnitOfWork context)
+        public UserController(IUnitOfWork context)
         {
             _context = context;
         }
+
         [HttpGet]
         public IEnumerable<User> Get()
         {
-            return _context.UserRepository.AsQueriable().ToList();
+            return _context.UserRepository.GetAll();
         }
     }
 }

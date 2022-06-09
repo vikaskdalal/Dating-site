@@ -1,5 +1,6 @@
 ﻿using DotNetCoreAngular.DAL.Repository;
 using DotNetCoreAngular.Interfaces;
+using DotNetCoreAngular.Interfaces.Repository;
 using DotNetCoreAngular.Models.Entity;
 
 namespace DotNetCoreAngular.DAL
@@ -10,14 +11,14 @@ namespace DotNetCoreAngular.DAL
 
         private DatabaseContext _context;
 
-        private GenericRepository<User> _userRepository;
+        private IUserRepository _userRepository;
 
         public UnitOfWork(DatabaseContext context)
         {
             _context = context;
         }
 
-        public GenericRepository<User> UserRepository => _userRepository ?? new GenericRepository<User>(_context);
+        public IUserRepository UserRepository => _userRepository ?? _userRepository ?? new UserRepository(_context);
 
         public void Save()
         {

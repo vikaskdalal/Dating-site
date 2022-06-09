@@ -1,17 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using DotNetCoreAngular.Interfaces;
 using System.Linq.Expressions;
+using DotNetCoreAngular.Interfaces.Repository;
+using DotNetCoreAngular.Models.Entity;
 
 namespace DotNetCoreAngular.DAL.Repository
 {
-    public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
+    public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : BaseEntity
     {
-        internal DatabaseContext Context;
-        internal DbSet<TEntity> DbSet;
+        private DatabaseContext _context;
+        protected DbSet<TEntity> DbSet;
 
         public GenericRepository(DatabaseContext context)
         {
-            this.Context = context;
+            this._context = context;
             DbSet = context.Set<TEntity>();
         }
 
@@ -20,45 +21,53 @@ namespace DotNetCoreAngular.DAL.Repository
             return DbSet.Find(id);
         }
 
+        public IEnumerable<TEntity> GetAll()
+        {
+            return DbSet.ToList();
+        }
+
         public void Add(TEntity entity)
         {
             DbSet.Add(entity);
         }
 
-        public IQueryable<TEntity> AsQueriable()
+        public void AddRange(IEnumerable<TEntity> entities)
         {
-            return DbSet.AsQueryable();
-        }
-
-        public void Delete(object id)
-        {
-            TEntity entityToDelete = DbSet.Find(id);
-            Delete(entityToDelete);
+            DbSet.AddRange(entities);
         }
 
         public void Delete(TEntity entityToDelete)
         {
-            if (Context.Entry(entityToDelete).State == EntityState.Detached)
+            if (_context.Entry(entityToDelete).State == EntityState.Detached)
             {
                 DbSet.Attach(entityToDelete);
             }
             DbSet.Remove(entityToDelete);
         }
+        public void DeleteRange(IEnumerable<TEntity> entities)
+        {
+            DbSet.RemoveRange(entities);
+        }
 
         public void Update(TEntity entityToUpdate)
         {
             DbSet.Attach(entityToUpdate);
-            Context.Entry(entityToUpdate).State = EntityState.Modified;
+            _context.Entry(entityToUpdate).State = EntityState.Modified;
         }
 
-        public IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> filter)
+        public IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> filter)
         {
             return DbSet.Where(filter).ToList();
         }
 
-        public IEnumerable<TEntity> GetAll()
+        public async Task<TEntity> GetByIdAsync(object id)
         {
-            return DbSet.ToList();
+            return await DbSet.FindAsync(id);
+        }
+
+        public async Task<IEnumerable<TEntity>> GetAllAsync()
+        {
+            return await DbSet.ToListAsync();
         }
     }
 }

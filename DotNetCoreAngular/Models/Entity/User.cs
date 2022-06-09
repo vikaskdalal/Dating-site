@@ -1,13 +1,38 @@
-﻿namespace DotNetCoreAngular.Models.Entity
-{
-    public class User
-    {
-        public int Id { get; set; }
+﻿using DotNetCoreAngular.Extensions;
+using System.ComponentModel.DataAnnotations.Schema;
 
+namespace DotNetCoreAngular.Models.Entity
+{
+    public class User : BaseEntity
+    {
         public string UserName { get; set; }
 
         public byte[] PasswordHash { get; set; }
 
         public byte[] PasswordSalt { get; set; }
+
+        public DateTime DateOfBirth { get; set; }
+
+        public string? City { get; set; }
+
+        public string? Country { get; set; }
+
+        public Gender? Gender { get; set; }
+
+        public DateTime LastActive { get; set; } = DateTime.Now;
+
+        public string? Interests { get; set; }
+
+        public string? LookingFor { get; set; }
+
+        [NotMapped]
+        public int Age => DateOfBirth.CalculateAge();
+    }
+
+    public enum Gender : short
+    {
+        Male, 
+        Female,
+        Other
     }
 }
