@@ -10,10 +10,10 @@ import { FormsModule } from '@angular/forms';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './register/register.component';
-import { MemberListComponent } from './members/member-list/member-list.component';
-import { MemberDetailComponent } from './members/member-detail/member-detail.component';
 import { ListComponent } from './list/list.component';
 import { MessageComponent } from './message/message.component';
+import { UserDetailComponent } from './user-detail/user-detail.component';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
 @NgModule({
   declarations: [
@@ -21,10 +21,9 @@ import { MessageComponent } from './message/message.component';
     NavbarComponent,
     HomeComponent,
     RegisterComponent,
-    MemberListComponent,
-    MemberDetailComponent,
     ListComponent,
-    MessageComponent
+    MessageComponent,
+    UserDetailComponent
   ],
   imports: [
     BrowserModule,
@@ -32,7 +31,8 @@ import { MessageComponent } from './message/message.component';
     BrowserAnimationsModule,
     HttpClientModule,
     FormsModule,
-    BsDropdownModule.forRoot()
+    BsDropdownModule.forRoot(),
+    BsDatepickerModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

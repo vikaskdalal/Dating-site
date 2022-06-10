@@ -2,10 +2,15 @@
     <h2 class="text-center text-primary">Signup</h2>
     <hr>
     <div class="mb-3">
-        <input type="text" class="form-control" name="username" placeholder="Username" [(ngModel)]="model.username">
+        <input type="text" class="form-control" name="username" placeholder="Username" [(ngModel)]="model.username" required>
     </div>
     <div class="mb-3">
-        <input type="password" class="form-control" name="password" placeholder="Password" [(ngModel)]="model.password">
+        <input type="password" class="form-control" name="password" placeholder="Password" [(ngModel)]="model.password" required>
+    </div>
+    <div class="mb-3">
+        <input type="text"  placeholder="Date of Birth" class="form-control" bsDatepicker [(ngModel)]="model.dob" 
+            [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }" required>
+        <small id="emailHelp" class="form-text text-muted">You can not change date of birth after this.</small>
     </div>
     <div class="form-group text-center">
         <button class="btn btn-success me-3" type="submit">Register</button>
