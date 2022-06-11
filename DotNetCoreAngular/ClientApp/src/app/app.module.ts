@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import {HttpClientModule} from '@angular/common/http';
+import {HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -14,6 +14,7 @@ import { ListComponent } from './list/list.component';
 import { MessageComponent } from './message/message.component';
 import { UserDetailComponent } from './user-detail/user-detail.component';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { AuthInterceptor } from './_interceptor/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,9 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
     BsDropdownModule.forRoot(),
     BsDatepickerModule.forRoot()
   ],
-  providers: [],
+  providers: [
+    {provide : HTTP_INTERCEPTORS, useClass : AuthInterceptor, multi : true}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

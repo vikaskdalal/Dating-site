@@ -8,7 +8,7 @@
         <input type="password" class="form-control" name="password" placeholder="Password" [(ngModel)]="model.password" required>
     </div>
     <div class="mb-3">
-        <input type="text"  placeholder="Date of Birth" class="form-control" bsDatepicker [(ngModel)]="model.dob" 
+        <input type="text" name="dob"  placeholder="Date of Birth" class="form-control" bsDatepicker [(ngModel)]="model.dateOfBirth" 
             [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }" required>
         <small id="emailHelp" class="form-text text-muted">You can not change date of birth after this.</small>
     </div>

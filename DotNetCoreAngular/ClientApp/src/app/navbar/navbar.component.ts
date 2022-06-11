@@ -11,10 +11,12 @@ import { AccountService } from '../_services/account.service';
 })
 export class NavbarComponent implements OnInit {
   loginModel : any = {};
+  currentUsername? : string = undefined;
 
   constructor(public accountService : AccountService, private router: Router) { }
 
   ngOnInit(): void {
+    this.accountService.currentUser$.subscribe(q => this.currentUsername = q?.userName);
   }
 
   login(){

@@ -1,4 +1,5 @@
-﻿using DotNetCoreAngular.Extensions;
+﻿using DotNetCoreAngular.Common.Enums;
+using DotNetCoreAngular.Extensions;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DotNetCoreAngular.Models.Entity
@@ -27,12 +28,5 @@ namespace DotNetCoreAngular.Models.Entity
 
         [NotMapped]
         public int Age => DateOfBirth.CalculateAge();
-    }
-
-    public enum Gender : short
-    {
-        Male, 
-        Female,
-        Other
     }
 }

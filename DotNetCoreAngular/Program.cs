@@ -1,4 +1,5 @@
 using DotNetCoreAngular.DAL;
+using DotNetCoreAngular.Helpers;
 using DotNetCoreAngular.Interfaces;
 using DotNetCoreAngular.Middleware;
 using DotNetCoreAngular.Services;
@@ -18,6 +19,7 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
 
 builder.Services.AddAuthentication(opt => {
     opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
