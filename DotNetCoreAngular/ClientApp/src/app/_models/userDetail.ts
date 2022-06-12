@@ -6,4 +6,6 @@ export interface UserDetail{
     country : string;
     interests : string;
     lookingFor : string;
+    introduction : string;
+    email : string;
 }

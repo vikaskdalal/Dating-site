@@ -26,6 +26,10 @@ namespace DotNetCoreAngular.Models.Entity
 
         public string? LookingFor { get; set; }
 
+        public string? Introduction { get; set; }
+
+        public string? Email { get; set; }
+
         [NotMapped]
         public int Age => DateOfBirth.CalculateAge();
     }

@@ -1,1 +1,36 @@
-<p>user-detail works!</p>
+<div class="row justify-content-center"  *ngIf="userDetail">
+    <div class="col-xxl-4 col-lg-6 col-md-8">
+        <form #editForm = "ngForm" (ngSubmit)="update()">
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Introduction</label>
+                <input type="textarea" class="form-control" name="introduction" [(ngModel)]="userDetail.introduction">
+            </div>
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">lookingFor</label>
+                <input type="textarea" class="form-control" name="lookingFor" [(ngModel)]="userDetail.lookingFor">
+            </div>
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">interests</label>
+                <input type="textarea" class="form-control" name="interests" [(ngModel)]="userDetail.interests">
+            </div>
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">country</label>
+                <input type="textarea" class="form-control" name="country" [(ngModel)]="userDetail.country">
+            </div>
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">city</label>
+                <input type="textarea" class="form-control" name="city" [(ngModel)]="userDetail.city">
+            </div>
+            <div class="mb-3">
+                <select class="form-select" name="gender" [(ngModel)]="userDetail.gender" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option *ngFor="let g of genderDropdown " [ngValue]="g.id">{{g.value}}</option>
+                  </select>
+            </div>
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+        
+    </div>
+</div>

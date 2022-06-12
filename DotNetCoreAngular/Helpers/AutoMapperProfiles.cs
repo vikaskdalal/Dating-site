@@ -9,6 +9,8 @@ namespace DotNetCoreAngular.Helpers
         public AutoMapperProfiles()
         {
             CreateMap<User, UserDetailDto>();
+
+            CreateMap<UserDetailDto, User>();
         }
     }
 }
