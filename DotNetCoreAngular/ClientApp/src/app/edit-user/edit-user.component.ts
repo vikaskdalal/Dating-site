@@ -1,6 +1,5 @@
 import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Gender } from '../_enums/gender';
 import { SelectDropDown } from '../_models/selectDropdown';
@@ -10,12 +9,12 @@ import { AccountService } from '../_services/account.service';
 import { UserService } from '../_services/user.service';
 
 @Component({
-  selector: 'app-user-detail',
-  templateUrl: './user-detail.component.html',
-  styleUrls: ['./user-detail.component.css']
+  selector: 'app-edit-user',
+  templateUrl: './edit-user.component.html',
+  styleUrls: ['./edit-user.component.css']
 })
+export class EditUserComponent implements OnInit {
 
-export class UserDetailComponent implements OnInit {
   @ViewChild('editForm') editForm! : NgForm;
   userDetail!: UserDetail;
   user! : User | null;

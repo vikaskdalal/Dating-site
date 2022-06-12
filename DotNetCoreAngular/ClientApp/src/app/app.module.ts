@@ -12,10 +12,10 @@ import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './register/register.component';
 import { ListComponent } from './list/list.component';
 import { MessageComponent } from './message/message.component';
-import { UserDetailComponent } from './user-detail/user-detail.component';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { AuthInterceptor } from './_interceptor/auth.interceptor';
 import { ToastrModule } from 'ngx-toastr';
+import { EditUserComponent } from './edit-user/edit-user.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +25,7 @@ import { ToastrModule } from 'ngx-toastr';
     RegisterComponent,
     ListComponent,
     MessageComponent,
-    UserDetailComponent
+    EditUserComponent
   ],
   imports: [
     BrowserModule,
