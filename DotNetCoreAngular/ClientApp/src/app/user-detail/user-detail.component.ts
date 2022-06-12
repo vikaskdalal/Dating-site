@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { Gender } from '../_enums/gender';
 import { SelectDropDown } from '../_models/selectDropdown';
 import { User } from '../_models/user';
@@ -19,7 +20,7 @@ export class UserDetailComponent implements OnInit {
   gender = Gender;
   genderDropdown : SelectDropDown[] = [];
 
-  constructor(private _userService : UserService, private _accountService : AccountService) { 
+  constructor(private _userService : UserService, private _accountService : AccountService, private _toastr : ToastrService) { 
     this._accountService.currentUser$.subscribe(user => this.user = user);
   }
   
@@ -47,7 +48,13 @@ export class UserDetailComponent implements OnInit {
   }
 
   update(){
-    this._userService.updateUser(this.userDetail).subscribe(u => console.log(u));
+    this._userService.updateUser(this.userDetail).subscribe(u => 
+      {
+        console.log(u)
+        this._toastr.success("Profile has been updated");
+      }
+    
+    );
     console.log(this.userDetail);
   }
 

@@ -15,6 +15,7 @@ import { MessageComponent } from './message/message.component';
 import { UserDetailComponent } from './user-detail/user-detail.component';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { AuthInterceptor } from './_interceptor/auth.interceptor';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,10 @@ import { AuthInterceptor } from './_interceptor/auth.interceptor';
     HttpClientModule,
     FormsModule,
     BsDropdownModule.forRoot(),
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule.forRoot(),
+    ToastrModule.forRoot({
+      positionClass : 'toast-bottom-right'
+    })
   ],
   providers: [
     {provide : HTTP_INTERCEPTORS, useClass : AuthInterceptor, multi : true}
