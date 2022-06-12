@@ -56,7 +56,7 @@ namespace DotNetCoreAngular.Controllers
             var user = await _context.UserRepository.GetByUserNameAsync(loginDto.Username);
 
             if (user == null) 
-                return Unauthorized("Invalid UserName");
+                return Unauthorized("Invalid userName or password");
 
             var hmac = new HMACSHA512(user.PasswordSalt);
 
@@ -64,7 +64,7 @@ namespace DotNetCoreAngular.Controllers
 
             for (int i = 0; i < computedHash.Length; i++)
             {
-                if (computedHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid Password");
+                if (computedHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid userName or password");
             }
 
             var userDto = new UserDto()

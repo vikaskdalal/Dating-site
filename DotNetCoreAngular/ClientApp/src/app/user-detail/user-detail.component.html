@@ -1,29 +1,30 @@
 <div class="row justify-content-center"  *ngIf="userDetail">
     <div class="col-xxl-4 col-lg-6 col-md-8">
+        <h4 class="row justify-content-center">Edit Profile</h4>
         <form #editForm = "ngForm" (ngSubmit)="update()">
             <div class="mb-3">
                 <label for="exampleInputEmail1" class="form-label">Introduction</label>
                 <input type="textarea" class="form-control" name="introduction" [(ngModel)]="userDetail.introduction">
             </div>
             <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">lookingFor</label>
+                <label for="exampleInputEmail1" class="form-label">Looking For</label>
                 <input type="textarea" class="form-control" name="lookingFor" [(ngModel)]="userDetail.lookingFor">
             </div>
             <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">interests</label>
+                <label for="exampleInputEmail1" class="form-label">Interests</label>
                 <input type="textarea" class="form-control" name="interests" [(ngModel)]="userDetail.interests">
             </div>
             <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">country</label>
+                <label for="exampleInputEmail1" class="form-label">Country</label>
                 <input type="textarea" class="form-control" name="country" [(ngModel)]="userDetail.country">
             </div>
             <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">city</label>
+                <label for="exampleInputEmail1" class="form-label">City</label>
                 <input type="textarea" class="form-control" name="city" [(ngModel)]="userDetail.city">
             </div>
             <div class="mb-3">
-                <select class="form-select" name="gender" [(ngModel)]="userDetail.gender" aria-label="Default select example">
-                    <option selected>Open this select menu</option>
+                <select class="form-select" name="gender" [(ngModel)]="userDetail.gender">
+                    <option selected>Select Gender</option>
                     <option *ngFor="let g of genderDropdown " [ngValue]="g.id">{{g.value}}</option>
                   </select>
             </div>
