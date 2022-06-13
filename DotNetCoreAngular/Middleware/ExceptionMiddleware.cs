@@ -30,7 +30,7 @@ namespace DotNetCoreAngular.Middleware
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
                 var response = _env.IsDevelopment()
-                    ? new ApiException(context.Response.StatusCode, ex.Message, ex.StackTrace)
+                    ? new ApiException(context.Response.StatusCode, ex.Message, ex.StackTrace, ex.InnerException.ToString())
                     : new ApiException(context.Response.StatusCode, "Internal Server error");
 
                 var jsonResponse = JsonSerializer.Serialize(response);

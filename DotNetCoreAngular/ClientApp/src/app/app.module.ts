@@ -16,6 +16,8 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { AuthInterceptor } from './_interceptor/auth.interceptor';
 import { ToastrModule } from 'ngx-toastr';
 import { EditUserComponent } from './edit-user/edit-user.component';
+import { ErrorInterceptor } from './_interceptor/error.interceptor';
+import { ServerErrorComponent } from './server-error/server-error.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +27,8 @@ import { EditUserComponent } from './edit-user/edit-user.component';
     RegisterComponent,
     ListComponent,
     MessageComponent,
-    EditUserComponent
+    EditUserComponent,
+    ServerErrorComponent
   ],
   imports: [
     BrowserModule,
@@ -40,7 +43,8 @@ import { EditUserComponent } from './edit-user/edit-user.component';
     })
   ],
   providers: [
-    {provide : HTTP_INTERCEPTORS, useClass : AuthInterceptor, multi : true}
+    {provide : HTTP_INTERCEPTORS, useClass : AuthInterceptor, multi : true},
+    {provide : HTTP_INTERCEPTORS, useClass : ErrorInterceptor, multi : true}
   ],
   bootstrap: [AppComponent]
 })
