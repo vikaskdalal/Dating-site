@@ -4,7 +4,9 @@ namespace DotNetCoreAngular.DTO
 {
     public class UserDetailDto
     {
-        public string UserName { get; set; }
+        public string Email { get; set; }
+
+        public string Name { get; set; }
 
         public DateTime DateOfBirth { get; set; }
 
@@ -21,7 +23,5 @@ namespace DotNetCoreAngular.DTO
         public string? LookingFor { get; set; }
 
         public string? Introduction { get; set; }
-
-        public string? Email { get; set; }
     }
 }

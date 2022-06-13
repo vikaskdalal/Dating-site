@@ -25,7 +25,7 @@ namespace DotNetCoreAngular.Controllers
         [HttpGet("{userName}")]
         public async Task<UserDetailDto> GetUser(string userName)
         {
-            var user = await _context.UserRepository.GetByUserNameAsync(userName);
+            var user = await _context.UserRepository.GetByEmailAsync(userName);
             
             return _mapper.Map<UserDetailDto>(user);
         }
@@ -41,7 +41,7 @@ namespace DotNetCoreAngular.Controllers
         {
             string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            var user = await _context.UserRepository.GetByUserNameAsync(userId);
+            var user = await _context.UserRepository.GetByEmailAsync(userId);
 
             if (user == null)
                 return BadRequest("User not found");

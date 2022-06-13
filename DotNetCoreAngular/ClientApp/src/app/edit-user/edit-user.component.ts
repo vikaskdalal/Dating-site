@@ -45,7 +45,7 @@ export class EditUserComponent implements OnInit {
   }
 
   loadUser(){
-    this._userService.getUser(this.user?.userName).subscribe(
+    this._userService.getUser(this.user?.email).subscribe(
       user =>{
         this.userDetail = user
       },

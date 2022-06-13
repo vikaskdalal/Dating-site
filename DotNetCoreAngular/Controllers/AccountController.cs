@@ -25,17 +25,18 @@ namespace DotNetCoreAngular.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> RegisterAsync(RegisterDto registerDto)
         {
-            if(await UserExistsAsync(registerDto.Username)) 
-                return BadRequest("Username is already taken.");
+            if(await UserExistsAsync(registerDto.Email)) 
+                return BadRequest("Email is already registered.");
 
             var hmac = new HMACSHA512();
 
             var user = new User
             {
-                UserName = registerDto.Username,
+                Email = registerDto.Email,
                 PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
                 PasswordSalt = hmac.Key,
-                DateOfBirth = registerDto.DateOfBirth
+                DateOfBirth = registerDto.DateOfBirth,
+                Name = registerDto.Name,
             };
 
             _context.UserRepository.Add(user);
@@ -43,8 +44,9 @@ namespace DotNetCoreAngular.Controllers
 
             var userDto = new UserDto()
             {
-                UserName = user.UserName,
-                Token = _tokenService.CreateToken(user)
+                Email = user.Email,
+                Token = _tokenService.CreateToken(user),
+                Name = user.Name
             };
 
             return CreatedAtAction(nameof(RegisterAsync), userDto);
@@ -53,10 +55,10 @@ namespace DotNetCoreAngular.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> LoginAsync(LoginDto loginDto)
         {
-            var user = await _context.UserRepository.GetByUserNameAsync(loginDto.Username);
+            var user = await _context.UserRepository.GetByEmailAsync(loginDto.Email);
 
             if (user == null) 
-                return Unauthorized("Invalid userName or password");
+                return Unauthorized("Invalid email or password");
 
             var hmac = new HMACSHA512(user.PasswordSalt);
 
@@ -64,21 +66,22 @@ namespace DotNetCoreAngular.Controllers
 
             for (int i = 0; i < computedHash.Length; i++)
             {
-                if (computedHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid userName or password");
+                if (computedHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid email or password");
             }
 
             var userDto = new UserDto()
             {
-                UserName = user.UserName,
-                Token = _tokenService.CreateToken(user)
+                Email = user.Email,
+                Token = _tokenService.CreateToken(user),
+                Name = user.Name
             };
 
             return Ok(userDto);
         }
 
-        private async Task<bool> UserExistsAsync(string username)
+        private async Task<bool> UserExistsAsync(string email)
         {
-            return await _context.UserRepository.GetByUserNameAsync(username) != null;
+            return await _context.UserRepository.GetByEmailAsync(email) != null;
         }
     }
 }

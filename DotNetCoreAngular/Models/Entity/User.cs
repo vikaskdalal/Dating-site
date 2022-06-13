@@ -6,7 +6,9 @@ namespace DotNetCoreAngular.Models.Entity
 {
     public class User : BaseEntity
     {
-        public string UserName { get; set; }
+        public string Email { get; set; }
+
+        public string Name { get; set; }
 
         public byte[] PasswordHash { get; set; }
 
@@ -27,8 +29,6 @@ namespace DotNetCoreAngular.Models.Entity
         public string? LookingFor { get; set; }
 
         public string? Introduction { get; set; }
-
-        public string? Email { get; set; }
 
         [NotMapped]
         public int Age => DateOfBirth.CalculateAge();

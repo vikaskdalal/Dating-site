@@ -4,6 +4,6 @@ namespace DotNetCoreAngular.Interfaces.Repository
 {
     public interface IUserRepository : IGenericRepository<User>
     {
-        Task<User> GetByUserNameAsync(string username);
+        Task<User> GetByEmailAsync(string email);
     }
 }
