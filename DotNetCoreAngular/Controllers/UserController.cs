@@ -31,9 +31,11 @@ namespace DotNetCoreAngular.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<User> Get()
+        public IEnumerable<UserDetailDto> Get()
         {
-            return _context.UserRepository.GetAll();
+            var users =  _context.UserRepository.GetAll();
+
+            return _mapper.Map<IEnumerable<UserDetailDto>>(users);
         }
 
         [HttpPut]

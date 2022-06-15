@@ -10,7 +10,6 @@ import { FormsModule } from '@angular/forms';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './register/register.component';
-import { ListComponent } from './list/list.component';
 import { MessageComponent } from './message/message.component';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { AuthInterceptor } from './_interceptor/auth.interceptor';
@@ -18,6 +17,8 @@ import { ToastrModule } from 'ngx-toastr';
 import { EditUserComponent } from './edit-user/edit-user.component';
 import { ErrorInterceptor } from './_interceptor/error.interceptor';
 import { ServerErrorComponent } from './server-error/server-error.component';
+import { UserListComponent } from './user-list/user-list.component';
+import { UserCardComponent } from './user-card/user-card.component';
 
 @NgModule({
   declarations: [
@@ -25,10 +26,11 @@ import { ServerErrorComponent } from './server-error/server-error.component';
     NavbarComponent,
     HomeComponent,
     RegisterComponent,
-    ListComponent,
     MessageComponent,
     EditUserComponent,
-    ServerErrorComponent
+    ServerErrorComponent,
+    UserListComponent,
+    UserCardComponent
   ],
   imports: [
     BrowserModule,

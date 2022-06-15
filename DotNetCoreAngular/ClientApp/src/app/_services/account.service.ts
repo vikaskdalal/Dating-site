@@ -15,10 +15,10 @@ export class AccountService {
   
   currentUser$ = this.currentUserSource.asObservable();
 
-  constructor(private http : HttpClient) { }
+  constructor(private _http : HttpClient) { }
 
   login(model : any){
-    return this.http.post<User>(this.baseUrl + 'account/login', model).pipe(
+    return this._http.post<User>(this.baseUrl + 'account/login', model).pipe(
       map(response => {
           const user = response;
           if(user){
@@ -30,7 +30,7 @@ export class AccountService {
   }
 
   register(model : any){
-    return this.http.post<User>(this.baseUrl + 'account/register', model).pipe(
+    return this._http.post<User>(this.baseUrl + 'account/register', model).pipe(
       map(response => {
           const user = response;
           if(user){

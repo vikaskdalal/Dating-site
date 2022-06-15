@@ -10,7 +10,7 @@ import { AccountService } from './_services/account.service';
 export class AppComponent implements OnInit {
   title = 'ClientApp';
 
-  constructor(private accountService : AccountService){}
+  constructor(private _accountService : AccountService){}
 
   ngOnInit(): void {
     this.setCurrentUser();
@@ -20,6 +20,6 @@ export class AppComponent implements OnInit {
     const user : User = JSON.parse(localStorage.getItem('user') || '{}');
     
     if(user.token != undefined)
-      this.accountService.setCurrentUser(user);
+      this._accountService.setCurrentUser(user);
   }
 }

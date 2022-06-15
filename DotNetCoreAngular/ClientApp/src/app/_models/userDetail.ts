@@ -1,8 +1,10 @@
+import { Gender } from "../_enums/gender";
+
 export interface UserDetail{
-    userName : string;
+    name : string;
     dateOfBirth : string;
     city: string;
-    gender : number;
+    gender : Gender;
     country : string;
     interests : string;
     lookingFor : string;
