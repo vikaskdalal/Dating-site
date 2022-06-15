@@ -23,5 +23,7 @@ namespace DotNetCoreAngular.DTO
         public string? LookingFor { get; set; }
 
         public string? Introduction { get; set; }
+
+        public string Username { get; set; }
     }
 }

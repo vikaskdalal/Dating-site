@@ -37,17 +37,15 @@ namespace DotNetCoreAngular.Controllers
                 PasswordSalt = hmac.Key,
                 DateOfBirth = registerDto.DateOfBirth,
                 Name = registerDto.Name,
+                Username = CreateUsername(registerDto.Email)
             };
 
             _context.UserRepository.Add(user);
             await _context.SaveAsync();
 
-            var userDto = new UserDto()
-            {
-                Email = user.Email,
-                Token = _tokenService.CreateToken(user),
-                Name = user.Name
-            };
+            var token = _tokenService.CreateToken(user);
+
+            var userDto = new UserDto(token, user.Name, user.Username, user.Email);
 
             return CreatedAtAction(nameof(RegisterAsync), userDto);
         }
@@ -69,12 +67,9 @@ namespace DotNetCoreAngular.Controllers
                 if (computedHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid email or password");
             }
 
-            var userDto = new UserDto()
-            {
-                Email = user.Email,
-                Token = _tokenService.CreateToken(user),
-                Name = user.Name
-            };
+            var token = _tokenService.CreateToken(user);
+
+            var userDto = new UserDto(token, user.Name, user.Username, user.Email);
 
             return Ok(userDto);
         }
@@ -82,6 +77,16 @@ namespace DotNetCoreAngular.Controllers
         private async Task<bool> UserExistsAsync(string email)
         {
             return await _context.UserRepository.GetByEmailAsync(email) != null;
+        }
+
+        private string CreateUsername(string email)
+        {
+            using (MD5 md5 = MD5.Create())
+            {
+                byte[] hash = md5.ComputeHash(Encoding.Default.GetBytes(email));
+                var res = Convert.ToBase64String(hash);
+                return res.Substring(0, 7);
+            }
         }
     }
 }

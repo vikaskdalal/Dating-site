@@ -11,6 +11,10 @@ namespace DotNetCoreAngular.Services
     {
         private readonly IConfiguration _configuration;
 
+        private DateTime _tokenExpire => DateTime.UtcNow.AddMinutes(10);
+
+        public DateTime TokenExpire => _tokenExpire;
+
         public TokenService(IConfiguration config)
         {
             _configuration = config;
@@ -34,7 +38,7 @@ namespace DotNetCoreAngular.Services
                 _configuration["Jwt:Issuer"],
                 _configuration["Jwt:Audience"],
                 claims,
-                expires: DateTime.UtcNow.AddMinutes(10),
+                expires: _tokenExpire,
                 signingCredentials: signIn);
 
             return new JwtSecurityTokenHandler().WriteToken(token);

@@ -8,7 +8,7 @@ import { AccountService } from '../_services/account.service';
 })
 export class HomeComponent implements OnInit {
   registerMode : boolean = false;
-  constructor(public _accountService : AccountService) { }
+  constructor(public accountService : AccountService) { }
 
   ngOnInit(): void {
   }
