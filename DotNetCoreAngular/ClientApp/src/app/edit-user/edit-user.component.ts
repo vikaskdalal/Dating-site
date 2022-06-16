@@ -1,5 +1,5 @@
 import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
-import { NgForm } from '@angular/forms';
+import { NgForm, NgModel } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Gender } from '../_enums/gender';
 import { SelectDropDown } from '../_models/selectDropdown';
@@ -20,6 +20,8 @@ export class EditUserComponent implements OnInit {
   user! : User | null;
   gender = Gender;
   genderDropdown : SelectDropDown[] = [];
+  isUsernameAvailable : boolean = true;
+
   @HostListener('window:beforeunload', ['$event']) unloadNotification($event : any){
     if(this.editForm?.dirty)
       $event.returnValue = true;
@@ -65,6 +67,19 @@ export class EditUserComponent implements OnInit {
     
     );
     console.log(this.userDetail);
+  }
+
+  checkUsername(username : string){
+    if(username == this.user?.username)
+      return;
+
+    this._userService.getByUsername(username).subscribe(data => {
+        if(data == null)
+          this.isUsernameAvailable = true;
+        else
+          this.isUsernameAvailable = false;
+    });
+    console.log(username);
   }
 
 }

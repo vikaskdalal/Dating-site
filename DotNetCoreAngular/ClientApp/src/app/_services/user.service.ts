@@ -11,8 +11,12 @@ export class UserService {
 
   constructor(private _httpClient : HttpClient) { }
 
-  getUser(userName : string | undefined){
-    return this._httpClient.get<UserDetail>(this.baseUrl + 'user/' + userName);
+  getUser(email : string | undefined){
+    return this._httpClient.get<UserDetail>(this.baseUrl + 'user/' + email);
+  }
+
+  getByUsername(userName : string | undefined){
+    return this._httpClient.get<UserDetail>(this.baseUrl + 'user/getbyusername/' + userName);
   }
 
   updateUser(userDetail : UserDetail){

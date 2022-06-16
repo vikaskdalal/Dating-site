@@ -22,11 +22,19 @@ namespace DotNetCoreAngular.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("{userName}")]
-        public async Task<UserDetailDto> GetUser(string userName)
+        [HttpGet("{email}")]
+        public async Task<UserDetailDto> GetByEmail(string email)
         {
-            var user = await _context.UserRepository.GetByEmailAsync(userName);
+            var user = await _context.UserRepository.GetByEmailAsync(email);
             
+            return _mapper.Map<UserDetailDto>(user);
+        }
+
+        [HttpGet("getbyusername/{username}")]
+        public async Task<UserDetailDto> GetByUsername(string username)
+        {
+            var user = await _context.UserRepository.GetByUsernameAsync(username);
+
             return _mapper.Map<UserDetailDto>(user);
         }
 

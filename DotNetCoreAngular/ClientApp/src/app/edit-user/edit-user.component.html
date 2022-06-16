@@ -3,6 +3,16 @@
         <h4 class="row justify-content-center">Edit Profile</h4>
         <form #editForm = "ngForm" (ngSubmit)="update()">
             <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Email</label>
+                <input type="text" class="form-control" name="email" [(ngModel)]="userDetail.email">
+            </div>
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Username</label>
+                <input type="text" #username="ngModel" class="form-control" name="username" (blur)="checkUsername(username.value)" [(ngModel)]="userDetail.username">
+                <small class="text-danger" *ngIf="!isUsernameAvailable">Username is not available.</small>
+                <small class="text-success" *ngIf="isUsernameAvailable && username.touched && username.dirty">Username is available.</small>
+            </div>
+            <div class="mb-3">
                 <label for="exampleInputEmail1" class="form-label">Introduction</label>
                 <input type="textarea" class="form-control" name="introduction" [(ngModel)]="userDetail.introduction">
             </div>
@@ -16,11 +26,11 @@
             </div>
             <div class="mb-3">
                 <label for="exampleInputEmail1" class="form-label">Country</label>
-                <input type="textarea" class="form-control" name="country" [(ngModel)]="userDetail.country">
+                <input type="text" class="form-control" name="country" [(ngModel)]="userDetail.country">
             </div>
             <div class="mb-3">
                 <label for="exampleInputEmail1" class="form-label">City</label>
-                <input type="textarea" class="form-control" name="city" [(ngModel)]="userDetail.city">
+                <input type="text" class="form-control" name="city" [(ngModel)]="userDetail.city">
             </div>
             <div class="mb-3">
                 <select class="form-select" name="gender" [(ngModel)]="userDetail.gender">

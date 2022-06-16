@@ -14,5 +14,10 @@ namespace DotNetCoreAngular.DAL.Repository
         {
             return await DbSet.FirstOrDefaultAsync(q => q.Email == email);
         }
+
+        public async Task<User> GetByUsernameAsync(string username)
+        {
+            return await DbSet.FirstOrDefaultAsync(q => q.Username == username);
+        }
     }
 }

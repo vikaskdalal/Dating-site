@@ -10,4 +10,5 @@ export interface UserDetail{
     lookingFor : string;
     introduction : string;
     email : string;
+    username : string;
 }

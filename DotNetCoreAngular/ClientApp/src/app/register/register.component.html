@@ -12,6 +12,7 @@
     <div class="mb-3">
         <input type="password" #password="ngModel" class="form-control" name="password" placeholder="Password" [(ngModel)]="model.password" required>
         <small class="text-danger" *ngIf="password.invalid && password.touched">Password is required.</small>
+        
     </div>
     <div class="mb-3">
         <input type="text" #dob="ngModel" name="dob"  placeholder="Date of Birth" class="form-control" bsDatepicker [(ngModel)]="model.dateOfBirth" 
@@ -25,3 +26,4 @@
         <button class="btn btn-success" type="button" (click)="cancel()">Cancel</button>
     </div>
 </form>
+
