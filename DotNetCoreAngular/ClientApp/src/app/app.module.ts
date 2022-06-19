@@ -19,7 +19,8 @@ import { ErrorInterceptor } from './_interceptor/error.interceptor';
 import { ServerErrorComponent } from './server-error/server-error.component';
 import { UserListComponent } from './user-list/user-list.component';
 import { UserCardComponent } from './user-card/user-card.component';
-
+import { UserDetailComponent } from './user-detail/user-detail.component';
+import { TabsModule } from 'ngx-bootstrap/tabs';
 @NgModule({
   declarations: [
     AppComponent,
@@ -30,7 +31,8 @@ import { UserCardComponent } from './user-card/user-card.component';
     EditUserComponent,
     ServerErrorComponent,
     UserListComponent,
-    UserCardComponent
+    UserCardComponent,
+    UserDetailComponent
   ],
   imports: [
     BrowserModule,
@@ -42,7 +44,8 @@ import { UserCardComponent } from './user-card/user-card.component';
     BsDatepickerModule.forRoot(),
     ToastrModule.forRoot({
       positionClass : 'toast-bottom-right'
-    })
+    }),
+    TabsModule.forRoot()
   ],
   providers: [
     {provide : HTTP_INTERCEPTORS, useClass : AuthInterceptor, multi : true},

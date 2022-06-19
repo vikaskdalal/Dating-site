@@ -1,7 +1,7 @@
 <div class="row justify-content-center"  *ngIf="userDetail">
     <div class="col-xxl-4 col-lg-6 col-md-8">
         <h4 class="row justify-content-center">Edit Profile</h4>
-        <form #editForm = "ngForm" (ngSubmit)="update()">
+        <form #editForm = "ngForm" (ngSubmit)="update(editForm)">
             <div class="mb-3">
                 <label for="exampleInputEmail1" class="form-label">Email</label>
                 <input type="text" class="form-control" name="email" [(ngModel)]="userDetail.email">

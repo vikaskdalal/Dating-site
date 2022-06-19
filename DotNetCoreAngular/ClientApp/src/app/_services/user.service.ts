@@ -15,7 +15,7 @@ export class UserService {
     return this._httpClient.get<UserDetail>(this.baseUrl + 'user/' + email);
   }
 
-  getByUsername(userName : string | undefined){
+  getByUsername(userName : string | null){
     return this._httpClient.get<UserDetail>(this.baseUrl + 'user/getbyusername/' + userName);
   }
 

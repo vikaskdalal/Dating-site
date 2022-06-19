@@ -85,7 +85,7 @@ namespace DotNetCoreAngular.Controllers
             {
                 byte[] hash = md5.ComputeHash(Encoding.Default.GetBytes(email));
                 var res = Convert.ToBase64String(hash);
-                return res.Substring(0, 7);
+                return res?.ToLower();
             }
         }
     }

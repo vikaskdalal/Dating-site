@@ -58,10 +58,12 @@ export class EditUserComponent implements OnInit {
       );
   }
 
-  update(){
+  update(form : NgForm){
     this._userService.updateUser(this.userDetail).subscribe(u => 
       {
         console.log(u)
+        form.form.markAsPristine();
+        form.form.markAsTouched();
         this._toastr.success("Profile has been updated");
       }
     
