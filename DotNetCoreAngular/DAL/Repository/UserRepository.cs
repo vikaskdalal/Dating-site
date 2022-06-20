@@ -19,5 +19,12 @@ namespace DotNetCoreAngular.DAL.Repository
         {
             return await DbSet.FirstOrDefaultAsync(q => q.Username == username);
         }
+
+        public async Task<User> GetUserWithLikes(int userid)
+        {
+            return await DbSet
+                .Include(x => x.LikedUsers)
+                .FirstOrDefaultAsync(x => x.Id == userid);
+        }
     }
 }

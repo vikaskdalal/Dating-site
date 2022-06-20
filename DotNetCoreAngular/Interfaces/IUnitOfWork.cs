@@ -6,8 +6,10 @@ namespace DotNetCoreAngular.Interfaces
     {
         public IUserRepository UserRepository { get; }
 
-        void Save();
+        public ILikeRepository LikeRepository { get; }
 
-        Task SaveAsync();
+        int Save();
+
+        Task<int> SaveAsync();
     }
 }

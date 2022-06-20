@@ -2,12 +2,15 @@
     <div class="card-img-wrapper">Here goes the user image
         <ul class="animate text-center list-inline member-icons">
             <li class="list-inline-item">
-                <button class="btn btn-primary" routerLink="/user/{{user.username}}"><i class="fa fa-user"></i></button>
+                <button class="btn btn-primary" routerLink="/user/{{user?.username}}"><i class="fa fa-user"></i></button>
+            </li>
+            <li class="list-inline-item"><button (click)="addLike(user)" class="btn btn-primary">
+                <i class="fa fa-heart"></i></button>
             </li>
         </ul>
     </div>
     <div class="card-body">
-        <h6 class="card-title text-center mb-1">{{user.name}}</h6>
-        <p class="card-text text-muted text-center">{{user.city}}</p>
+        <h6 class="card-title text-center mb-1">{{user?.name}}</h6>
+        <p class="card-text text-muted text-center">{{user?.city}}</p>
     </div>
 </div>

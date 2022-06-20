@@ -28,8 +28,10 @@ export class ErrorInterceptor implements HttpInterceptor {
               if(error.error.errors){
                 throw this.extractModelErrors(error.error.errors);
               }
+              else if (typeof error.error == 'object')
+                this._toastr.error(error.statusText);
               else
-                this._toastr.error(error.statusText, error.status.toString());
+                this._toastr.error(error.error);
               break;
             case 401:
               this.handle401(error);
@@ -61,7 +63,7 @@ export class ErrorInterceptor implements HttpInterceptor {
   }
 
   handle401(error : HttpErrorResponse){
-    this._toastr.error(error.error, error.status.toString());
+    this._toastr.error(error.error);
   }
 
   handle500(error : HttpErrorResponse){

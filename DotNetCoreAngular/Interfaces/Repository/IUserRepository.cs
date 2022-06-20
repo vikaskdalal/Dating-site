@@ -7,5 +7,7 @@ namespace DotNetCoreAngular.Interfaces.Repository
         Task<User> GetByEmailAsync(string email);
 
         Task<User> GetByUsernameAsync(string username);
+
+        Task<User> GetUserWithLikes(int userid);
     }
 }

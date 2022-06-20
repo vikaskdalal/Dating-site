@@ -13,21 +13,25 @@ namespace DotNetCoreAngular.DAL
 
         private IUserRepository _userRepository;
 
+        private ILikeRepository _likeRepository;
+
         public UnitOfWork(DatabaseContext context)
         {
             _context = context;
         }
 
-        public IUserRepository UserRepository => _userRepository ?? _userRepository ?? new UserRepository(_context);
+        public IUserRepository UserRepository => _userRepository ?? new UserRepository(_context);
 
-        public void Save()
+        public ILikeRepository LikeRepository => _likeRepository ?? new LikeRepository(_context);
+
+        public int Save()
         {
-            _context.SaveChanges();
+            return _context.SaveChanges();
         }
 
-        public async Task SaveAsync()
+        public async Task<int> SaveAsync()
         {
-            await _context.SaveChangesAsync();
+            return await _context.SaveChangesAsync();
         }
 
         public void Dispose()

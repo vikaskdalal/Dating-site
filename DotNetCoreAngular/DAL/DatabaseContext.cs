@@ -12,7 +12,8 @@ namespace DotNetCoreAngular.DAL
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration<User>(new UserMap());
+            modelBuilder.ApplyConfiguration(new UserMap());
+            modelBuilder.ApplyConfiguration(new UserLikeMap());
         }
     }
 }

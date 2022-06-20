@@ -49,9 +49,9 @@ namespace DotNetCoreAngular.Controllers
         [HttpPut]
         public async Task<IActionResult> Put(UserDetailDto userDetailDto)
         {
-            string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            string? userEmail = User.FindFirst(ClaimTypes.Name)?.Value;
 
-            var user = await _context.UserRepository.GetByEmailAsync(userId);
+            var user = await _context.UserRepository.GetByEmailAsync(userEmail);
 
             if (user == null)
                 return BadRequest("User not found");

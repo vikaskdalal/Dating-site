@@ -24,7 +24,8 @@ namespace DotNetCoreAngular.Services
             var claims = new[] {
                         //new Claim(JwtRegisteredClaimNames.Sub, _configuration["Jwt:Subject"]),
                         //new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                        new Claim(JwtRegisteredClaimNames.NameId, user.Email),
+                        new Claim(JwtRegisteredClaimNames.UniqueName, user.Email),
+                        new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
                         //new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
                         //new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                         //new Claim("DisplayName", user.DisplayName),

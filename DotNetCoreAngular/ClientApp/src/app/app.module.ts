@@ -21,6 +21,7 @@ import { UserListComponent } from './user-list/user-list.component';
 import { UserCardComponent } from './user-card/user-card.component';
 import { UserDetailComponent } from './user-detail/user-detail.component';
 import { TabsModule } from 'ngx-bootstrap/tabs';
+import { UserLikeComponent } from './user-like/user-like.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -32,7 +33,8 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
     ServerErrorComponent,
     UserListComponent,
     UserCardComponent,
-    UserDetailComponent
+    UserDetailComponent,
+    UserLikeComponent
   ],
   imports: [
     BrowserModule,
