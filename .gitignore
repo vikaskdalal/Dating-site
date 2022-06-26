@@ -51,3 +51,5 @@ DotNetCoreAngular/ClientApp/Thumbs.db
 /DotNetCoreAngular/obj
 /DotNetCoreAngular/bin/Debug/net6.0
 /.vscode
+/IntegrationTests/bin/Debug/net6.0
+/IntegrationTests/obj
