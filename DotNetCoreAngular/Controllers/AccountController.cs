@@ -6,6 +6,7 @@ using DotNetCoreAngular.Interfaces;
 using DotNetCoreAngular.Models.Entity;
 using System.Security.Cryptography;
 using System.Text;
+using DotNetCoreAngular.Helpers;
 
 namespace DotNetCoreAngular.Controllers
 {
@@ -37,7 +38,7 @@ namespace DotNetCoreAngular.Controllers
                 PasswordSalt = hmac.Key,
                 DateOfBirth = registerDto.DateOfBirth,
                 Name = registerDto.Name,
-                Username = CreateUsername(registerDto.Email)
+                Username = UserHelper.CreateUsername(registerDto.Email)
             };
 
             _context.UserRepository.Add(user);
@@ -77,16 +78,6 @@ namespace DotNetCoreAngular.Controllers
         private async Task<bool> UserExistsAsync(string email)
         {
             return await _context.UserRepository.GetByEmailAsync(email) != null;
-        }
-
-        private string CreateUsername(string email)
-        {
-            using (MD5 md5 = MD5.Create())
-            {
-                byte[] hash = md5.ComputeHash(Encoding.Default.GetBytes(email));
-                var res = Convert.ToBase64String(hash);
-                return res?.ToLower();
-            }
         }
     }
 }
