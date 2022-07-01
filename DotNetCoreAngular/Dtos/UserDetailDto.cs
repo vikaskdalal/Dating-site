@@ -1,6 +1,6 @@
 ﻿using DotNetCoreAngular.Common.Enums;
 
-namespace DotNetCoreAngular.DTO
+namespace DotNetCoreAngular.Dtos
 {
     public class UserDetailDto
     {

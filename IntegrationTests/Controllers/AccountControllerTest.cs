@@ -1,6 +1,6 @@
 ﻿using DotNetCoreAngular.Controllers;
 using DotNetCoreAngular.DAL;
-using DotNetCoreAngular.DTO;
+using DotNetCoreAngular.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Transactions;

@@ -1,4 +1,4 @@
-﻿namespace DotNetCoreAngular.DTO
+﻿namespace DotNetCoreAngular.Dtos
 {
     public class UserDto
     {

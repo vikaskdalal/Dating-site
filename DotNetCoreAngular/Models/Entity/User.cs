@@ -35,7 +35,11 @@ namespace DotNetCoreAngular.Models.Entity
         [NotMapped]
         public int Age => DateOfBirth.CalculateAge();
 
-        public ICollection<UserLike>LikedByUsers { get; set; }
-        public ICollection<UserLike>LikedUsers { get; set; }
+        public ICollection<UserLike> LikedByUsers { get; set; }
+        public ICollection<UserLike> LikedUsers { get; set; }
+
+        public ICollection<Message> MessagesSent { get; set; }
+
+        public ICollection<Message> MessagesReceived { get; set; }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using DotNetCoreAngular.DTO;
+using DotNetCoreAngular.Dtos;
 using DotNetCoreAngular.Models.Entity;
 
 namespace DotNetCoreAngular.Helpers
@@ -11,6 +11,8 @@ namespace DotNetCoreAngular.Helpers
             CreateMap<User, UserDetailDto>();
 
             CreateMap<UserDetailDto, User>();
+
+            CreateMap<Message, MessageDto>();
         }
     }
 }

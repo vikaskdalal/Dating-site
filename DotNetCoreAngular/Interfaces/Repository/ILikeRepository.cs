@@ -1,4 +1,4 @@
-﻿using DotNetCoreAngular.DTO;
+﻿using DotNetCoreAngular.Dtos;
 using DotNetCoreAngular.Models.Entity;
 
 namespace DotNetCoreAngular.Interfaces.Repository

@@ -1,4 +1,4 @@
-﻿using DotNetCoreAngular.DTO;
+﻿using DotNetCoreAngular.Dtos;
 using DotNetCoreAngular.Interfaces.Repository;
 using DotNetCoreAngular.Models.Entity;
 
@@ -6,7 +6,8 @@ namespace DotNetCoreAngular.DAL.Repository
 {
     public class LikeRepository : GenericRepository<UserLike>, ILikeRepository
     {
-        public LikeRepository(DatabaseContext context) : base(context)
+        public LikeRepository(DatabaseContext context) 
+            : base(context)
         {
         }
         public async Task<UserLike> GetUserLike(int sourceUserId, int likedUserId)

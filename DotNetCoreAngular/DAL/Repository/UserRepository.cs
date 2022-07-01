@@ -6,7 +6,8 @@ namespace DotNetCoreAngular.DAL.Repository
 {
     public class UserRepository : GenericRepository<User>, IUserRepository
     {
-        public UserRepository(DatabaseContext context) : base(context)
+        public UserRepository(DatabaseContext context) 
+            : base(context)
         {
         }
 

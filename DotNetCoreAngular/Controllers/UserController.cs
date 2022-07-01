@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using DotNetCoreAngular.DTO;
+using DotNetCoreAngular.Dtos;
 using DotNetCoreAngular.Interfaces;
 using DotNetCoreAngular.Models.Entity;
 using Microsoft.AspNetCore.Authorization;

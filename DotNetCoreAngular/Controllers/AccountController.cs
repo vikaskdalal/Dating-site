@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DotNetCoreAngular.DAL;
-using DotNetCoreAngular.DTO;
+using DotNetCoreAngular.Dtos;
 using DotNetCoreAngular.Interfaces;
 using DotNetCoreAngular.Models.Entity;
 using System.Security.Cryptography;
