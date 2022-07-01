@@ -15,6 +15,8 @@ namespace DotNetCoreAngular.DAL
 
         private ILikeRepository _likeRepository;
 
+        private IMessageRepository _messageRepository;
+
         public UnitOfWork(DatabaseContext context)
         {
             _context = context;
@@ -23,15 +25,16 @@ namespace DotNetCoreAngular.DAL
         public IUserRepository UserRepository => _userRepository ?? new UserRepository(_context);
 
         public ILikeRepository LikeRepository => _likeRepository ?? new LikeRepository(_context);
+        public IMessageRepository MessageRepository => _messageRepository ?? new MessageRepository(_context);
 
-        public int Save()
+        public bool Save()
         {
-            return _context.SaveChanges();
+            return _context.SaveChanges() > 0;
         }
 
-        public async Task<int> SaveAsync()
+        public async Task<bool> SaveAsync()
         {
-            return await _context.SaveChangesAsync();
+            return await _context.SaveChangesAsync() > 0;
         }
 
         public void Dispose()

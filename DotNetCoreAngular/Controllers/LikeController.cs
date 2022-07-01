@@ -1,4 +1,5 @@
-﻿using DotNetCoreAngular.Interfaces;
+﻿using DotNetCoreAngular.Extensions;
+using DotNetCoreAngular.Interfaces;
 using DotNetCoreAngular.Models.Entity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -21,7 +22,7 @@ namespace DotNetCoreAngular.Controllers
         [HttpPost("{username}")]
         public async Task<IActionResult> AddLike(string username)
         {
-            int sourceUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            int sourceUserId = User.GetUserId();
 
             var sourceUser = await _context.UserRepository.GetUserWithLikes(sourceUserId);
             var likedUser = await _context.UserRepository.GetByUsernameAsync(username);
@@ -42,7 +43,7 @@ namespace DotNetCoreAngular.Controllers
 
             sourceUser.LikedUsers.Add(userLike);
 
-            if (await _context.SaveAsync() > 0)
+            if (await _context.SaveAsync())
                 return Ok();
 
             return BadRequest();

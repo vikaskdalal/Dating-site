@@ -7,9 +7,10 @@ namespace DotNetCoreAngular.Interfaces
         public IUserRepository UserRepository { get; }
 
         public ILikeRepository LikeRepository { get; }
+        public IMessageRepository MessageRepository { get; }
 
-        int Save();
+        bool Save();
 
-        Task<int> SaveAsync();
+        Task<bool> SaveAsync();
     }
 }

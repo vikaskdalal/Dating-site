@@ -22,15 +22,8 @@ namespace DotNetCoreAngular.Services
         public string CreateToken(User user)
         {
             var claims = new[] {
-                        //new Claim(JwtRegisteredClaimNames.Sub, _configuration["Jwt:Subject"]),
-                        //new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                        new Claim(JwtRegisteredClaimNames.UniqueName, user.Email),
+                        new Claim(JwtRegisteredClaimNames.UniqueName, user.Username),
                         new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
-                        //new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
-                        //new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                        //new Claim("DisplayName", user.DisplayName),
-                        //new Claim("UserName", user.UserName),
-                        //new Claim("Email", user.Email)
                     };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));

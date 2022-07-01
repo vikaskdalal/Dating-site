@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DotNetCoreAngular.Dtos;
+using DotNetCoreAngular.Extensions;
 using DotNetCoreAngular.Interfaces;
 using DotNetCoreAngular.Models.Entity;
 using Microsoft.AspNetCore.Authorization;
@@ -49,9 +50,9 @@ namespace DotNetCoreAngular.Controllers
         [HttpPut]
         public async Task<IActionResult> Put(UserDetailDto userDetailDto)
         {
-            string? userEmail = User.FindFirst(ClaimTypes.Name)?.Value;
+            string? username = User.GetUsername();
 
-            var user = await _context.UserRepository.GetByEmailAsync(userEmail);
+            var user = await _context.UserRepository.GetByUsernameAsync(username);
 
             if (user == null)
                 return BadRequest("User not found");
