@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DotNetCoreAngular.Dtos;
 using DotNetCoreAngular.Extensions;
+using DotNetCoreAngular.Helpers;
 using DotNetCoreAngular.Interfaces;
 using DotNetCoreAngular.Models.Entity;
 using Microsoft.AspNetCore.Authorization;
@@ -51,6 +52,19 @@ namespace DotNetCoreAngular.Controllers
                 return Ok(_mapper.Map<MessageDto>(message));
 
             return BadRequest("Failed to send message");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetMessagesForUser([FromQuery] MessageParams messageParams)
+        {
+            messageParams.Username = User.GetUsername();
+
+            var messages = await _context.MessageRepository.GetMessagesForUser(messageParams);
+
+            Response.AddPaginationHeader(messages.CurrentPage, messages.PageSize,
+                messages.TotalCount, messages.TotalPages);
+
+            return Ok(messages);
         }
     }
 }

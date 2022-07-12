@@ -24,7 +24,7 @@ namespace IntegrationTests.Controllers
                 Password = "123",
                 Name = "vikas"
             };
-            var unitofWork = new UnitOfWork(DatabaseContext);
+            var unitofWork = new UnitOfWork(DatabaseContext, null);
 
 
             var controller = new AccountController(UnitOfWork, TokenService);
@@ -43,7 +43,7 @@ namespace IntegrationTests.Controllers
                 Email = "vikas.dalal@gmail.com",
                 Password = "123",
             };
-            var unitofWork = new UnitOfWork(DatabaseContext);
+            var unitofWork = new UnitOfWork(DatabaseContext, null);
 
 
             var controller = new AccountController(UnitOfWork, TokenService);
@@ -61,7 +61,7 @@ namespace IntegrationTests.Controllers
                 Password = "123",
             };
 
-            var unitofWork = new UnitOfWork(DatabaseContext);
+            var unitofWork = new UnitOfWork(DatabaseContext,null);
 
 
             var controller = new AccountController(UnitOfWork, TokenService);
