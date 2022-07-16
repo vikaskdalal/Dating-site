@@ -1,23 +1,20 @@
 <div class="row">
     <div class="col-4">
         <div class="card">
-            <!-- <img src="{{userDetails.photoUrl || './assets/user.png'}}" alt="{{userDetails.knownAs}}" 
-                class="card-img-top img-thumbnail"> -->
+            <img src="{{userDetails?.photoUrl || './assets/user.png'}}" alt="{{userDetails.name}}" 
+                class="card-img-top img-thumbnail">
             <div class="card-body">
-                <div>
-                    <strong>Name:</strong>
-                    <p>{{userDetails.name | titlecase}}</p>
-                </div>
                 <div>
                     <strong>Location:</strong>
                     <p>{{userDetails.city}}, {{userDetails.country}}</p>
                 </div>
-                
-            </div>
-            <div class="card-footer">
-                <div class="btn-group d-flex">
-                    <button class="btn btn-primary">Like</button>
-                    
+                <div>
+                    <strong>Age:</strong>
+                    <p>{{userDetails.age}}</p>
+                </div>
+                <div>
+                    <strong>Member since:</strong>
+                    <p>{{userDetails.created | date: 'dd MMM yyyy'}}</p>
                 </div>
             </div>
         </div>
@@ -25,15 +22,15 @@
 
     <div class="col-8">
         <tabset class="member-tabset" #memberTabs>
-            <tab heading='About {{userDetails.name | titlecase}}'>
+            <tab heading='About {{userDetails.name}}'>
                 <h4>Description</h4>
                 <p>{{userDetails.introduction}}</p>
                 <h4>Looking for</h4>
-                <p>{{userDetails.lookingFor ?? 'No data provided yet'}}</p>
+                <p>{{userDetails.lookingFor}}</p>
             </tab>
             <tab heading='Interests'>
                 <h4>Interests</h4>
-                <p>{{userDetails.interests  ?? 'No interests provided yet'}}</p>
+                <p>{{userDetails.interests}}</p>
             </tab>
         </tabset>
     </div>

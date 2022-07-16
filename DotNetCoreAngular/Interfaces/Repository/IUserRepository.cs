@@ -9,5 +9,7 @@ namespace DotNetCoreAngular.Interfaces.Repository
         Task<User> GetByUsernameAsync(string username);
 
         Task<User> GetUserWithLikes(int userid);
+
+        Task<IEnumerable<User>> GetAllUsersWithPhotos();
     }
 }

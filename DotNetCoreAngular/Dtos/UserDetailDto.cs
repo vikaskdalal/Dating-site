@@ -16,7 +16,7 @@ namespace DotNetCoreAngular.Dtos
 
         public Gender? Gender { get; set; }
 
-        public DateTime LastActive { get; set; }
+        public DateTime Created { get; set; }
 
         public string? Interests { get; set; }
 
@@ -24,6 +24,12 @@ namespace DotNetCoreAngular.Dtos
 
         public string? Introduction { get; set; }
 
+        public int Age { get; set; }
+
         public string Username { get; set; }
+
+        public ICollection<PhotoDto> Photos { get; set; }
+
+        public string PhotoUrl { get; set; }
     }
 }

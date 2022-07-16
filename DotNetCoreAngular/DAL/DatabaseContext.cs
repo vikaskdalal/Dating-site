@@ -15,6 +15,7 @@ namespace DotNetCoreAngular.DAL
             modelBuilder.ApplyConfiguration(new UserMap());
             modelBuilder.ApplyConfiguration(new UserLikeMap());
             modelBuilder.ApplyConfiguration(new MessageMap());
+            modelBuilder.ApplyConfiguration(new PhotoMap());
         }
     }
 }

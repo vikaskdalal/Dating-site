@@ -1,47 +1,59 @@
-<div class="row justify-content-center"  *ngIf="userDetail">
-    <div class="col-xxl-4 col-lg-6 col-md-8">
-        <h4 class="row justify-content-center">Edit Profile</h4>
-        <form #editForm = "ngForm" (ngSubmit)="update(editForm)">
-            <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Email</label>
-                <input type="text" class="form-control" name="email" [(ngModel)]="userDetail.email">
+<div class="row" *ngIf="userDetail">
+    <div class="col-4">
+        <h1>Your profile</h1>
+    </div>
+    <div class="col-8">
+        <div class="alert alert-info" *ngIf="editForm.dirty">
+            <strong>Information: </strong> You have made changes.  Any unsaved changes will be lost
+        </div>
+    </div>
+    <div class="col-4">
+        <div class="card">
+            <img src="{{userDetail.photoUrl || './assets/user.png'}}" alt="{{userDetail.name}}" 
+                class="card-img-top img-thumbnail">
+            <div class="card-body">
+                <div>
+                    <strong>Location:</strong>
+                    <p>{{userDetail.city}}, {{userDetail.country}}</p>
+                </div>
+                <div>
+                    <strong>Age:</strong>
+                    <p>{{userDetail.age}}</p>
+                </div>
+                <div>
+                    <strong>Member since:</strong>
+                    <p>{{userDetail.created | date: 'dd MMM yyyy'}}</p>
+                </div>
             </div>
-            <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Username</label>
-                <input type="text" #username="ngModel" class="form-control" name="username" (blur)="checkUsername(username.value)" [(ngModel)]="userDetail.username">
-                <small class="text-danger" *ngIf="!isUsernameAvailable">Username is not available.</small>
-                <small class="text-success" *ngIf="isUsernameAvailable && username.touched && username.dirty">Username is available.</small>
+            <div class="card-footer">
+                <button [disabled]="!editForm.dirty" form="editForm" type="submit" class="btn btn-success btn-block">Save Changes</button>
             </div>
-            <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Introduction</label>
-                <input type="textarea" class="form-control" name="introduction" [(ngModel)]="userDetail.introduction">
-            </div>
-            <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Looking For</label>
-                <input type="textarea" class="form-control" name="lookingFor" [(ngModel)]="userDetail.lookingFor">
-            </div>
-            <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Interests</label>
-                <input type="textarea" class="form-control" name="interests" [(ngModel)]="userDetail.interests">
-            </div>
-            <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Country</label>
-                <input type="text" class="form-control" name="country" [(ngModel)]="userDetail.country">
-            </div>
-            <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">City</label>
-                <input type="text" class="form-control" name="city" [(ngModel)]="userDetail.city">
-            </div>
-            <div class="mb-3">
-                <select class="form-select" name="gender" [(ngModel)]="userDetail.gender">
-                    <option selected>Select Gender</option>
-                    <option *ngFor="let g of genderDropdown " [ngValue]="g.id">{{g.value}}</option>
-                  </select>
-            </div>
-            <div class="mb-3">
-                <button type="submit" class="btn btn-primary">Save Changes</button>
-            </div>
-        </form>
-        
+        </div>
+    </div>
+
+    <div class="col-8">
+        <tabset class="member-tabset">
+            <tab heading='About {{userDetail.name}}'>
+                <form #editForm="ngForm" id="editForm" (ngSubmit)="update(editForm)">
+                    <h4>Description</h4>
+                    <textarea class="form-control" [(ngModel)]="userDetail.introduction" name="introduction" rows="6"></textarea>
+                    <h4 class="mt-2">Looking for</h4>
+                    <textarea class="form-control" [(ngModel)]="userDetail.lookingFor" name="lookingFor" rows="6"></textarea>
+                    <h4 class="mt-2">Interests</h4>
+                    <textarea class="form-control" [(ngModel)]="userDetail.interests" name="interests" rows="6"></textarea>
+                    <h4 class="mt-2">Location Details: </h4>
+                    <div class="form-inline">
+                        <label for="city">City: </label>
+                        <input [(ngModel)]="userDetail.city" type="text" name="city" class="form-control mx-2">
+                        <label for="city">Country: </label>
+                        <input [(ngModel)]="userDetail.country" type="text" name="country" class="form-control mx-2">
+                    </div>
+                </form>
+               
+            </tab>
+            <tab heading='Edit Photos'>
+                <app-photo-editor [userDetail]="userDetail"></app-photo-editor>
+            </tab>
+        </tabset>
     </div>
 </div>

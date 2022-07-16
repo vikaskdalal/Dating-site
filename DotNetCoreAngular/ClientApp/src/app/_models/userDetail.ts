@@ -1,4 +1,5 @@
 import { Gender } from "../_enums/gender";
+import { Photo } from "./photo";
 
 export interface UserDetail{
     name : string;
@@ -11,4 +12,8 @@ export interface UserDetail{
     introduction : string;
     email : string;
     username : string;
+    photoUrl : string;
+    photos : Photo[];
+    created : Date;
+    age : number;
 }

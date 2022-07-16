@@ -22,6 +22,8 @@ import { UserCardComponent } from './user-card/user-card.component';
 import { UserDetailComponent } from './user-detail/user-detail.component';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { UserLikeComponent } from './user-like/user-like.component';
+import { PhotoEditorComponent } from './photo-editor/photo-editor.component';
+import { FileUploadModule } from 'ng2-file-upload';
 @NgModule({
   declarations: [
     AppComponent,
@@ -34,7 +36,8 @@ import { UserLikeComponent } from './user-like/user-like.component';
     UserListComponent,
     UserCardComponent,
     UserDetailComponent,
-    UserLikeComponent
+    UserLikeComponent,
+    PhotoEditorComponent
   ],
   imports: [
     BrowserModule,
@@ -47,7 +50,8 @@ import { UserLikeComponent } from './user-like/user-like.component';
     ToastrModule.forRoot({
       positionClass : 'toast-bottom-right'
     }),
-    TabsModule.forRoot()
+    TabsModule.forRoot(),
+    FileUploadModule
   ],
   providers: [
     {provide : HTTP_INTERCEPTORS, useClass : AuthInterceptor, multi : true},

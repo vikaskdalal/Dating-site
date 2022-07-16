@@ -8,11 +8,15 @@ namespace DotNetCoreAngular.Helpers
     {
         public AutoMapperProfiles()
         {
-            CreateMap<User, UserDetailDto>();
+            CreateMap<User, UserDetailDto>()
+                .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src =>
+                    src.Photos.FirstOrDefault(x => x.IsMain).Url));
 
             CreateMap<UserDetailDto, User>();
 
             CreateMap<Message, MessageDto>();
+            CreateMap<Photo, PhotoDto>();
+            CreateMap<UserUpdateDto, User>();
         }
     }
 }
