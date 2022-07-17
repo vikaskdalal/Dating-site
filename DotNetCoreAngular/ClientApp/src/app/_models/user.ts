@@ -3,4 +3,5 @@ export interface User {
     token : string;
     name : string;
     username : string;
+    tokenExpire : Date;
 }

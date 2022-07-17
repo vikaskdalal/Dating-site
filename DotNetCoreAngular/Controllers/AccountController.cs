@@ -46,7 +46,7 @@ namespace DotNetCoreAngular.Controllers
 
             var token = _tokenService.CreateToken(user);
 
-            var userDto = new UserDto(token, user.Name, user.Username, user.Email);
+            var userDto = new UserDto(token, user.Name, user.Username, user.Email, _tokenService.TokenExpire);
 
             return CreatedAtAction(nameof(RegisterAsync), userDto);
         }
@@ -70,7 +70,7 @@ namespace DotNetCoreAngular.Controllers
 
             var token = _tokenService.CreateToken(user);
 
-            var userDto = new UserDto(token, user.Name, user.Username, user.Email);
+            var userDto = new UserDto(token, user.Name, user.Username, user.Email, _tokenService.TokenExpire);
 
             return Ok(userDto);
         }
