@@ -11,7 +11,7 @@ namespace DotNetCoreAngular.Services
     {
         private readonly IConfiguration _configuration;
 
-        private DateTime _tokenExpire => DateTime.UtcNow.AddMinutes(10);
+        private DateTime _tokenExpire => DateTime.UtcNow.AddMinutes(60);
 
         public DateTime TokenExpire => _tokenExpire;
 
