@@ -46,6 +46,12 @@ export class AccountService {
     this.currentUserSource.next(user);
   }
 
+  isTokenExpired(user : User) : boolean {
+      const expires = new Date(user.tokenExpire);
+      const timeout = expires.getTime() - Date.now();
+      return timeout < 0;
+  }
+
   logout(){
     localStorage.removeItem("user");
     this.currentUserSource.next(null);

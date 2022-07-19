@@ -24,6 +24,7 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { UserLikeComponent } from './user-like/user-like.component';
 import { PhotoEditorComponent } from './photo-editor/photo-editor.component';
 import { FileUploadModule } from 'ng2-file-upload';
+import { DatePipe } from '@angular/common';
 @NgModule({
   declarations: [
     AppComponent,
@@ -54,6 +55,7 @@ import { FileUploadModule } from 'ng2-file-upload';
     FileUploadModule
   ],
   providers: [
+    DatePipe,
     {provide : HTTP_INTERCEPTORS, useClass : AuthInterceptor, multi : true},
     {provide : HTTP_INTERCEPTORS, useClass : ErrorInterceptor, multi : true}
   ],

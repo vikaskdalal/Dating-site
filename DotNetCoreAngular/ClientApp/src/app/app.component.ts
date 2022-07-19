@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { User } from './_models/user';
 import { AccountService } from './_services/account.service';
@@ -10,7 +11,7 @@ import { AccountService } from './_services/account.service';
 export class AppComponent implements OnInit {
   title = 'ClientApp';
 
-  constructor(private _accountService : AccountService){}
+  constructor(private _accountService : AccountService, private datePipe : DatePipe){}
 
   ngOnInit(): void {
     this.setCurrentUser();
@@ -19,7 +20,13 @@ export class AppComponent implements OnInit {
   setCurrentUser(){
     const user : User = JSON.parse(localStorage.getItem('user') || '{}');
     
-    if(user.token != undefined)
-      this._accountService.setCurrentUser(user);
+    if(user.token != undefined){
+      if(this._accountService.isTokenExpired(user)){
+        this._accountService.logout();
+      }
+      else{
+        this._accountService.setCurrentUser(user);
+      }
+    }
   }
 }

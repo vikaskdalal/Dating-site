@@ -4,7 +4,7 @@ namespace DotNetCoreAngular.Interfaces
 {
     public interface ITokenService
     {
-        DateTime TokenExpire;
+        DateTime TokenExpire { get;}
 
         string CreateToken(User user);
     }
