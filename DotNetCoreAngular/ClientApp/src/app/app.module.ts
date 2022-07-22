@@ -25,6 +25,7 @@ import { UserLikeComponent } from './user-like/user-like.component';
 import { PhotoEditorComponent } from './photo-editor/photo-editor.component';
 import { FileUploadModule } from 'ng2-file-upload';
 import { DatePipe } from '@angular/common';
+import { UserChatComponent } from './user-chat/user-chat.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -38,7 +39,8 @@ import { DatePipe } from '@angular/common';
     UserCardComponent,
     UserDetailComponent,
     UserLikeComponent,
-    PhotoEditorComponent
+    PhotoEditorComponent,
+    UserChatComponent
   ],
   imports: [
     BrowserModule,
