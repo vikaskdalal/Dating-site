@@ -8,5 +8,7 @@ namespace DotNetCoreAngular.Interfaces.Repository
     {
         Task<IEnumerable<MessageDto>> GetMessageThread(int senderId, int recipientId);
         Task<PagedList<MessageDto>> GetMessagesForUser(MessageParams messageParams);
+
+        Task<Message> GetMessage(int id);
     }
 }

@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using DotNetCoreAngular.Dtos;
+using DotNetCoreAngular.Extensions;
 using DotNetCoreAngular.Helpers;
 using DotNetCoreAngular.Interfaces.Repository;
 using DotNetCoreAngular.Models.Entity;
+using Microsoft.EntityFrameworkCore;
 
 namespace DotNetCoreAngular.DAL.Repository
 {
@@ -20,23 +22,47 @@ namespace DotNetCoreAngular.DAL.Repository
         public async Task<PagedList<MessageDto>> GetMessagesForUser(MessageParams messageParams)
         {
             var query = DbSet.OrderByDescending(o => o.MessageSent)
-                .ProjectTo<MessageDto>(_mapper.ConfigurationProvider)
                 .AsQueryable();
 
             query = messageParams.Container switch
             {
-                "Inbox" => query.Where(u => u.RecipientUsername == messageParams.Username),
-                "Outbox" => query.Where(u => u.SenderUsername == messageParams.Username),
+                "Inbox" => query.Where(u => u.RecipientUsername == messageParams.Username && u.RecipientDeleted == false),
+                "Outbox" => query.Where(u => u.SenderUsername == messageParams.Username && u.SenderDeleted == false),
                 _ => query.Where(u => u.RecipientUsername ==
-                    messageParams.Username && u.DateRead == null)
+                    messageParams.Username && u.RecipientDeleted == false && u.DateRead == null)
             };
 
-            return await PagedList<MessageDto>.CreateAsync(query, messageParams.PageNumber, messageParams.PageSize);
+            var messages = query.ProjectTo<MessageDto>(_mapper.ConfigurationProvider);
+
+            return await PagedList<MessageDto>.CreateAsync(messages, messageParams.PageNumber, messageParams.PageSize);
         }
 
-        public Task<IEnumerable<MessageDto>> GetMessageThread(int senderId, int recipientId)
+        public async Task<Message> GetMessage(int id)
         {
-            throw new NotImplementedException();
+            return await DbSet
+                .Include(u => u.Sender)
+                .Include(u => u.Recipient)
+                .SingleOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task<IEnumerable<MessageDto>> GetMessageThread(int currentUserId, int recipientId)
+        {
+            var messages = await DbSet
+                .Include(u => u.Sender).ThenInclude(p => p.Photos)
+                .Include(u => u.Recipient).ThenInclude(p => p.Photos)
+                .Where(m => 
+                    m.Recipient.Id == currentUserId && m.RecipientDeleted == false
+                    && m.Sender.Id == recipientId
+                    ||
+                    m.Recipient.Id == recipientId
+                    && m.Sender.Id == currentUserId && m.SenderDeleted == false
+                )
+                .MarkUnreadAsRead(currentUserId)
+                .OrderBy(o => o.MessageSent)
+                .ProjectTo<MessageDto>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            return messages;
         }
     }
 }
