@@ -1,9 +1,12 @@
-<div class="row">
+<div class="row" *ngIf="userDetails">
     <div class="col-4">
         <div class="card">
             <img src="{{userDetails?.photoUrl || './assets/user.png'}}" alt="{{userDetails.name}}" 
                 class="card-img-top img-thumbnail">
             <div class="card-body">
+                <div class="mb-2" *ngIf = "onlineUsers.includes(userDetails.username)">
+                    <i class="fa fa-user-circle text-success"></i> Online now
+                </div> 
                 <div>
                     <strong>Location:</strong>
                     <p>{{userDetails.city}}, {{userDetails.country}}</p>
@@ -39,7 +42,7 @@
                 <p>{{userDetails.interests}}</p>
             </tab>
             <tab heading='Messages' (selectTab)="onTabActivated($event)">
-                <app-user-chat [messages]="messages" [username]="userDetails.username"></app-user-chat>
+                <app-user-chat [username]="userDetails.username"></app-user-chat>
             </tab>
         </tabset>
     </div>

@@ -2,6 +2,7 @@
 using DotNetCoreAngular.Helpers;
 using DotNetCoreAngular.Interfaces;
 using DotNetCoreAngular.Services;
+using DotNetCoreAngular.SignalR;
 
 namespace DotNetCoreAngular.Extensions
 {
@@ -11,6 +12,7 @@ namespace DotNetCoreAngular.Extensions
         {
             services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddSingleton<PresenceTracker>();
             services.AddScoped<IPhotoService, PhotoService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);

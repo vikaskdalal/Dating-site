@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { User } from '../_models/user';
 import { UserDetail } from '../_models/userDetail';
+import { AccountService } from '../_services/account.service';
 import { UserService } from '../_services/user.service';
 
 @Component({
@@ -9,7 +11,13 @@ import { UserService } from '../_services/user.service';
 })
 export class UserListComponent implements OnInit {
   users! : UserDetail[];
-  constructor(private _userService : UserService) { }
+  currentUser! : User;
+  constructor(private _userService : UserService, private _accountService : AccountService) { 
+    this._accountService.currentUser$.subscribe(user => {
+      if(user != null)
+        this.currentUser = user;
+    })
+  }
 
   ngOnInit(): void {
     this.loadUsers();
@@ -17,7 +25,7 @@ export class UserListComponent implements OnInit {
 
   loadUsers(){
     this._userService.getUsers().subscribe(users =>{
-        this.users = users;
+        this.users = users.filter(f => f.username != this.currentUser.username);
       })
   }
 

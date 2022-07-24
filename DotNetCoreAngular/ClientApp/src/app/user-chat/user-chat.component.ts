@@ -14,14 +14,13 @@ export class UserChatComponent implements OnInit {
   messageContent!: string;
   @ViewChild('messageForm') messageForm! : NgForm;
 
-  constructor(private _messageService : MessageService) { }
+  constructor(public messageService : MessageService) { }
 
   ngOnInit(): void {
   }
 
   sendMessage() {
-    this._messageService.sendMessage(this.username, this.messageContent).subscribe(msg => {
-        this.messages.push(msg);
+    this.messageService.sendMessage(this.username, this.messageContent).then(() => {
         this.messageForm.reset();
     });
   }

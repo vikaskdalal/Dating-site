@@ -1,17 +1,22 @@
-<div class="card mb-4">
+<div class="card mb-4 card-body flex-fill">
     <div class="card-img-wrapper">
         <img src="{{user?.photoUrl || './assets/user.png'}}" alt="{{user?.name}}" class="card-img-top">
-        <ul class="animate text-center list-inline member-icons">
+        <ul class="animate text-center list-inline member-icons mt-2">
             <li class="list-inline-item">
                 <button class="btn btn-primary" routerLink="/user/{{user?.username}}"><i class="fa fa-user"></i></button>
             </li>
-            <li class="list-inline-item"><button (click)="addLike(user)" class="btn btn-primary">
+            <li class="list-inline-item"><button (click)="addLike(user)" class="btn btn-danger">
                 <i class="fa fa-heart"></i></button>
             </li>
         </ul>
     </div>
     <div class="card-body">
-        <h6 class="card-title text-center mb-1">{{user?.name}}</h6>
+        <h6 class="card-title text-center mb-1">
+            <span [class.is-online] = "onlineUsers.includes(user?.username!)">
+                <i class="fa fa-user mr-2"></i>
+            </span>    
+            {{user?.name}}
+        </h6>
         <p class="card-text text-muted text-center">{{user?.city}}</p>
     </div>
 </div>

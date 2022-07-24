@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { UserDetail } from '../_models/userDetail';
 import { LikeService } from '../_services/like.service';
+import { PresenceService } from '../_services/presence.service';
 
 @Component({
   selector: 'app-user-card',
@@ -10,10 +11,18 @@ import { LikeService } from '../_services/like.service';
 })
 export class UserCardComponent implements OnInit {
   @Input() user! : UserDetail | undefined;
+  onlineUsers : string[] = [];
 
-  constructor(private _likeService : LikeService, private _toastr : ToastrService) { }
+  constructor(private _likeService : LikeService, private _toastr : ToastrService, private _presenceService : PresenceService) { }
 
   ngOnInit(): void {
+    this.loadOnlineUsers();
+  }
+
+  loadOnlineUsers(){
+    this._presenceService.onlineUsers$.subscribe(u => {
+      this.onlineUsers = u;
+    });
   }
 
   addLike(userDetail : UserDetail | undefined){

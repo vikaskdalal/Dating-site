@@ -1,6 +1,7 @@
 using DotNetCoreAngular.DAL;
 using DotNetCoreAngular.Extensions;
 using DotNetCoreAngular.Middleware;
+using DotNetCoreAngular.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,7 @@ builder.Services.AddIdentityServices(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -31,10 +33,17 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthentication();
 app.UseHttpsRedirection();
+app.UseRouting();
 
-app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200"));
+app.UseCors(x => x.AllowAnyHeader().AllowCredentials().AllowAnyMethod().WithOrigins("http://localhost:4200"));
 
 app.UseAuthorization();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHub<PresenceHub>("hubs/presence");
+    endpoints.MapHub<MessageHub>("hubs/message");
+});
 
 app.MapControllers();
 

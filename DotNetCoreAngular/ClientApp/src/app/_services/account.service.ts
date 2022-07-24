@@ -4,6 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { User } from '../_models/user';
 import { environment } from 'src/environments/environment';
+import { PresenceService } from './presence.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,7 @@ export class AccountService {
   
   currentUser$ = this.currentUserSource.asObservable();
 
-  constructor(private _http : HttpClient) { }
+  constructor(private _http : HttpClient, private _presenceService : PresenceService) { }
 
   login(model : any){
     return this._http.post<User>(this.baseUrl + 'account/login', model).pipe(
@@ -24,6 +25,7 @@ export class AccountService {
           if(user){
             localStorage.setItem('user', JSON.stringify(user));
             this.currentUserSource.next(user);
+            this._presenceService.createHubConnection(user);
           }
       })
     )
@@ -36,6 +38,7 @@ export class AccountService {
           if(user){
             localStorage.setItem('user', JSON.stringify(user));
             this.currentUserSource.next(user);
+            this._presenceService.createHubConnection(user);
           }
           return user;
       })
@@ -55,5 +58,6 @@ export class AccountService {
   logout(){
     localStorage.removeItem("user");
     this.currentUserSource.next(null);
+    this._presenceService.stopHubConnection();
   }
 }
