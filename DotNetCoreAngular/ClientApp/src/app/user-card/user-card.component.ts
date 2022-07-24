@@ -11,6 +11,7 @@ import { PresenceService } from '../_services/presence.service';
 })
 export class UserCardComponent implements OnInit {
   @Input() user! : UserDetail | undefined;
+  @Input() showLikeButton : boolean = true;
   onlineUsers : string[] = [];
 
   constructor(private _likeService : LikeService, private _toastr : ToastrService, private _presenceService : PresenceService) { }
