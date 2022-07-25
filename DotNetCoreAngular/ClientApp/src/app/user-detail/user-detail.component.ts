@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { TabDirective, TabsetComponent } from 'ngx-bootstrap/tabs';
 import { Message } from '../_models/message';
@@ -22,7 +23,8 @@ export class UserDetailComponent implements OnInit, OnDestroy {
   onlineUsers : string[] = [];
   user! : User;
   constructor(private _userService : UserService, private _route : ActivatedRoute, private _messageService : MessageService,
-              private _presenceService : PresenceService, private _accountService : AccountService) { 
+              private _presenceService : PresenceService, private _accountService : AccountService, 
+              private _titleService : Title) { 
                 this._accountService.currentUser$.subscribe(user => {
                   if(user != null)
                     this.user = user
@@ -31,6 +33,7 @@ export class UserDetailComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadUser();
     this.loadOnlineUsers();
+    this._titleService.setTitle("User Details");
   }
 
   loadUser(){

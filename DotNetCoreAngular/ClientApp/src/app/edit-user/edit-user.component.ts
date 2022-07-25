@@ -1,5 +1,6 @@
 import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
-import { NgForm, NgModel } from '@angular/forms';
+import { NgForm } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { ToastrService } from 'ngx-toastr';
 import { Gender } from '../_enums/gender';
 import { SelectDropDown } from '../_models/selectDropdown';
@@ -27,7 +28,8 @@ export class EditUserComponent implements OnInit {
       $event.returnValue = true;
   }
 
-  constructor(private _userService : UserService, private _accountService : AccountService, private _toastr : ToastrService) { 
+  constructor(private _userService : UserService, private _accountService : AccountService, private _toastr : ToastrService,
+              private _titleService : Title) { 
     this._accountService.currentUser$.subscribe(user => this.user = user);
   }
   
@@ -35,6 +37,7 @@ export class EditUserComponent implements OnInit {
   ngOnInit(): void {
     this.loadUser();
     this.createGenderDropdown();
+    this._titleService.setTitle("User Profile");
   }
 
   createGenderDropdown(){
