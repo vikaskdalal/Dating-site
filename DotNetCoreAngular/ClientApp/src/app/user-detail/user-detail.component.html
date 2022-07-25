@@ -1,7 +1,7 @@
 <div class="row" *ngIf="userDetails">
     <div class="col-4">
         <div class="card">
-            <img src="{{userDetails?.photoUrl || './assets/user.png'}}" alt="{{userDetails.name}}" 
+            <img src="{{userDetails.photoUrl || './assets/user.png'}}" alt="{{userDetails.name}}" 
                 class="card-img-top img-thumbnail">
             <div class="card-body">
                 <div class="mb-2" *ngIf = "onlineUsers.includes(userDetails.username)">
@@ -22,7 +22,7 @@
             </div>
             <div class="card-footer">
                 <div class="btn-group d-flex">
-                    <button class="btn btn-primary">Like</button>
+                    <button class="btn btn-primary me-2">Like</button>
                     <button (click)="selectTab(2)" class="btn btn-success">Message</button>
                 </div>
             </div>

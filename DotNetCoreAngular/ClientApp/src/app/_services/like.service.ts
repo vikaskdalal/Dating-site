@@ -15,6 +15,10 @@ export class LikeService {
     return this._httpClient.post(this.baseUrl + 'like/' + username, {});
   }
 
+  removeLike(username : string){
+    return this._httpClient.delete(this.baseUrl + 'like/remove-like/' + username, {});
+  }
+
   getUserWhoLikeMe(){
     return this._httpClient.get<Partial<UserDetail[]>>(this.baseUrl + 'like/like-me');
   }

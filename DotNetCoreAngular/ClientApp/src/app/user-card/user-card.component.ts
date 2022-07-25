@@ -28,7 +28,13 @@ export class UserCardComponent implements OnInit {
 
   addLike(userDetail : UserDetail | undefined){
     this._likeService.addLike(userDetail?.username as string).subscribe(() => {
-        this._toastr.success('You have liked ' + userDetail?.name);
+        this.showLikeButton = false;
+    })
+  }
+
+  removeLike(userDetail : UserDetail | undefined){
+    this._likeService.removeLike(userDetail?.username as string).subscribe(() => {
+        this.showLikeButton = true;
     })
   }
 }

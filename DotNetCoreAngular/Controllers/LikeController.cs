@@ -68,5 +68,27 @@ namespace DotNetCoreAngular.Controllers
 
             return Ok(likes);
         }
+
+        [HttpDelete("remove-like/{username}")]
+        public async Task<IActionResult> RemoveLike(string username)
+        {
+            int sourceUserId = User.GetUserId();
+
+            var sourceUser = await _context.UserRepository.GetUserWithLikes(sourceUserId);
+            var likedUser = await _context.UserRepository.GetByUsernameAsync(username);
+
+            if (likedUser == null) return BadRequest(new { username = username });
+
+            var userLike = await _context.LikeRepository.GetUserLike(sourceUserId, likedUser.Id);
+
+            if(userLike == null) return BadRequest(new { username = username });
+
+            _context.LikeRepository.Delete(userLike);
+
+            if (await _context.SaveAsync())
+                return Ok();
+
+            return BadRequest(new { username = username }); 
+        }
     }
 }

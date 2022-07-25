@@ -19,7 +19,7 @@ namespace DotNetCoreAngular.SignalR
 
             _tracker.UserConnected(username, Context.ConnectionId);
 
-            await Clients.Others.SendAsync("UserIsOnline", username);
+            //await Clients.Others.SendAsync("UserIsOnline", username);
 
             var currentUsers = _tracker.GetOnlineUsers();
 
@@ -32,7 +32,7 @@ namespace DotNetCoreAngular.SignalR
 
             _tracker.UserDisconnected(username, Context.ConnectionId);
 
-            await Clients.Others.SendAsync("UserIsOffline", username);
+            //await Clients.Others.SendAsync("UserIsOffline", username);
 
             var currentUsers = _tracker.GetOnlineUsers();
 

@@ -31,13 +31,13 @@ export class PresenceService {
       console.log(error)
     });
 
-    this._hubConnection.on('UserIsOnline', username => {
-      this._toastrService.info(username + ' is online')
-    });
+    // this._hubConnection.on('UserIsOnline', username => {
+    //   this._toastrService.info(username + ' is online')
+    // });
 
-    this._hubConnection.on('UserIsOffline', username => {
-      this._toastrService.warning(username + ' is offline')
-    })
+    // this._hubConnection.on('UserIsOffline', username => {
+    //   this._toastrService.warning(username + ' is offline')
+    // })
 
     this._hubConnection.on("GetOnlineUsers", (users : string[]) => {
       this._onlineUserSource.next(users);
