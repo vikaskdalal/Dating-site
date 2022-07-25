@@ -1,18 +1,18 @@
 <div class="card h-100">
     <div class="card-img-wrapper">
-        <img src="{{user?.photoUrl || './assets/user.png'}}" alt="{{user?.name}}" class="card-img-top">
+        <img src="{{user?.photoUrl || './assets/user.png'}}" alt="{{user?.name | titlecase}}" class="card-img-top">
     </div>
-    <div class="card-body">
+    <div class="card-body py-2">
         <h6 class="card-title text-center mb-1">
             <span [class.is-online] = "onlineUsers.includes(user?.username!)">
                 <i class="fa fa-user mr-2"></i>
             </span>    
-            {{user?.name}}
+            {{user?.name | titlecase}}
         </h6>
-        <p class="card-text text-muted text-center">{{user?.city}}</p>
+        <p class="card-text text-muted text-center">{{user?.city | titlecase}}</p>
     </div>
-    <div class="card-footer">
-        <ul class="animate text-center list-inline member-icons mt-2">
+    <div class="card-footer py-0">
+        <ul class="animate text-center list-inline member-icons my-2">
             <li class="list-inline-item">
                 <button class="btn btn-primary" routerLink="/user/{{user?.username}}"><i class="fa fa-user"></i></button>
             </li>

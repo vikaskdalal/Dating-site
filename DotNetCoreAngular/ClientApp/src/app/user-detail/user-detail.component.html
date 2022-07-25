@@ -22,8 +22,7 @@
             </div>
             <div class="card-footer">
                 <div class="btn-group d-flex">
-                    <button class="btn btn-primary me-2">Like</button>
-                    <button (click)="selectTab(2)" class="btn btn-success">Message</button>
+                    <button class="btn btn-primary">Like</button>
                 </div>
             </div>
         </div>
@@ -33,12 +32,15 @@
         <tabset class="member-tabset" #userTabs>
             <tab heading='About {{userDetails.name}}' (selectTab)="onTabActivated($event)">
                 <h4>Description</h4>
+                <p *ngIf="!userDetails.introduction" class="text-danger" >Not Mentioned</p>
                 <p>{{userDetails.introduction}}</p>
                 <h4>Looking for</h4>
+                <p *ngIf="!userDetails.lookingFor" class="text-danger" >Not Mentioned</p>
                 <p>{{userDetails.lookingFor}}</p>
             </tab>
             <tab heading='Interests' (selectTab)="onTabActivated($event)">
                 <h4>Interests</h4>
+                <p *ngIf="!userDetails.interests" class="text-danger" >Not Mentioned</p>
                 <p>{{userDetails.interests}}</p>
             </tab>
             <tab heading='Messages' (selectTab)="onTabActivated($event)">

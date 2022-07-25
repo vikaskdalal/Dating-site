@@ -23,6 +23,7 @@ export class AppComponent implements OnInit {
     
     if(user.token == undefined || this._accountService.isTokenExpired(user)){
       this._accountService.logout();
+      return;
     }
 
     this._accountService.setCurrentUser(user);

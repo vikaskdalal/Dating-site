@@ -17,3 +17,11 @@
 .rounded-circle {
     max-height: 45px;
 } 
+.chat-container{
+    height: 400px; 
+    overflow-y: auto;
+    position: relative;
+    display: flex;
+    flex-direction: column-reverse;
+    border: 1px solid rgba(0,0,0,.125);
+}

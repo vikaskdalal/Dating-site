@@ -15,16 +15,19 @@ export class UserLikeComponent implements OnInit {
   ngOnInit(): void {
     this.getUserWhoLikeMe();
   }
+  headingText : string = '';
 
   getUserWhoLikeMe(){
     this._likeService.getUserWhoLikeMe().subscribe(data =>{
       this.users = data;
+      this.headingText = "User Who Like Me";
     })
   }
 
   getUserWhoLikedByMe(){
     this._likeService.getUserLikedByMe().subscribe(data =>{
       this.users = data;
+      this.headingText = "User Liked By Me";
     })
   }
 
