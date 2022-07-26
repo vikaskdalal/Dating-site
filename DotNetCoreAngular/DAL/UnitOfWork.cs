@@ -26,7 +26,7 @@ namespace DotNetCoreAngular.DAL
             _mapper = mapper;
         }
 
-        public IUserRepository UserRepository => _userRepository ?? new UserRepository(_context);
+        public IUserRepository UserRepository => _userRepository ?? new UserRepository(_context, _mapper);
 
         public ILikeRepository LikeRepository => _likeRepository ?? new LikeRepository(_context);
         public IMessageRepository MessageRepository => _messageRepository ?? new MessageRepository(_context, _mapper);

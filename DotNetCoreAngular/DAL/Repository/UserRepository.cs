@@ -1,4 +1,8 @@
-﻿using DotNetCoreAngular.Interfaces.Repository;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using DotNetCoreAngular.Dtos;
+using DotNetCoreAngular.Helpers;
+using DotNetCoreAngular.Interfaces.Repository;
 using DotNetCoreAngular.Models.Entity;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,14 +10,22 @@ namespace DotNetCoreAngular.DAL.Repository
 {
     public class UserRepository : GenericRepository<User>, IUserRepository
     {
-        public UserRepository(DatabaseContext context) 
+        private readonly IMapper _mapper;
+
+        public UserRepository(DatabaseContext context, IMapper mapper) 
             : base(context)
         {
+            _mapper = mapper;
         }
 
-        public async Task<IEnumerable<User>> GetAllUsersWithPhotos()
+        public async Task<PagedList<UserDetailDto>> GetAllUsersWithPhotos(UserParams userParams)
         {
-            return await DbSet.Include(p => p.Photos).ToListAsync();
+            var query = DbSet.AsQueryable();
+            query = query.Where(u => u.Username != userParams.CurrentUsername);
+
+            return await PagedList<UserDetailDto>.CreateAsync(query.ProjectTo<UserDetailDto>(_mapper
+                .ConfigurationProvider).AsNoTracking(),
+                    userParams.PageNumber, userParams.PageSize);
         }
 
         public async Task<User> GetByEmailAsync(string email)

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DotNetCoreAngular.Dtos;
 using DotNetCoreAngular.Extensions;
+using DotNetCoreAngular.Helpers;
 using DotNetCoreAngular.Interfaces;
 using DotNetCoreAngular.Models.Entity;
 using Microsoft.AspNetCore.Authorization;
@@ -41,11 +42,15 @@ namespace DotNetCoreAngular.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<UserDetailDto>> Get()
+        public async Task<IActionResult> Get([FromQuery] UserParams userParams)
         {
-            var users =  await _context.UserRepository.GetAllUsersWithPhotos();
+            userParams.CurrentUsername = User.GetUsername();
+            var users =  await _context.UserRepository.GetAllUsersWithPhotos(userParams);
 
-            return _mapper.Map<IEnumerable<UserDetailDto>>(users);
+            Response.AddPaginationHeader(users.CurrentPage, users.PageSize,
+                users.TotalCount, users.TotalPages);
+
+            return Ok(users);
         }
 
         [HttpPut]

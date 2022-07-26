@@ -27,6 +27,7 @@ import { FileUploadModule } from 'ng2-file-upload';
 import { DatePipe } from '@angular/common';
 import { UserChatComponent } from './user-chat/user-chat.component';
 import { TimeAgoPipe } from './_pipes/time-ago.pipe';
+import { PaginationModule } from 'ngx-bootstrap/pagination';
 @NgModule({
   declarations: [
     AppComponent,
@@ -56,7 +57,8 @@ import { TimeAgoPipe } from './_pipes/time-ago.pipe';
       positionClass : 'toast-bottom-right'
     }),
     TabsModule.forRoot(),
-    FileUploadModule
+    FileUploadModule,
+    PaginationModule.forRoot()
   ],
   providers: [
     DatePipe,

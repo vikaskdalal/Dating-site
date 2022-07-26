@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Pagination } from '../_models/pagination';
 import { User } from '../_models/user';
 import { UserDetail } from '../_models/userDetail';
 import { AccountService } from '../_services/account.service';
@@ -12,14 +13,13 @@ import { UserService } from '../_services/user.service';
 })
 export class UserListComponent implements OnInit {
   users! : UserDetail[];
-  currentUser! : User;
   userLikedByme : string[] = [];
 
-  constructor(private _userService : UserService, private _accountService : AccountService, private _likeService : LikeService) { 
-    this._accountService.currentUser$.subscribe(user => {
-      if(user != null)
-        this.currentUser = user;
-    })
+  pagination! : Pagination | null;
+  pageNumber = 1;
+  pageSize = 2;
+
+  constructor(private _userService : UserService, private _likeService : LikeService) { 
   }
 
   ngOnInit(): void {
@@ -28,9 +28,15 @@ export class UserListComponent implements OnInit {
   }
 
   loadUsers(){
-    this._userService.getUsers().subscribe(users =>{
-        this.users = users.filter(f => f.username != this.currentUser.username);
+    this._userService.getUsers(this.pageNumber, this.pageSize).subscribe(response =>{
+        this.users = response.result;
+        this.pagination = response.pagination;
       })
+  }
+
+  pageChanged(event : any){
+    this.pageNumber = event.page;
+    this.loadUsers();
   }
 
   getUserWhoLikedByMe(){
