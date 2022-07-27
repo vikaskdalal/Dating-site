@@ -2,7 +2,6 @@
 using DotNetCoreAngular.Interfaces;
 using DotNetCoreAngular.Models.Entity;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -67,6 +66,28 @@ namespace DotNetCoreAngular.Controllers
             var likes = _context.LikeRepository.GetUserLikedByMe(sourceUserId);
 
             return Ok(likes);
+        }
+
+        [HttpDelete("remove-like/{username}")]
+        public async Task<IActionResult> RemoveLike(string username)
+        {
+            int sourceUserId = User.GetUserId();
+
+            var sourceUser = await _context.UserRepository.GetUserWithLikes(sourceUserId);
+            var likedUser = await _context.UserRepository.GetByUsernameAsync(username);
+
+            if (likedUser == null) return BadRequest(new { username = username });
+
+            var userLike = await _context.LikeRepository.GetUserLike(sourceUserId, likedUser.Id);
+
+            if(userLike == null) return BadRequest(new { username = username });
+
+            _context.LikeRepository.Delete(userLike);
+
+            if (await _context.SaveAsync())
+                return Ok();
+
+            return BadRequest(new { username = username }); 
         }
     }
 }

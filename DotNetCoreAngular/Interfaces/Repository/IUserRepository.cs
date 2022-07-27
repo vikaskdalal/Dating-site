@@ -1,4 +1,6 @@
-﻿using DotNetCoreAngular.Models.Entity;
+﻿using DotNetCoreAngular.Dtos;
+using DotNetCoreAngular.Helpers;
+using DotNetCoreAngular.Models.Entity;
 
 namespace DotNetCoreAngular.Interfaces.Repository
 {
@@ -10,6 +12,6 @@ namespace DotNetCoreAngular.Interfaces.Repository
 
         Task<User> GetUserWithLikes(int userid);
 
-        Task<IEnumerable<User>> GetAllUsersWithPhotos();
+        Task<PagedList<UserDetailDto>> GetAllUsersWithPhotos(UserParams userParams);
     }
 }

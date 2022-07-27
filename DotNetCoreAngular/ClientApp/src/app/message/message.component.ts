@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { Message } from '../_models/message';
 import { Pagination } from '../_models/pagination';
 import { MessageService } from '../_services/message.service';
@@ -15,10 +16,11 @@ export class MessageComponent implements OnInit {
   pageNumber = 1;
   pageSize = 5;
 
-  constructor(private _messageService : MessageService) { }
+  constructor(private _messageService : MessageService, private _titleService : Title) { }
 
   ngOnInit(): void {
     this.loadMessages();
+    this._titleService.setTitle("Messages");
   }
 
   loadMessages(){

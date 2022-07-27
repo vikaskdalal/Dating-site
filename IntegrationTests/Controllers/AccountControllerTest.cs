@@ -9,9 +9,11 @@ namespace IntegrationTests.Controllers
 {
     public class AccountControllerTest : BaseTest
     {
+        private AccountController _controller;
+
         public AccountControllerTest()
         {
-            TransactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            _controller = new AccountController(UnitOfWork, TokenService);
         }
 
         [Fact]
@@ -24,12 +26,8 @@ namespace IntegrationTests.Controllers
                 Password = "123",
                 Name = "vikas"
             };
-            var unitofWork = new UnitOfWork(DatabaseContext, null);
 
-
-            var controller = new AccountController(UnitOfWork, TokenService);
-
-            var result = await controller.RegisterAsync(registerDto);
+            var result = await _controller.RegisterAsync(registerDto);
 
             Assert.NotNull(result);
         }
@@ -43,12 +41,8 @@ namespace IntegrationTests.Controllers
                 Email = "vikas.dalal@gmail.com",
                 Password = "123",
             };
-            var unitofWork = new UnitOfWork(DatabaseContext, null);
 
-
-            var controller = new AccountController(UnitOfWork, TokenService);
-
-            Assert.ThrowsAsync<DbUpdateException>(async () => await controller.RegisterAsync(registerDto));
+            Assert.ThrowsAsync<DbUpdateException>(async () => await _controller.RegisterAsync(registerDto));
         }
 
         [Fact]

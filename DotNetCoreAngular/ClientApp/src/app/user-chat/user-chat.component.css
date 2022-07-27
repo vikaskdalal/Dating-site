@@ -9,11 +9,19 @@
 }
 
 .chat li {
-    margin-bottom: 10px;
-    padding-bottom: 10px;
+    margin-bottom: 5px;
+    padding-bottom: 5px;
     border-bottom: 1px dotted #B3A9A9;
 }
 
 .rounded-circle {
-    max-height: 50px;
+    max-height: 45px;
 } 
+.chat-container{
+    height: 400px; 
+    overflow-y: auto;
+    position: relative;
+    display: flex;
+    flex-direction: column-reverse;
+    border: 1px solid rgba(0,0,0,.125);
+}

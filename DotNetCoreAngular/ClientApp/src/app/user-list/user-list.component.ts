@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { Pagination } from '../_models/pagination';
+import { User } from '../_models/user';
 import { UserDetail } from '../_models/userDetail';
+import { AccountService } from '../_services/account.service';
+import { LikeService } from '../_services/like.service';
 import { UserService } from '../_services/user.service';
 
 @Component({
@@ -9,16 +13,38 @@ import { UserService } from '../_services/user.service';
 })
 export class UserListComponent implements OnInit {
   users! : UserDetail[];
-  constructor(private _userService : UserService) { }
+  userLikedByme : string[] = [];
+
+  pagination! : Pagination | null;
+  pageNumber = 1;
+  pageSize = 2;
+
+  constructor(private _userService : UserService, private _likeService : LikeService) { 
+  }
 
   ngOnInit(): void {
     this.loadUsers();
+    this.getUserWhoLikedByMe();
   }
 
   loadUsers(){
-    this._userService.getUsers().subscribe(users =>{
-        this.users = users;
+    this._userService.getUsers(this.pageNumber, this.pageSize).subscribe(response =>{
+        this.users = response.result;
+        this.pagination = response.pagination;
       })
+  }
+
+  pageChanged(event : any){
+    this.pageNumber = event.page;
+    this.loadUsers();
+  }
+
+  getUserWhoLikedByMe(){
+    this._likeService.getUserLikedByMe().subscribe(data =>{
+      this.userLikedByme = data.map(u => {
+          return u?.username!
+      });
+    })
   }
 
 }

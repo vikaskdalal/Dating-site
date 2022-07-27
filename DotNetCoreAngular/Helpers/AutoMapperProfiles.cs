@@ -21,6 +21,7 @@ namespace DotNetCoreAngular.Helpers
                     src.Recipient.Photos.FirstOrDefault(x => x.IsMain).Url));
             CreateMap<Photo, PhotoDto>();
             CreateMap<UserUpdateDto, User>();
+            CreateMap<DateTime, DateTime>().ConvertUsing(d => DateTime.SpecifyKind(d, DateTimeKind.Utc));
         }
     }
 }

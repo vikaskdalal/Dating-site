@@ -1,17 +1,27 @@
-<div class="card mb-4">
+<div class="card h-100">
     <div class="card-img-wrapper">
-        <img src="{{user?.photoUrl || './assets/user.png'}}" alt="{{user?.name}}" class="card-img-top">
-        <ul class="animate text-center list-inline member-icons">
+        <img src="{{user?.photoUrl || './assets/user.png'}}" alt="{{user?.name | titlecase}}" class="card-img-top">
+    </div>
+    <div class="card-body py-2">
+        <h6 class="card-title text-center mb-1">
+            <span [class.is-online] = "onlineUsers.includes(user?.username!)">
+                <i class="fa fa-user mr-2"></i>
+            </span>    
+            {{user?.name | titlecase}}
+        </h6>
+        <p class="card-text text-muted text-center">{{user?.city | titlecase}}</p>
+    </div>
+    <div class="card-footer py-0">
+        <ul class="animate text-center list-inline member-icons my-2">
             <li class="list-inline-item">
                 <button class="btn btn-primary" routerLink="/user/{{user?.username}}"><i class="fa fa-user"></i></button>
             </li>
-            <li class="list-inline-item"><button (click)="addLike(user)" class="btn btn-primary">
+            <li *ngIf="showLikeButton" class="list-inline-item"><button (click)="addLike(user)" class="btn btn-outline-danger">
+                <i class="fa fa-heart-o"></i></button>
+            </li>
+            <li *ngIf="!showLikeButton" class="list-inline-item"><button (click)="removeLike(user)" class="btn btn-danger">
                 <i class="fa fa-heart"></i></button>
             </li>
         </ul>
-    </div>
-    <div class="card-body">
-        <h6 class="card-title text-center mb-1">{{user?.name}}</h6>
-        <p class="card-text text-muted text-center">{{user?.city}}</p>
     </div>
 </div>
