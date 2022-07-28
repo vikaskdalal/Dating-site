@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DotNetCoreAngular.Common;
 using DotNetCoreAngular.Dtos;
 using DotNetCoreAngular.Extensions;
 using DotNetCoreAngular.Interfaces;
@@ -11,11 +12,14 @@ namespace DotNetCoreAngular.SignalR
     {
         private readonly IUnitOfWork _context;
         private readonly IMapper _mapper;
+        private readonly ICacheService _cacheService;
+        private DateTime _cacheExpire = DateTime.UtcNow.AddDays(2);
 
-        public MessageHub(IUnitOfWork unitOfWork, IMapper mapper)
+        public MessageHub(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cacheService)
         {
             this._context = unitOfWork;
             this._mapper = mapper;
+            _cacheService = cacheService;
         }
 
         public override async Task OnConnectedAsync()
@@ -76,6 +80,8 @@ namespace DotNetCoreAngular.SignalR
 
         private async Task<bool> AddToGroup(string groupName)
         {
+            string cacheKey = $"{InMemoryCacheKeys.SIGNALR_GROUP}_{groupName}";
+
             var group = await _context.GroupRepository.GetGroup(groupName);
 
             var connection = new Connection(Context.ConnectionId, Context.User.GetUsername());
@@ -87,6 +93,9 @@ namespace DotNetCoreAngular.SignalR
             }
 
             group.Connections.Add(connection);
+
+            _cacheService.RemoveData(cacheKey);
+            _cacheService.SetData(cacheKey, group, _cacheExpire);
 
             return await _context.SaveAsync();
         }
