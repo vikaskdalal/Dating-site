@@ -28,15 +28,19 @@ namespace DotNetCoreAngular.SignalR
 
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
 
+            await AddToGroup(groupName);
+
             var otherUserId = await _context.UserRepository.GetByUsernameAsync(otherUser);
             var messages = await _context.MessageRepository.GetMessageThread(Context.User.GetUserId(), otherUserId.Id);
 
             Clients.Group(groupName).SendAsync("ReceiveMessageThread", messages);
         }
 
-        public override Task OnDisconnectedAsync(Exception? exception)
+        public override async Task OnDisconnectedAsync(Exception? exception)
         {
-            return base.OnDisconnectedAsync(exception);
+            await RemoveConnection(Context.ConnectionId);
+
+            base.OnDisconnectedAsync(exception);
         }
 
         public async Task SendMessage(CreateMessageDto createMessageDto)
@@ -68,6 +72,32 @@ namespace DotNetCoreAngular.SignalR
                 var groupName = GetGroupName(sender.Username, recipient.Username);
                 await Clients.Group(groupName).SendAsync("NewMessage", _mapper.Map<MessageDto>(message));
             }
+        }
+
+        private async Task<bool> AddToGroup(string groupName)
+        {
+            var group = await _context.GroupRepository.GetGroup(groupName);
+
+            var connection = new Connection(Context.ConnectionId, Context.User.GetUsername());
+
+            if(group == null)
+            {
+                group = new Group(groupName);
+                _context.GroupRepository.Add(group);
+            }
+
+            group.Connections.Add(connection);
+
+            return await _context.SaveAsync();
+        }
+
+        private async Task RemoveConnection(string connectionId)
+        {
+            var connection = await _context.ConnectionRepository.GetByIdAsync(connectionId);
+
+            _context.ConnectionRepository.Delete(connection);
+
+            await _context.SaveAsync();
         }
 
         private string GetGroupName(string caller, string other)

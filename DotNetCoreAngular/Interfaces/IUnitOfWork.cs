@@ -8,6 +8,8 @@ namespace DotNetCoreAngular.Interfaces
 
         public ILikeRepository LikeRepository { get; }
         public IMessageRepository MessageRepository { get; }
+        public IGroupRepository GroupRepository { get; }
+        public IConnectionRepository ConnectionRepository { get; }
 
         bool Save();
 

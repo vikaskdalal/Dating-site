@@ -1,0 +1,9 @@
+﻿using DotNetCoreAngular.Models.Entity;
+
+namespace DotNetCoreAngular.Interfaces.Repository
+{
+    public interface IGroupRepository : IGenericRepository<Group>
+    {
+        Task<Group> GetGroup(string groupName);
+    }
+}
