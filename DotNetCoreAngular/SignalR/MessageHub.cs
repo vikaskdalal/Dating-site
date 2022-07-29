@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using DotNetCoreAngular.Common;
 using DotNetCoreAngular.Dtos;
 using DotNetCoreAngular.Extensions;
+using DotNetCoreAngular.Helpers;
 using DotNetCoreAngular.Interfaces;
 using DotNetCoreAngular.Models.Entity;
 using Microsoft.AspNetCore.SignalR;
@@ -14,11 +14,12 @@ namespace DotNetCoreAngular.SignalR
         private readonly IMapper _mapper;
         private readonly ICacheService _cacheService;
         private DateTime _cacheExpire = DateTime.UtcNow.AddDays(2);
+        private static object _lock = new object();
 
         public MessageHub(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cacheService)
         {
-            this._context = unitOfWork;
-            this._mapper = mapper;
+            _context = unitOfWork;
+            _mapper = mapper;
             _cacheService = cacheService;
         }
 
@@ -35,9 +36,9 @@ namespace DotNetCoreAngular.SignalR
             await AddToGroup(groupName);
 
             var otherUserId = await _context.UserRepository.GetByUsernameAsync(otherUser);
-            var messages = await _context.MessageRepository.GetMessageThread(Context.User.GetUserId(), otherUserId.Id);
+            var messages = await _context.MessageRepository.GetMessageThreadAsync(Context.User.GetUserId(), otherUserId.Id);
 
-            Clients.Group(groupName).SendAsync("ReceiveMessageThread", messages);
+            await Clients.Group(groupName).SendAsync("ReceiveMessageThread", messages);
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception)
@@ -78,11 +79,33 @@ namespace DotNetCoreAngular.SignalR
             }
         }
 
+        public async Task UserIsTyping(string recipientUsername)
+        {
+            var username = Context.User.GetUsername();
+            var groupName = GetGroupName(username, recipientUsername);
+
+            var connectionIdsOfOtherUsers = GetConnectionIdsInGroupOtherThanCurrentUser(groupName);
+
+            await Clients.Clients(connectionIdsOfOtherUsers).SendAsync("UserIsTyping", username);
+        }
+
+        public async Task UserHasStoppedTyping(string recipientUsername)
+        {
+            var username = Context.User.GetUsername();
+            var groupName = GetGroupName(username, recipientUsername);
+
+            var connectionIdsOfOtherUsers = GetConnectionIdsInGroupOtherThanCurrentUser(groupName);
+
+            await Clients.Clients(connectionIdsOfOtherUsers).SendAsync("UserHasStoppedTyping", username);
+        }
+
+        #region Private Methods
+
         private async Task<bool> AddToGroup(string groupName)
         {
-            string cacheKey = $"{InMemoryCacheKeys.SIGNALR_GROUP}_{groupName}";
+            string cacheKey = SignalRHelper.GetGroupCacheKey(groupName);
 
-            var group = await _context.GroupRepository.GetGroup(groupName);
+            var group = await _context.GroupRepository.GetGroupAsync(groupName);
 
             var connection = new Connection(Context.ConnectionId, Context.User.GetUsername());
 
@@ -109,10 +132,31 @@ namespace DotNetCoreAngular.SignalR
             await _context.SaveAsync();
         }
 
+        private List<string> GetConnectionIdsInGroupOtherThanCurrentUser(string groupName)
+        {
+            string cacheKey = SignalRHelper.GetGroupCacheKey(groupName);
+
+            var group = _cacheService.GetData<Group>(cacheKey);
+
+            lock (_lock)
+            {
+                if (group == null)
+                {
+                    group = _context.GroupRepository.GetGroup(groupName);
+
+                    _cacheService.SetData(cacheKey, group, _cacheExpire);
+                }
+            }
+
+            return group.Connections.Where(q => q.ConnectionId != Context.ConnectionId).Select(s => s.ConnectionId).ToList();
+        }
+
         private string GetGroupName(string caller, string other)
         {
             var stringCompare = string.CompareOrdinal(caller, other) < 0;
             return stringCompare ? $"{caller}-{other}" : $"{other}-{caller}";
         }
+
+        #endregion
     }
 }

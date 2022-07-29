@@ -59,7 +59,7 @@ namespace DotNetCoreAngular.Controllers
         {
             messageParams.Username = User.GetUsername();
 
-            var messages = await _context.MessageRepository.GetMessagesForUser(messageParams);
+            var messages = await _context.MessageRepository.GetMessagesForUserAsync(messageParams);
 
             Response.AddPaginationHeader(messages.CurrentPage, messages.PageSize,
                 messages.TotalCount, messages.TotalPages);
@@ -73,7 +73,7 @@ namespace DotNetCoreAngular.Controllers
             var currentUserId = User.GetUserId();
             var recipientUser = await _context.UserRepository.GetByUsernameAsync(username);
 
-            return Ok(await _context.MessageRepository.GetMessageThread(currentUserId, recipientUser.Id));
+            return Ok(await _context.MessageRepository.GetMessageThreadAsync(currentUserId, recipientUser.Id));
         }
 
         [HttpDelete("{id}")]
@@ -81,7 +81,7 @@ namespace DotNetCoreAngular.Controllers
         {
             var username = User.GetUsername();
 
-            var message = await _context.MessageRepository.GetMessage(id);
+            var message = await _context.MessageRepository.GetMessageAsync(id);
 
             if (message.Sender.Username != username && message.Recipient.Username != username)
                 return Unauthorized();

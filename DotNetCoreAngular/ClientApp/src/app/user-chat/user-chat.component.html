@@ -39,6 +39,7 @@
                     </div>
                 </div>
             </li>
+            <li *ngIf="isRecipientTyping">Typing...</li>
         </ul>
     </div>
 
@@ -46,9 +47,11 @@
         <form #messageForm="ngForm" (ngSubmit)="sendMessage()" autocomplete="off">
             <div class="input-group">
                 <input 
+                    #chatBox 
                     name="messageContent"
                     required
                     [(ngModel)]="messageContent"
+                    (keyup)="onKeyUpEvent($event)"
                     type="text" 
                     class="form-control input-sm" 
                     placeholder="Send a private message">

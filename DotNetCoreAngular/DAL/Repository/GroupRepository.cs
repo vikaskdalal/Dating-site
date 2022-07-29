@@ -11,7 +11,14 @@ namespace DotNetCoreAngular.DAL.Repository
         {
         }
 
-        public Task<Group> GetGroup(string groupName)
+        public Group GetGroup(string groupName)
+        {
+            return DbSet
+                .Include(c => c.Connections)
+                .FirstOrDefault(q => q.Name == groupName);
+        }
+
+        public Task<Group> GetGroupAsync(string groupName)
         {
             return DbSet
                 .Include(c => c.Connections)

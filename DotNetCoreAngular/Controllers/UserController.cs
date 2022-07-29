@@ -45,7 +45,7 @@ namespace DotNetCoreAngular.Controllers
         public async Task<IActionResult> Get([FromQuery] UserParams userParams)
         {
             userParams.CurrentUsername = User.GetUsername();
-            var users =  await _context.UserRepository.GetAllUsersWithPhotos(userParams);
+            var users =  await _context.UserRepository.GetAllUsersWithPhotosAsync(userParams);
 
             Response.AddPaginationHeader(users.CurrentPage, users.PageSize,
                 users.TotalCount, users.TotalPages);

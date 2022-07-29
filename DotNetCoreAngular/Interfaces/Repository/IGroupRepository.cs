@@ -4,6 +4,7 @@ namespace DotNetCoreAngular.Interfaces.Repository
 {
     public interface IGroupRepository : IGenericRepository<Group>
     {
-        Task<Group> GetGroup(string groupName);
+        Task<Group> GetGroupAsync(string groupName);
+        Group GetGroup(string groupName);
     }
 }

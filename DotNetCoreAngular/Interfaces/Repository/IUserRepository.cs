@@ -10,8 +10,8 @@ namespace DotNetCoreAngular.Interfaces.Repository
 
         Task<User> GetByUsernameAsync(string username);
 
-        Task<User> GetUserWithLikes(int userid);
+        Task<User> GetUserWithLikesAsync(int userid);
 
-        Task<PagedList<UserDetailDto>> GetAllUsersWithPhotos(UserParams userParams);
+        Task<PagedList<UserDetailDto>> GetAllUsersWithPhotosAsync(UserParams userParams);
     }
 }
