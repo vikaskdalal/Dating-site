@@ -10,7 +10,7 @@ namespace DotNetCoreAngular.DAL.Repository
             : base(context)
         {
         }
-        public async Task<UserLike> GetUserLike(int sourceUserId, int likedUserId)
+        public async Task<UserLike> GetUserLikeAsync(int sourceUserId, int likedUserId)
         {
             return await DbSet.FindAsync(sourceUserId, likedUserId);
         }

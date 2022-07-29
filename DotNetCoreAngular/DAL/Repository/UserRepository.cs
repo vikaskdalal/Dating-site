@@ -18,7 +18,7 @@ namespace DotNetCoreAngular.DAL.Repository
             _mapper = mapper;
         }
 
-        public async Task<PagedList<UserDetailDto>> GetAllUsersWithPhotos(UserParams userParams)
+        public async Task<PagedList<UserDetailDto>> GetAllUsersWithPhotosAsync(UserParams userParams)
         {
             var query = DbSet.AsQueryable();
             query = query.Where(u => u.Username != userParams.CurrentUsername);
@@ -38,7 +38,7 @@ namespace DotNetCoreAngular.DAL.Repository
             return await DbSet.Include(p => p.Photos).FirstOrDefaultAsync(q => q.Username == username);
         }
 
-        public async Task<User> GetUserWithLikes(int userid)
+        public async Task<User> GetUserWithLikesAsync(int userid)
         {
             return await DbSet
                 .Include(x => x.LikedUsers)

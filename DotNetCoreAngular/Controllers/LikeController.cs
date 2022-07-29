@@ -23,14 +23,14 @@ namespace DotNetCoreAngular.Controllers
         {
             int sourceUserId = User.GetUserId();
 
-            var sourceUser = await _context.UserRepository.GetUserWithLikes(sourceUserId);
+            var sourceUser = await _context.UserRepository.GetUserWithLikesAsync(sourceUserId);
             var likedUser = await _context.UserRepository.GetByUsernameAsync(username);
 
             if(likedUser == null) return BadRequest(new { username = username });
 
             if(sourceUser.Username == username) return BadRequest("You can not like yourself.");
 
-            var userLike = await _context.LikeRepository.GetUserLike(sourceUserId, likedUser.Id);
+            var userLike = await _context.LikeRepository.GetUserLikeAsync(sourceUserId, likedUser.Id);
 
             if(userLike != null) return BadRequest("You already like this user.");
 
@@ -73,12 +73,12 @@ namespace DotNetCoreAngular.Controllers
         {
             int sourceUserId = User.GetUserId();
 
-            var sourceUser = await _context.UserRepository.GetUserWithLikes(sourceUserId);
+            var sourceUser = await _context.UserRepository.GetUserWithLikesAsync(sourceUserId);
             var likedUser = await _context.UserRepository.GetByUsernameAsync(username);
 
             if (likedUser == null) return BadRequest(new { username = username });
 
-            var userLike = await _context.LikeRepository.GetUserLike(sourceUserId, likedUser.Id);
+            var userLike = await _context.LikeRepository.GetUserLikeAsync(sourceUserId, likedUser.Id);
 
             if(userLike == null) return BadRequest(new { username = username });
 

@@ -19,7 +19,7 @@ namespace DotNetCoreAngular.DAL.Repository
             _mapper = mapper;
         }
 
-        public async Task<PagedList<MessageDto>> GetMessagesForUser(MessageParams messageParams)
+        public async Task<PagedList<MessageDto>> GetMessagesForUserAsync(MessageParams messageParams)
         {
             var query = DbSet.OrderByDescending(o => o.MessageSent)
                 .AsQueryable();
@@ -37,7 +37,7 @@ namespace DotNetCoreAngular.DAL.Repository
             return await PagedList<MessageDto>.CreateAsync(messages, messageParams.PageNumber, messageParams.PageSize);
         }
 
-        public async Task<Message> GetMessage(int id)
+        public async Task<Message> GetMessageAsync(int id)
         {
             return await DbSet
                 .Include(u => u.Sender)
@@ -45,7 +45,7 @@ namespace DotNetCoreAngular.DAL.Repository
                 .SingleOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<IEnumerable<MessageDto>> GetMessageThread(int currentUserId, int recipientId)
+        public async Task<IEnumerable<MessageDto>> GetMessageThreadAsync(int currentUserId, int recipientId)
         {
             var messages = await DbSet
                 .Include(u => u.Sender).ThenInclude(p => p.Photos)

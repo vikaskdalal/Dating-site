@@ -15,6 +15,7 @@ namespace DotNetCoreAngular.Extensions
             services.AddSingleton<PresenceTracker>();
             services.AddScoped<IPhotoService, PhotoService>();
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<ICacheService, CacheService>();
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
 
             return services;
