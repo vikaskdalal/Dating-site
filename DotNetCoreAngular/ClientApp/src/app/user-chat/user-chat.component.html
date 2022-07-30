@@ -1,3 +1,7 @@
+<div class="mb-1 btn btn-primary d-block" *ngIf="friendDetails">
+    {{friendDetails.name}}
+</div>
+
 <div class="card mb-3">
     <div #chatContainer class="card-body chat-container">
         <div *ngIf="(messageService.messageThread$ | async)?.length === 0">
@@ -6,15 +10,15 @@
 
         <ul *ngIf="(messageService.messageThread$ | async)?.length != 0" class="chat">
             <li *ngFor="let message of (messageService.messageThread$ | async)">
-                <div [class.text-end] = "message.senderUsername == username">
-                    <div *ngIf="message.senderUsername != username">
+                <div [class.text-end] = "message.senderUsername != friendUsername">
+                    <div *ngIf="message.senderUsername == friendUsername">
                         <span class="chat-img float-right">
                             <img class="rounded-circle" src="{{message.senderPhotoUrl || './assets/user.png'}}" 
                                 alt="{{message.senderUsername}}">
                         </span>
                         <p class="mb-0 ms-2 d-inline">{{message.content}}</p>
                     </div>
-                    <div *ngIf="message.senderUsername == username">
+                    <div *ngIf="message.senderUsername != friendUsername">
                         <p class="mb-0 me-2 d-inline">{{message.content}}</p>
                         <span class="chat-img float-right">
                             <img class="rounded-circle" src="{{message.senderPhotoUrl || './assets/user.png'}}" 
@@ -27,11 +31,11 @@
                             <small class="text-muted">
                                 <span class="fa fa-clock-o">{{message.messageSent | timeAgo}}</span>
                                 <span class="text-danger" *ngIf="!message.dateRead 
-                                    && message.senderUsername !== username">
+                                    && message.senderUsername !== friendUsername">
                                     <!-- (unread) -->
                                 </span>
                                 <span class="text-success" *ngIf="message.dateRead 
-                                    && message.senderUsername !== username">
+                                    && message.senderUsername !== friendUsername">
                                     ({{message.dateRead }})
                                 </span>
                             </small>
@@ -51,7 +55,7 @@
                     name="messageContent"
                     required
                     [(ngModel)]="messageContent"
-                    (keyup)="onKeyUpEvent($event)"
+                    (keypress)="onKeyUpEvent($event)"
                     type="text" 
                     class="form-control input-sm" 
                     placeholder="Send a private message">

@@ -42,8 +42,6 @@ namespace DotNetCoreAngular.Controllers
                 Sender = sender,
                 Recipient = recipient,
                 Content = createMessageDto.Content,
-                SenderUsername = username,
-                RecipientUsername = createMessageDto.RecipientUsername
             };
 
             _context.MessageRepository.Add(message);
@@ -57,7 +55,7 @@ namespace DotNetCoreAngular.Controllers
         [HttpGet]
         public async Task<IActionResult> GetMessagesForUser([FromQuery] MessageParams messageParams)
         {
-            messageParams.Username = User.GetUsername();
+            messageParams.UserId = User.GetUserId();
 
             var messages = await _context.MessageRepository.GetMessagesForUserAsync(messageParams);
 
