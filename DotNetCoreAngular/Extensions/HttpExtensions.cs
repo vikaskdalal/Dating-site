@@ -1,4 +1,4 @@
-﻿using DotNetCoreAngular.Helpers;
+﻿using DotNetCoreAngular.Helpers.Pagination;
 using System.Text.Json;
 
 namespace DotNetCoreAngular.Extensions

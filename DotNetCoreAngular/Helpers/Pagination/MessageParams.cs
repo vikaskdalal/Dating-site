@@ -1,4 +1,4 @@
-﻿namespace DotNetCoreAngular.Helpers
+﻿namespace DotNetCoreAngular.Helpers.Pagination
 {
     public class MessageParams : PaginationParams
     {

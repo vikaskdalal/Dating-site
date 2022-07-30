@@ -27,16 +27,16 @@ namespace DotNetCoreAngular.SignalR
         {
             var httpContext = Context.GetHttpContext();
 
-            var otherUser = httpContext.Request.Query["user"].ToString();
+            var otherUsername = httpContext.Request.Query["user"].ToString();
 
-            var groupName = GetGroupName(Context.User.GetUsername(), otherUser);
+            var groupName = GetGroupName(Context.User.GetUsername(), otherUsername);
 
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
 
             await AddToGroup(groupName);
 
-            var otherUserId = await _context.UserRepository.GetByUsernameAsync(otherUser);
-            var messages = await _context.MessageRepository.GetMessageThreadAsync(Context.User.GetUserId(), otherUserId.Id);
+            var otherUser = await _context.UserRepository.GetByUsernameAsync(otherUsername);
+            var messages = await _context.MessageRepository.GetMessageThreadAsync(Context.User.GetUserId(), otherUser.Id);
 
             await Clients.Group(groupName).SendAsync("ReceiveMessageThread", messages);
         }

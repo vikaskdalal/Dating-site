@@ -2,7 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using DotNetCoreAngular.Dtos;
 using DotNetCoreAngular.Extensions;
-using DotNetCoreAngular.Helpers;
+using DotNetCoreAngular.Helpers.Pagination;
 using DotNetCoreAngular.Interfaces.Repository;
 using DotNetCoreAngular.Models.Entity;
 using Microsoft.EntityFrameworkCore;
