@@ -39,10 +39,10 @@ export class MessageService {
     })
 
     this._hubConnection.on('NewMessage', message => {
-      var abc = this.messageThread$.pipe(take(1));
       this.messageThread$.pipe(take(1)).subscribe(messages => {
         this._messageSource.next([...messages, message]);
       })
+
     })
 
     this._hubConnection.on('UserIsTyping', username => {
@@ -69,10 +69,6 @@ export class MessageService {
     let params = getPaginationHeaders(pageNumber, pageSize);
     params = params.append('Container', container);
     return getPaginatedResult<Message[]>(this.baseUrl + 'message', params, this._httpClient);
-  }
-
-  getMessageThread(username : string){
-    return this._httpClient.get<Message[]>(this.baseUrl + 'message/thread/'+ username);
   }
 
   async sendMessage(username: string, content: string) {

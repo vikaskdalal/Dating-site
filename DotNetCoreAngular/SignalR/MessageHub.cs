@@ -66,8 +66,6 @@ namespace DotNetCoreAngular.SignalR
                 Sender = sender,
                 Recipient = recipient,
                 Content = createMessageDto.Content,
-                SenderUsername = username,
-                RecipientUsername = createMessageDto.RecipientUsername
             };
 
             _context.MessageRepository.Add(message);

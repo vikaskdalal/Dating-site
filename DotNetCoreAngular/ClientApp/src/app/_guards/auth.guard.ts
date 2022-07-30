@@ -16,7 +16,7 @@ export class AuthGuard implements CanActivate {
         if(user)
           return true;
         
-          this._toastr.warning("Not allowed to access this page.");
+        this._toastr.warning("Not allowed to access this page.");
         return false;
       })
     )
