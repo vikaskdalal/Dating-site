@@ -10,18 +10,20 @@
 
 .chat li {
     margin-bottom: 5px;
-    padding-bottom: 5px;
     border-bottom: 1px dotted #B3A9A9;
 }
 
 .rounded-circle {
-    max-height: 45px;
+    max-height: 35px;
 } 
 .chat-container{
-    height: 400px; 
+    height: 500px; 
     overflow-y: auto;
     position: relative;
     display: flex;
     flex-direction: column-reverse;
     border: 1px solid rgba(0,0,0,.125);
+}
+.online-icon{
+    font-size: 12px;
 }

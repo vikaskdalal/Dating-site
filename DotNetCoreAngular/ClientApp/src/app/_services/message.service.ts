@@ -40,6 +40,12 @@ export class MessageService {
 
     this._hubConnection.on('ReceiveMessageThread', response => {
       this._messageThreadPaginationSource.next(response.paginationHeader);
+      this._messageSource.next(response.messages);
+      
+    })
+
+    this._hubConnection.on('ReceiveMessageThreadOnScroll', response => {
+      this._messageThreadPaginationSource.next(response.paginationHeader);
       
       this.messageThread$.pipe(take(1)).subscribe(messages => {
           this._messageSource.next([...messages, ...response.messages]);
@@ -48,7 +54,7 @@ export class MessageService {
 
     this._hubConnection.on('NewMessage', message => {
       this.messageThread$.pipe(take(1)).subscribe(messages => {
-        this._messageSource.next([...messages, message]);
+        this._messageSource.next([message, ...messages]);
       })
 
     })

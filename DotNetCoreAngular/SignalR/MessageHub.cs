@@ -128,7 +128,7 @@ namespace DotNetCoreAngular.SignalR
 
             var groupName = GetGroupName(Context.User.GetUsername(), messageThreadParams.RecipientUsername);
 
-            await Clients.Group(groupName).SendAsync("ReceiveMessageThread", messageThreadDto);
+            await Clients.Group(groupName).SendAsync("ReceiveMessageThreadOnScroll", messageThreadDto);
         }
 
         #region Private Methods
