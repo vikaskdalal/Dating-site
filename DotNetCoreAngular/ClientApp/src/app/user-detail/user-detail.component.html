@@ -4,7 +4,7 @@
             <img src="{{userDetails.photoUrl || './assets/user.png'}}" alt="{{userDetails.name}}" 
                 class="card-img-top img-thumbnail">
             <div class="card-body">
-                <div class="mb-2" *ngIf = "onlineUsers.includes(userDetails.username)">
+                <div class="mb-2" *ngIf = "(presenceService.onlineUsers$ | async)?.includes(userDetails.username)">
                     <i class="fa fa-user-circle text-success"></i> Online now
                 </div> 
                 <div>

@@ -1,45 +1,62 @@
-<div class="mb-1 btn btn-primary d-block" *ngIf="friendDetails">
-    {{friendDetails.name}}
+<div class="bg-info p-1 rounded" *ngIf="friendDetails">
+    <span class="chat-img float-right">
+        <img class="rounded-circle" src="{{friendDetails.photoUrl || './assets/user.png'}}" 
+            alt="{{friendDetails.name}}">
+    </span>
+    <div class="d-inline">
+        <span class="px-1">{{friendDetails.name}}</span>
+        <span  *ngIf = "(presenceService.onlineUsers$ | async)?.includes(friendUsername)">
+            <i class="fa fa-circle text-success online-icon" aria-hidden="true"></i>
+        </span>
+    </div>
 </div>
 
 <div class="card mb-3">
-    <div #chatContainer class="card-body chat-container">
+    <div #chatContainer (scroll)="onScrollUp($event)" class="card-body chat-container">
         <div *ngIf="(messageService.messageThread$ | async)?.length === 0">
             No messages yet... say hi by using the message box below
         </div>
 
-        <ul *ngIf="(messageService.messageThread$ | async)?.length != 0" class="chat">
-            <li *ngFor="let message of (messageService.messageThread$ | async)">
-                <div [class.text-end] = "message.senderUsername != friendUsername">
-                    <div *ngIf="message.senderUsername == friendUsername">
-                        <span class="chat-img float-right">
-                            <img class="rounded-circle" src="{{message.senderPhotoUrl || './assets/user.png'}}" 
-                                alt="{{message.senderUsername}}">
+        <ul #chatList *ngIf="(messageService.messageThread$ | async)?.length != 0" class="chat">
+            <li *ngFor="let message of (messageService.messageThread$ | async) as messages; let i = index">
+                <div [class.text-end] = "messages[messages.length-1-i].senderUsername != friendUsername">
+                    <div *ngIf="messages[messages.length-1-i].senderUsername == friendUsername">
+                        <span *ngIf="i == 0 || messages.length-i-2 < 0 || messages[messages.length-1-i].senderUsername != messages[messages.length-i-2].senderUsername" class="chat-img float-right">
+                            <img class="rounded-circle" src="{{messages[messages.length-1-i].senderPhotoUrl || './assets/user.png'}}" 
+                                alt="{{messages[messages.length-1-i].senderUsername}}">
                         </span>
-                        <p class="mb-0 ms-2 d-inline">{{message.content}}</p>
+                        <p class="mb-0 ms-2 d-inline">{{messages[messages.length-1-i].content}}</p>
+                        
+                        <small [class.d-inline]="showChatDate" [class.d-none]="!showChatDate" class="text-muted float-end">
+                            <span class="fa fa-clock-o">{{messages[messages.length-1-i].messageSent | timeAgo}}</span>
+                            <span class="text-danger" *ngIf="!messages[messages.length-1-i].dateRead 
+                                && messages[messages.length-1-i].senderUsername !== friendUsername">
+                                <!-- (unread) -->
+                            </span>
+                            <span class="text-success" *ngIf="messages[messages.length-1-i].dateRead 
+                                && messages[messages.length-1-i].senderUsername !== friendUsername">
+                                ({{messages[messages.length-1-i].dateRead }})
+                            </span>
+                        </small>
                     </div>
-                    <div *ngIf="message.senderUsername != friendUsername">
-                        <p class="mb-0 me-2 d-inline">{{message.content}}</p>
-                        <span class="chat-img float-right">
-                            <img class="rounded-circle" src="{{message.senderPhotoUrl || './assets/user.png'}}" 
-                                alt="{{message.senderUsername}}">
+                    <div *ngIf="messages[messages.length-1-i].senderUsername != friendUsername">
+                        <small [class.d-inline]="showChatDate" [class.d-none]="!showChatDate" class="text-muted float-start">
+                            <span class="fa fa-clock-o">{{messages[messages.length-1-i].messageSent | timeAgo}}</span>
+                            <span class="text-danger" *ngIf="!messages[messages.length-1-i].dateRead 
+                                && messages[messages.length-1-i].senderUsername !== friendUsername">
+                                <!-- (unread) -->
+                            </span>
+                            <span class="text-success" *ngIf="messages[messages.length-1-i].dateRead 
+                                && messages[messages.length-1-i].senderUsername !== friendUsername">
+                                ({{messages[messages.length-1-i].dateRead }})
+                            </span>
+                        </small>
+
+                        <p class="mb-0 me-2 d-inline">{{messages[messages.length-1-i].content}}</p>
+                        <span *ngIf="i == 0 || messages.length-i-2 < 0 || messages[messages.length-1-i].senderUsername != messages[messages.length-i-2].senderUsername" class="chat-img float-right">
+                            <img class="rounded-circle" src="{{messages[messages.length-1-i].senderPhotoUrl || './assets/user.png'}}" 
+                                alt="{{messages[messages.length-1-i].senderUsername}}">
                         </span>
-                    </div>
-                    
-                    <div class="chat-body">
-                        <div class="header">
-                            <small class="text-muted">
-                                <span class="fa fa-clock-o">{{message.messageSent | timeAgo}}</span>
-                                <span class="text-danger" *ngIf="!message.dateRead 
-                                    && message.senderUsername !== friendUsername">
-                                    <!-- (unread) -->
-                                </span>
-                                <span class="text-success" *ngIf="message.dateRead 
-                                    && message.senderUsername !== friendUsername">
-                                    ({{message.dateRead }})
-                                </span>
-                            </small>
-                        </div>
                     </div>
                 </div>
             </li>

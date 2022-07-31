@@ -2,6 +2,7 @@
 using DotNetCoreAngular.Dtos;
 using DotNetCoreAngular.Extensions;
 using DotNetCoreAngular.Helpers;
+using DotNetCoreAngular.Helpers.Pagination;
 using DotNetCoreAngular.Interfaces;
 using DotNetCoreAngular.Models.Entity;
 using Microsoft.AspNetCore.SignalR;
@@ -27,18 +28,30 @@ namespace DotNetCoreAngular.SignalR
         {
             var httpContext = Context.GetHttpContext();
 
-            var otherUser = httpContext.Request.Query["user"].ToString();
+            var otherUsername = httpContext.Request.Query["user"].ToString();
 
-            var groupName = GetGroupName(Context.User.GetUsername(), otherUser);
+            var groupName = GetGroupName(Context.User.GetUsername(), otherUsername);
 
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
 
             await AddToGroup(groupName);
 
-            var otherUserId = await _context.UserRepository.GetByUsernameAsync(otherUser);
-            var messages = await _context.MessageRepository.GetMessageThreadAsync(Context.User.GetUserId(), otherUserId.Id);
+            var otherUser = await _context.UserRepository.GetByUsernameAsync(otherUsername);
 
-            await Clients.Group(groupName).SendAsync("ReceiveMessageThread", messages);
+            var messageThreadParams = new MessageThreadParams();
+            messageThreadParams.CurrentUserId = Context.User.GetUserId();
+            messageThreadParams.RecipientUserId = otherUser.Id;
+            messageThreadParams.PageSize = PaginationParams.MaxPageSize;
+
+            var messages = await _context.MessageRepository.GetMessageThreadAsync(messageThreadParams);
+
+            var paginationHeader = new PaginationHeader(messages.CurrentPage, messages.PageSize, messages.TotalCount, messages.TotalPages);
+            var messageThreadDto = new MessageThreadDto();
+            messageThreadDto.Messages = new List<MessageDto>();
+            messageThreadDto.Messages.AddRange(messages);
+            messageThreadDto.PaginationHeader = paginationHeader;
+
+            await Clients.Group(groupName).SendAsync("ReceiveMessageThread", messageThreadDto);
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception)
@@ -95,6 +108,27 @@ namespace DotNetCoreAngular.SignalR
             var connectionIdsOfOtherUsers = GetConnectionIdsInGroupOtherThanCurrentUser(groupName);
 
             await Clients.Clients(connectionIdsOfOtherUsers).SendAsync("UserHasStoppedTyping", username);
+        }
+
+        public async Task LoadMessageThreadOnScroll(MessageThreadParams messageThreadParams)
+        {
+            var otherUser = await _context.UserRepository.GetByUsernameAsync(messageThreadParams.RecipientUsername);
+
+            //var messageThreadParams = new MessageThreadParams();
+            messageThreadParams.CurrentUserId = Context.User.GetUserId();
+            messageThreadParams.RecipientUserId = otherUser.Id;
+
+            var messages = await _context.MessageRepository.GetMessageThreadAsync(messageThreadParams);
+
+            var paginationHeader = new PaginationHeader(messages.CurrentPage, messages.PageSize, messages.TotalCount, messages.TotalPages);
+            var messageThreadDto = new MessageThreadDto();
+            messageThreadDto.Messages = new List<MessageDto>();
+            messageThreadDto.Messages.AddRange(messages);
+            messageThreadDto.PaginationHeader = paginationHeader;
+
+            var groupName = GetGroupName(Context.User.GetUsername(), messageThreadParams.RecipientUsername);
+
+            await Clients.Group(groupName).SendAsync("ReceiveMessageThreadOnScroll", messageThreadDto);
         }
 
         #region Private Methods

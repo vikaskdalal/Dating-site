@@ -1,5 +1,5 @@
 ﻿using DotNetCoreAngular.Dtos;
-using DotNetCoreAngular.Helpers;
+using DotNetCoreAngular.Helpers.Pagination;
 using DotNetCoreAngular.Models.Entity;
 
 namespace DotNetCoreAngular.Interfaces.Repository

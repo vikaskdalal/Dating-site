@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using DotNetCoreAngular.Dtos;
 using DotNetCoreAngular.Extensions;
-using DotNetCoreAngular.Helpers;
+using DotNetCoreAngular.Helpers.Pagination;
 using DotNetCoreAngular.Interfaces;
 using DotNetCoreAngular.Models.Entity;
 using Microsoft.AspNetCore.Authorization;

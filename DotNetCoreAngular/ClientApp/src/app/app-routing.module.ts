@@ -18,7 +18,7 @@ const routes: Routes = [
   {path: 'friends', component: UserListComponent, canActivate : [AuthGuard]},
   {path: 'messages', component: MessageComponent},
   {path: 'user/:username', component: UserDetailComponent, canActivate : [AuthGuard]},
-  {path: 'chat-with-user/:username', component: UserChatComponent, canActivate : [AuthGuard, UserExistsGuard]},
+  {path: 'chat/:username', component: UserChatComponent, canActivate : [AuthGuard, UserExistsGuard]},
   {path: 'user-likes', component: UserLikeComponent, canActivate : [AuthGuard]},
   {path: 'server-error', component: ServerErrorComponent},
   {path: '**', component: HomeComponent, pathMatch: 'full'}

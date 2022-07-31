@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using DotNetCoreAngular.Dtos;
 using DotNetCoreAngular.Extensions;
-using DotNetCoreAngular.Helpers;
+using DotNetCoreAngular.Helpers.Pagination;
 using DotNetCoreAngular.Interfaces;
 using DotNetCoreAngular.Models.Entity;
 using Microsoft.AspNetCore.Authorization;
@@ -71,7 +71,8 @@ namespace DotNetCoreAngular.Controllers
             var currentUserId = User.GetUserId();
             var recipientUser = await _context.UserRepository.GetByUsernameAsync(username);
 
-            return Ok(await _context.MessageRepository.GetMessageThreadAsync(currentUserId, recipientUser.Id));
+            //return Ok(await _context.MessageRepository.GetMessageThreadAsync(currentUserId, recipientUser.Id));
+            return Ok();
         }
 
         [HttpDelete("{id}")]
