@@ -9,7 +9,7 @@
 }
 
 .chat li {
-    margin-bottom: 5px;
+    padding: 3px 0px;
     border-bottom: 1px dotted #B3A9A9;
 }
 
@@ -26,4 +26,8 @@
 }
 .online-icon{
     font-size: 12px;
+}
+.chat-time{
+    font-size: 12px;
+    font-weight: 600;
 }

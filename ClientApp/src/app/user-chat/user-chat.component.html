@@ -27,8 +27,8 @@
                         </span>
                         <p class="mb-0 ms-2 d-inline">{{messages[messages.length-1-i].content}}</p>
                         
-                        <small [class.d-inline]="showChatDate" [class.d-none]="!showChatDate" class="text-muted float-end">
-                            <span class="fa fa-clock-o">{{messages[messages.length-1-i].messageSent | timeAgo}}</span>
+                        <small  class="text-muted float-end">
+                            <span class="chat-time">{{messages[messages.length-1-i].messageSent | date : 'h:mm a'}}</span>
                             <span class="text-danger" *ngIf="!messages[messages.length-1-i].dateRead 
                                 && messages[messages.length-1-i].senderUsername !== friendUsername">
                                 <!-- (unread) -->
@@ -40,8 +40,8 @@
                         </small>
                     </div>
                     <div *ngIf="messages[messages.length-1-i].senderUsername != friendUsername">
-                        <small [class.d-inline]="showChatDate" [class.d-none]="!showChatDate" class="text-muted float-start">
-                            <span class="fa fa-clock-o">{{messages[messages.length-1-i].messageSent | timeAgo}}</span>
+                        <small class="text-muted float-start">
+                            <span class="chat-time">{{messages[messages.length-1-i].messageSent |  date : 'h:mm a'}}</span>
                             <span class="text-danger" *ngIf="!messages[messages.length-1-i].dateRead 
                                 && messages[messages.length-1-i].senderUsername !== friendUsername">
                                 <!-- (unread) -->
