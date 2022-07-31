@@ -1,29 +1,29 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # compiled output
-/DotNetCoreAngular/ClientApp/dist
-/DotNetCoreAngular/ClientApp/tmp
-/DotNetCoreAngular/ClientApp/out-tsc
+/ClientApp/dist
+/ClientApp/tmp
+/ClientApp/out-tsc
 # Only exists if Bazel was run
-/DotNetCoreAngular/ClientApp/bazel-out
+/ClientApp/bazel-out
 
 # dependencies
-/DotNetCoreAngular/ClientApp/node_modules
+/ClientApp/node_modules
 
 # profiling files
-DotNetCoreAngular/ClientApp/chrome-profiler-events*.json
+ClientApp/chrome-profiler-events*.json
 
 # IDEs and editors
-/DotNetCoreAngular/ClientApp/.idea
-DotNetCoreAngular/ClientApp/.project
-DotNetCoreAngular/ClientApp/.classpath
-DotNetCoreAngular/ClientApp/.c9/
-DotNetCoreAngular/ClientApp/*.launch
-DotNetCoreAngular/ClientApp/.settings/
-DotNetCoreAngular/ClientApp/*.sublime-workspace
+/ClientApp/.idea
+ClientApp/.project
+ClientApp/.classpath
+ClientApp/.c9/
+ClientApp/*.launch
+ClientApp/.settings/
+ClientApp/*.sublime-workspace
 
 # IDE - VSCode
-DotNetCoreAngular/ClientApp/.vscode/*
+ClientApp/.vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
@@ -31,19 +31,19 @@ DotNetCoreAngular/ClientApp/.vscode/*
 .history/*
 
 # misc
-/DotNetCoreAngular/ClientApp/.angular/cache
-/DotNetCoreAngular/ClientApp/.sass-cache
-/DotNetCoreAngular/ClientApp/connect.lock
-/DotNetCoreAngular/ClientApp/coverage
-/DotNetCoreAngular/ClientApp/libpeerconnection.log
-DotNetCoreAngular/ClientApp/npm-debug.log
-DotNetCoreAngular/ClientApp/yarn-error.log
-DotNetCoreAngular/ClientApp/testem.log
-/DotNetCoreAngular/ClientApp/typings
+/ClientApp/.angular/cache
+/ClientApp/.sass-cache
+/ClientApp/connect.lock
+/ClientApp/coverage
+/ClientApp/libpeerconnection.log
+ClientApp/npm-debug.log
+ClientApp/yarn-error.log
+ClientApp/testem.log
+/ClientApp/typings
 
 # System Files
-DotNetCoreAngular/ClientApp/.DS_Store
-DotNetCoreAngular/ClientApp/Thumbs.db
+ClientApp/.DS_Store
+ClientApp/Thumbs.db
 
 
 .vs/*
