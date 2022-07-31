@@ -53,3 +53,4 @@ ClientApp/Thumbs.db
 /.vscode
 /IntegrationTests/bin/Debug/net6.0
 /IntegrationTests/obj
+ClientApp/.angular/
