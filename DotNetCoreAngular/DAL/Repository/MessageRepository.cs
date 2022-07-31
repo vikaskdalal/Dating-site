@@ -12,11 +12,12 @@ namespace DotNetCoreAngular.DAL.Repository
     public class MessageRepository : GenericRepository<Message>, IMessageRepository
     {
         private readonly IMapper _mapper;
-
+        private readonly DatabaseContext _context;
         public MessageRepository(DatabaseContext context, IMapper mapper) 
             : base(context)
         {
             _mapper = mapper;
+            _context = context;
         }
 
         public async Task<PagedList<MessageDto>> GetMessagesForUserAsync(MessageParams messageParams)
@@ -57,7 +58,7 @@ namespace DotNetCoreAngular.DAL.Repository
                     m.Recipient.Id == messageThreadParams.RecipientUserId
                     && m.Sender.Id == messageThreadParams.CurrentUserId && m.SenderDeleted == false
                 )
-                .MarkUnreadAsRead(messageThreadParams.CurrentUserId)
+                .MarkUnreadAsRead(messageThreadParams.CurrentUserId, _context)
                 .OrderByDescending(o => o.MessageSent)
                 .ProjectTo<MessageDto>(_mapper.ConfigurationProvider);
                 //.ToListAsync();

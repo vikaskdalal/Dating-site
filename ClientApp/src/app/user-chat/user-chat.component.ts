@@ -104,15 +104,17 @@ export class UserChatComponent implements OnInit, AfterViewInit, OnDestroy{
     let chatlistOffsetHeight = this.chatList.nativeElement.offsetHeight;
     let pagination = this.chatPagination;
 
+    console.log(chatContainerOffsetHeight-scrollTop+20 + " " + chatlistOffsetHeight);
+
     this.showChatDate = true;
     clearTimeout(this.timeout);
     this.timeout = setTimeout(() => {
       this.showChatDate = false;
     }, 1000);
     
-    if(chatContainerOffsetHeight-scrollTop >= chatlistOffsetHeight && pagination.currentPage != pagination.totalPages){
+    if(chatContainerOffsetHeight-scrollTop+1 >= chatlistOffsetHeight && pagination.currentPage != pagination.totalPages){
         this.messageService.loadMessageThreadOnScroll(this.friendUsername, this.chatPagination).then(()=>{
-          this.chatContainer.nativeElement.scrollTop = scrollTop;
+          this.chatContainer.nativeElement.scrollTop = scrollTop+1;
         })
     }
     

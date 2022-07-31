@@ -41,7 +41,7 @@ namespace DotNetCoreAngular.SignalR
             var messageThreadParams = new MessageThreadParams();
             messageThreadParams.CurrentUserId = Context.User.GetUserId();
             messageThreadParams.RecipientUserId = otherUser.Id;
-            messageThreadParams.PageSize = PaginationParams.MaxPageSize;
+            messageThreadParams.PageSize = 10;
 
             var messages = await _context.MessageRepository.GetMessageThreadAsync(messageThreadParams);
 

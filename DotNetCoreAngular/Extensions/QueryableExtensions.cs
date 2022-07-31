@@ -1,10 +1,11 @@
-﻿using DotNetCoreAngular.Models.Entity;
+﻿using DotNetCoreAngular.DAL;
+using DotNetCoreAngular.Models.Entity;
 
 namespace DotNetCoreAngular.Extensions
 {
     public static class QueryableExtensions
     {
-        public static IQueryable<Message> MarkUnreadAsRead(this IQueryable<Message> query, int currentUserId)
+        public static IQueryable<Message> MarkUnreadAsRead(this IQueryable<Message> query, int currentUserId, DatabaseContext context)
         {
             var unreadMessages = query.Where(m => m.DateRead == null
                 && m.RecipientId == currentUserId);
@@ -15,6 +16,7 @@ namespace DotNetCoreAngular.Extensions
                 {
                     message.DateRead = DateTime.UtcNow;
                 }
+                context.SaveChanges();
             }
 
             return query;
