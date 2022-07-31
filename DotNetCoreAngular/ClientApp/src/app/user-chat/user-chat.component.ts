@@ -3,10 +3,12 @@ import { NgForm } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { debounceTime, fromEvent } from 'rxjs';
 import { Message } from '../_models/message';
+import { Pagination } from '../_models/pagination';
 import { User } from '../_models/user';
 import { UserDetail } from '../_models/userDetail';
 import { AccountService } from '../_services/account.service';
 import { MessageService } from '../_services/message.service';
+import { PresenceService } from '../_services/presence.service';
 import { UserService } from '../_services/user.service';
 
 @Component({
@@ -18,15 +20,18 @@ export class UserChatComponent implements OnInit, AfterViewInit, OnDestroy{
   
   @ViewChild('messageForm') messageForm! : NgForm;
   @ViewChild('chatBox') chatBox!: ElementRef;
+  @ViewChild('chatContainer') chatContainer!: ElementRef;
+  @ViewChild('chatList') chatList!: ElementRef;
   friendUsername! : string;
   messageContent!: string;
   sentTypingEvent : boolean = true;
   isRecipientTyping : boolean = false;
   user! : User;
   friendDetails! : UserDetail;
+  chatPagination!: Pagination;
 
   constructor(public messageService : MessageService, private _route : ActivatedRoute, 
-    private _userService : UserService, private _accountService : AccountService) { 
+    private _userService : UserService, private _accountService : AccountService, public presenceService : PresenceService) { 
     
       let username = this._route.snapshot.paramMap.get('username');
     if(username)
@@ -37,16 +42,22 @@ export class UserChatComponent implements OnInit, AfterViewInit, OnDestroy{
 
   ngOnInit(): void {
     this.loadFriendsDetails();
+    
   }
 
   ngAfterViewInit() {     
      this.sendEventWhenUserStopsTyping();
      this.checkIfRecipientTyping();
      this.messageService.createHubConnection(this.user, this.friendUsername);
+     this.loadChatPagination();
   }
 
   loadFriendsDetails(){
     this._userService.getByUsername(this.friendUsername).subscribe(user => this.friendDetails = user);
+  }
+
+  loadChatPagination(){
+    this.messageService.messageThreadPagination$.subscribe(response => this.chatPagination = response!);
   }
 
   ngOnDestroy(): void{
@@ -83,6 +94,21 @@ export class UserChatComponent implements OnInit, AfterViewInit, OnDestroy{
     this.messageService.sendUserIsTypingEvent(this.friendUsername).then(()=> {
       this.sentTypingEvent = false;
     });
+  }
+
+  onScrollUp(ev: any) {
+    let scrollTop = this.chatContainer.nativeElement.scrollTop;
+    let chatContainerOffsetHeight = this.chatContainer.nativeElement.offsetHeight;
+    let chatlistOffsetHeight = this.chatList.nativeElement.offsetHeight;
+    let pagination = this.chatPagination;
+    
+    if(chatContainerOffsetHeight-scrollTop >= chatlistOffsetHeight && pagination.currentPage != pagination.totalPages){
+        console.log("more chat loaded");
+        this.messageService.loadMessageThreadOnScroll(this.friendUsername, this.chatPagination).then(()=>{
+          this.chatContainer.nativeElement.scrollTop = scrollTop;
+        })
+    }
+    
   }
 
 }

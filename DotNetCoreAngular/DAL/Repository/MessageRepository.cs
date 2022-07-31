@@ -45,24 +45,24 @@ namespace DotNetCoreAngular.DAL.Repository
                 .SingleOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<IEnumerable<MessageDto>> GetMessageThreadAsync(int currentUserId, int recipientId)
+        public async Task<PagedList<MessageDto>> GetMessageThreadAsync(MessageThreadParams messageThreadParams)
         {
-            var messages = await DbSet
+            var query = DbSet.AsQueryable()
                 .Include(u => u.Sender).ThenInclude(p => p.Photos)
                 .Include(u => u.Recipient).ThenInclude(p => p.Photos)
-                .Where(m => 
-                    m.Recipient.Id == currentUserId && m.RecipientDeleted == false
-                    && m.Sender.Id == recipientId
+                .Where(m =>
+                    m.Recipient.Id == messageThreadParams.CurrentUserId && m.RecipientDeleted == false
+                    && m.Sender.Id == messageThreadParams.RecipientUserId
                     ||
-                    m.Recipient.Id == recipientId
-                    && m.Sender.Id == currentUserId && m.SenderDeleted == false
+                    m.Recipient.Id == messageThreadParams.RecipientUserId
+                    && m.Sender.Id == messageThreadParams.CurrentUserId && m.SenderDeleted == false
                 )
-                .MarkUnreadAsRead(currentUserId)
-                .OrderBy(o => o.MessageSent)
-                .ProjectTo<MessageDto>(_mapper.ConfigurationProvider)
-                .ToListAsync();
+                .MarkUnreadAsRead(messageThreadParams.CurrentUserId)
+                .OrderByDescending(o => o.MessageSent)
+                .ProjectTo<MessageDto>(_mapper.ConfigurationProvider);
+                //.ToListAsync();
 
-            return messages;
+            return await PagedList<MessageDto>.CreateAsync(query, messageThreadParams.PageNumber, messageThreadParams.PageSize);
         }
     }
 }
