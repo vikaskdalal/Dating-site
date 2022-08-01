@@ -13,7 +13,6 @@
         </div>
     </div>
 
-
     <div #chatContainer (scroll)="onScrollUp($event)" class="chat-box chat-container">
         <div *ngIf="(messageService.messageThread$ | async)?.length === 0">
             No messages yet... say hi by using the message box below
@@ -21,6 +20,9 @@
 
         <div class="chat-messages-container" #chatList *ngIf="(messageService.messageThread$ | async)?.length != 0">
             <ng-container *ngFor="let message of (messageService.messageThread$ | async) as messages; let i = index">
+                <div class="chat-group-by-date text-center" *ngIf="i == 0 || ((message.messageSent | date : 'MMM d, y') != (messages[i-1].messageSent | date : 'MMM d, y'))">
+                    {{message.messageSent | chatDate : 'MMM d, y'}}
+                </div>
                 <div [ngClass]="message.senderUsername != friendUsername ? 'chat-r' : 'chat-l'">
                     <ng-container *ngIf="message.senderUsername == friendUsername">
                         <div class="mess">

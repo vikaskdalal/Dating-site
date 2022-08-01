@@ -29,11 +29,11 @@ export class UserChatComponent implements OnInit, AfterViewInit, OnDestroy {
   friendDetails!: UserDetail;
   trackChat!: TrackMessageThread;
   showChatDate: boolean = false;
-  private timeout!: any;
   private keyCodeToSkipTypingEvent: number[] = [13];
 
   constructor(public messageService: MessageService, private _route: ActivatedRoute,
-    private _userService: UserService, private _accountService: AccountService, public presenceService: PresenceService) {
+    private _userService: UserService, private _accountService: AccountService, public presenceService: PresenceService,
+    private _elRef: ElementRef) {
 
     let username = this._route.snapshot.paramMap.get('username');
     if (username)
@@ -108,16 +108,8 @@ export class UserChatComponent implements OnInit, AfterViewInit, OnDestroy {
     let chatContainerOffsetHeight = this.chatContainer.nativeElement.offsetHeight;
     let chatlistOffsetHeight = this.chatList.nativeElement.offsetHeight;
     let scroll = Math.ceil(chatContainerOffsetHeight - scrollTop);
-    //console.log( + " " + chatlistOffsetHeight);
-
-    // this.showChatDate = true;
-    // clearTimeout(this.timeout);
-    // this.timeout = setTimeout(() => {
-    //   this.showChatDate = false;
-    // }, 1000);
 
     if (scroll == chatlistOffsetHeight && this.trackChat.messageLoaded < this.trackChat.totalMessages) {
-      console.log("api hit");
       this.messageService.loadMessageThreadOnScroll(this.friendUsername, this.trackChat.messageLoaded, 10).then(() => {
         this.chatContainer.nativeElement.scrollTop = scrollTop + 1;
       })
