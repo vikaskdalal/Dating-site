@@ -15,31 +15,31 @@ import { UserService } from '../_services/user.service';
   templateUrl: './user-chat.component.html',
   styleUrls: ['./user-chat.component.css']
 })
-export class UserChatComponent implements OnInit, AfterViewInit, OnDestroy{
-  
-  @ViewChild('messageForm') messageForm! : NgForm;
+export class UserChatComponent implements OnInit, AfterViewInit, OnDestroy {
+
+  @ViewChild('messageForm') messageForm!: NgForm;
   @ViewChild('chatBox') chatBox!: ElementRef;
   @ViewChild('chatContainer') chatContainer!: ElementRef;
   @ViewChild('chatList') chatList!: ElementRef;
-  friendUsername! : string;
+  friendUsername!: string;
   messageContent!: string;
-  sentTypingEvent : boolean = true;
-  isRecipientTyping : boolean = false;
-  user! : User;
-  friendDetails! : UserDetail;
+  sentTypingEvent: boolean = true;
+  isRecipientTyping: boolean = false;
+  user!: User;
+  friendDetails!: UserDetail;
   trackChat!: TrackMessageThread;
   showChatDate: boolean = false;
   private timeout!: any;
-  private keyCodeToSkipTypingEvent : number[] = [13];
+  private keyCodeToSkipTypingEvent: number[] = [13];
 
-  constructor(public messageService : MessageService, private _route : ActivatedRoute, 
-    private _userService : UserService, private _accountService : AccountService, public presenceService : PresenceService) { 
-    
-      let username = this._route.snapshot.paramMap.get('username');
-    if(username)
-      this.friendUsername =  username;
+  constructor(public messageService: MessageService, private _route: ActivatedRoute,
+    private _userService: UserService, private _accountService: AccountService, public presenceService: PresenceService) {
 
-      this._accountService.currentUser$.subscribe(user => this.user = user!);
+    let username = this._route.snapshot.paramMap.get('username');
+    if (username)
+      this.friendUsername = username;
+
+    this._accountService.currentUser$.subscribe(user => this.user = user!);
   }
 
   ngOnInit(): void {
@@ -47,58 +47,58 @@ export class UserChatComponent implements OnInit, AfterViewInit, OnDestroy{
     this.messageService.createHubConnection(this.user, this.friendUsername);
   }
 
-  ngAfterViewInit() {     
-     this.sendEventWhenUserStopsTyping();
-     this.checkIfRecipientTyping();
-     this.loadChatPagination();
+  ngAfterViewInit() {
+    this.sendEventWhenUserStopsTyping();
+    this.checkIfRecipientTyping();
+    this.loadChatPagination();
   }
 
-  loadFriendsDetails(){
+  loadFriendsDetails() {
     this._userService.getByUsername(this.friendUsername).subscribe(user => this.friendDetails = user);
   }
 
-  loadChatPagination(){
-    this.messageService.trackMessageThread$.subscribe(response => this.trackChat = response.filter(f => f.friendUsername == 
+  loadChatPagination() {
+    this.messageService.trackMessageThread$.subscribe(response => this.trackChat = response.filter(f => f.friendUsername ==
       this.friendUsername)[0]);
   }
 
-  ngOnDestroy(): void{
+  ngOnDestroy(): void {
     this.messageService.stopHubConnection();
   }
 
-  checkIfRecipientTyping(){
+  checkIfRecipientTyping() {
     this.messageService.recipientIsTypingSource$.subscribe(res => {
       this.isRecipientTyping = res.filter(f => f.username == this.friendUsername).length != 0;
-     })
+    })
   }
 
-  sendEventWhenUserStopsTyping(){
+  sendEventWhenUserStopsTyping() {
     fromEvent(this.chatBox.nativeElement, 'input')
-    .pipe(debounceTime(1000))
-    .subscribe(data => {
-      this.messageService.sendUserHasStoppedTypingEvent(this.friendUsername).then(() => {
-        this.sentTypingEvent = true;
+      .pipe(debounceTime(1000))
+      .subscribe(data => {
+        this.messageService.sendUserHasStoppedTypingEvent(this.friendUsername).then(() => {
+          this.sentTypingEvent = true;
+        });
+
       });
-      
-    });  
   }
 
   sendMessage() {
-    if(this.messageContent == undefined || this.messageContent.trim() == ''){
+    if (this.messageContent == undefined || this.messageContent.trim() == '') {
       this.messageContent = '';
       return;
     }
 
     this.messageService.sendMessage(this.friendUsername, this.messageContent).then(() => {
-        this.messageForm.reset();
+      this.messageForm.reset();
     });
   }
 
-  onKeyUpEvent(event: any){
-    if(!this.sentTypingEvent || this.keyCodeToSkipTypingEvent.includes(event.keyCode))
+  onKeyUpEvent(event: any) {
+    if (!this.sentTypingEvent || this.keyCodeToSkipTypingEvent.includes(event.keyCode))
       return;
 
-    this.messageService.sendUserIsTypingEvent(this.friendUsername).then(()=> {
+    this.messageService.sendUserIsTypingEvent(this.friendUsername).then(() => {
       this.sentTypingEvent = false;
     });
   }
@@ -115,14 +115,14 @@ export class UserChatComponent implements OnInit, AfterViewInit, OnDestroy{
     // this.timeout = setTimeout(() => {
     //   this.showChatDate = false;
     // }, 1000);
-    
-    if(scroll == chatlistOffsetHeight && this.trackChat.messageLoaded < this.trackChat.totalMessages){
+
+    if (scroll == chatlistOffsetHeight && this.trackChat.messageLoaded < this.trackChat.totalMessages) {
       console.log("api hit");
-        this.messageService.loadMessageThreadOnScroll(this.friendUsername, this.trackChat.messageLoaded, 10).then(()=>{
-          this.chatContainer.nativeElement.scrollTop = scrollTop+1;
-        })
+      this.messageService.loadMessageThreadOnScroll(this.friendUsername, this.trackChat.messageLoaded, 10).then(() => {
+        this.chatContainer.nativeElement.scrollTop = scrollTop + 1;
+      })
     }
-    
+
   }
 
 }

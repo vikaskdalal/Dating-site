@@ -1,5 +1,5 @@
 export interface TrackMessageThread {
-    friendUsername : string;
+    friendUsername: string;
     totalMessages: number;
     messageLoaded: number;
 }
