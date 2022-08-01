@@ -1,9 +1,8 @@
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { debounceTime, fromEvent } from 'rxjs';
-import { Message } from '../_models/message';
-import { Pagination } from '../_models/pagination';
+import { debounceTime, fromEvent, take } from 'rxjs';
+import { TrackMessageThread } from '../_models/trackMessageThread';
 import { User } from '../_models/user';
 import { UserDetail } from '../_models/userDetail';
 import { AccountService } from '../_services/account.service';
@@ -28,9 +27,10 @@ export class UserChatComponent implements OnInit, AfterViewInit, OnDestroy{
   isRecipientTyping : boolean = false;
   user! : User;
   friendDetails! : UserDetail;
-  chatPagination!: Pagination;
+  trackChat!: TrackMessageThread;
   showChatDate: boolean = false;
   private timeout!: any;
+  private keyCodeToSkipTypingEvent : number[] = [13];
 
   constructor(public messageService : MessageService, private _route : ActivatedRoute, 
     private _userService : UserService, private _accountService : AccountService, public presenceService : PresenceService) { 
@@ -44,13 +44,12 @@ export class UserChatComponent implements OnInit, AfterViewInit, OnDestroy{
 
   ngOnInit(): void {
     this.loadFriendsDetails();
-    
+    this.messageService.createHubConnection(this.user, this.friendUsername);
   }
 
   ngAfterViewInit() {     
      this.sendEventWhenUserStopsTyping();
      this.checkIfRecipientTyping();
-     this.messageService.createHubConnection(this.user, this.friendUsername);
      this.loadChatPagination();
   }
 
@@ -59,7 +58,8 @@ export class UserChatComponent implements OnInit, AfterViewInit, OnDestroy{
   }
 
   loadChatPagination(){
-    this.messageService.messageThreadPagination$.subscribe(response => this.chatPagination = response!);
+    this.messageService.trackMessageThread$.subscribe(response => this.trackChat = response.filter(f => f.friendUsername == 
+      this.friendUsername)[0]);
   }
 
   ngOnDestroy(): void{
@@ -84,13 +84,18 @@ export class UserChatComponent implements OnInit, AfterViewInit, OnDestroy{
   }
 
   sendMessage() {
+    if(this.messageContent == undefined || this.messageContent.trim() == ''){
+      this.messageContent = '';
+      return;
+    }
+
     this.messageService.sendMessage(this.friendUsername, this.messageContent).then(() => {
         this.messageForm.reset();
     });
   }
 
   onKeyUpEvent(event: any){
-    if(!this.sentTypingEvent)
+    if(!this.sentTypingEvent || this.keyCodeToSkipTypingEvent.includes(event.keyCode))
       return;
 
     this.messageService.sendUserIsTypingEvent(this.friendUsername).then(()=> {
@@ -102,18 +107,18 @@ export class UserChatComponent implements OnInit, AfterViewInit, OnDestroy{
     let scrollTop = this.chatContainer.nativeElement.scrollTop;
     let chatContainerOffsetHeight = this.chatContainer.nativeElement.offsetHeight;
     let chatlistOffsetHeight = this.chatList.nativeElement.offsetHeight;
-    let pagination = this.chatPagination;
+    let scroll = Math.ceil(chatContainerOffsetHeight - scrollTop);
+    //console.log( + " " + chatlistOffsetHeight);
 
-    console.log(chatContainerOffsetHeight-scrollTop+20 + " " + chatlistOffsetHeight);
-
-    this.showChatDate = true;
-    clearTimeout(this.timeout);
-    this.timeout = setTimeout(() => {
-      this.showChatDate = false;
-    }, 1000);
+    // this.showChatDate = true;
+    // clearTimeout(this.timeout);
+    // this.timeout = setTimeout(() => {
+    //   this.showChatDate = false;
+    // }, 1000);
     
-    if(chatContainerOffsetHeight-scrollTop+1 >= chatlistOffsetHeight && pagination.currentPage != pagination.totalPages){
-        this.messageService.loadMessageThreadOnScroll(this.friendUsername, this.chatPagination).then(()=>{
+    if(scroll == chatlistOffsetHeight && this.trackChat.messageLoaded < this.trackChat.totalMessages){
+      console.log("api hit");
+        this.messageService.loadMessageThreadOnScroll(this.friendUsername, this.trackChat.messageLoaded, 10).then(()=>{
           this.chatContainer.nativeElement.scrollTop = scrollTop+1;
         })
     }

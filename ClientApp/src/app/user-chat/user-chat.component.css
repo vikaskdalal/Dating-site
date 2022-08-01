@@ -35,7 +35,7 @@
     margin: 0px;
 }
 .messages-read-check{
-    font-size: 15px;
+    font-size: 13px;
 }
 
 
@@ -124,6 +124,7 @@
 .chat-box .mess p {
 	word-break: break-all;
 	line-height: initial;
+	display: inline;
 }
 .chat-box .mess-r {
     background: #E2FFC7;
@@ -137,6 +138,8 @@
 	color: #888;
 	font-size: 12px;
 	font-weight: 700px;
+	vertical-align: text-bottom;
+	margin-left: 5px;
 }
 
 *::-webkit-scrollbar {

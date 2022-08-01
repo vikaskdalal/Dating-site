@@ -26,32 +26,39 @@ namespace DotNetCoreAngular.SignalR
 
         public override async Task OnConnectedAsync()
         {
-            var httpContext = Context.GetHttpContext();
+            try
+            {
+                var httpContext = Context.GetHttpContext();
 
-            var otherUsername = httpContext.Request.Query["user"].ToString();
+                var otherUsername = httpContext.Request.Query["user"].ToString();
+                var ty = httpContext.Request.Query["takeMessage"].ToString();
+                var skipMessage = Convert.ToInt32(httpContext.Request.Query["skipMessage"].ToString());
+                var takeMessage = Convert.ToInt32(httpContext.Request.Query["takeMessage"].ToString());
 
-            var groupName = GetGroupName(Context.User.GetUsername(), otherUsername);
+                var groupName = GetGroupName(Context.User.GetUsername(), otherUsername);
 
-            await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+                await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
 
-            await AddToGroup(groupName);
+                await AddToGroup(groupName);
 
-            var otherUser = await _context.UserRepository.GetByUsernameAsync(otherUsername);
+                var otherUser = await _context.UserRepository.GetByUsernameAsync(otherUsername);
 
-            var messageThreadParams = new MessageThreadParams();
-            messageThreadParams.CurrentUserId = Context.User.GetUserId();
-            messageThreadParams.RecipientUserId = otherUser.Id;
-            messageThreadParams.PageSize = 10;
+                var messageThreadParams = new MessageThreadParams();
+                messageThreadParams.CurrentUserId = Context.User.GetUserId();
+                messageThreadParams.RecipientUserId = otherUser.Id;
+                messageThreadParams.SkipMessages = skipMessage;
+                messageThreadParams.TakeMessages = takeMessage;
 
-            var messages = await _context.MessageRepository.GetMessageThreadAsync(messageThreadParams);
+                var messages = await _context.MessageRepository.GetMessageThreadAsync(messageThreadParams);
+                messages.TrackMessageThread.FriendUsername = otherUsername;
 
-            var paginationHeader = new PaginationHeader(messages.CurrentPage, messages.PageSize, messages.TotalCount, messages.TotalPages);
-            var messageThreadDto = new MessageThreadDto();
-            messageThreadDto.Messages = new List<MessageDto>();
-            messageThreadDto.Messages.AddRange(messages);
-            messageThreadDto.PaginationHeader = paginationHeader;
-
-            await Clients.Group(groupName).SendAsync("ReceiveMessageThread", messageThreadDto);
+                await Clients.Group(groupName).SendAsync("ReceiveMessageThread", messages);
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+            
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception)
@@ -114,21 +121,15 @@ namespace DotNetCoreAngular.SignalR
         {
             var otherUser = await _context.UserRepository.GetByUsernameAsync(messageThreadParams.RecipientUsername);
 
-            //var messageThreadParams = new MessageThreadParams();
             messageThreadParams.CurrentUserId = Context.User.GetUserId();
             messageThreadParams.RecipientUserId = otherUser.Id;
 
             var messages = await _context.MessageRepository.GetMessageThreadAsync(messageThreadParams);
-
-            var paginationHeader = new PaginationHeader(messages.CurrentPage, messages.PageSize, messages.TotalCount, messages.TotalPages);
-            var messageThreadDto = new MessageThreadDto();
-            messageThreadDto.Messages = new List<MessageDto>();
-            messageThreadDto.Messages.AddRange(messages);
-            messageThreadDto.PaginationHeader = paginationHeader;
+            messages.TrackMessageThread.FriendUsername = messageThreadParams.RecipientUsername;
 
             var groupName = GetGroupName(Context.User.GetUsername(), messageThreadParams.RecipientUsername);
 
-            await Clients.Group(groupName).SendAsync("ReceiveMessageThreadOnScroll", messageThreadDto);
+            await Clients.Group(groupName).SendAsync("ReceiveMessageThreadOnScroll", messages);
         }
 
         #region Private Methods

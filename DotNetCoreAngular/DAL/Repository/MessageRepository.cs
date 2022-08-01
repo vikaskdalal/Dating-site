@@ -46,7 +46,7 @@ namespace DotNetCoreAngular.DAL.Repository
                 .SingleOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<PagedList<MessageDto>> GetMessageThreadAsync(MessageThreadParams messageThreadParams)
+        public async Task<MessageThreadDto> GetMessageThreadAsync(MessageThreadParams messageThreadParams)
         {
             var query = DbSet.AsQueryable()
                 .Include(u => u.Sender).ThenInclude(p => p.Photos)
@@ -61,9 +61,20 @@ namespace DotNetCoreAngular.DAL.Repository
                 .MarkUnreadAsRead(messageThreadParams.CurrentUserId, _context)
                 .OrderByDescending(o => o.MessageSent)
                 .ProjectTo<MessageDto>(_mapper.ConfigurationProvider);
-                //.ToListAsync();
 
-            return await PagedList<MessageDto>.CreateAsync(query, messageThreadParams.PageNumber, messageThreadParams.PageSize);
+            var totalCount = await query.CountAsync();
+            
+            var result = await query.Skip(messageThreadParams.SkipMessages).Take(messageThreadParams.TakeMessages).ToListAsync();
+            result = result.OrderBy(o => o.MessageSent).ToList();
+
+            int totalMessagesLoaded = GetTotalMessagesLoaded(totalCount, messageThreadParams.SkipMessages, messageThreadParams.TakeMessages);
+
+            return new MessageThreadDto(totalCount, totalMessagesLoaded, result);
+        }
+
+        private int GetTotalMessagesLoaded(int totalMessages, int skippedMessages, int takeMessages)
+        {
+            return skippedMessages + takeMessages >= totalMessages ? totalMessages : skippedMessages + takeMessages;
         }
     }
 }

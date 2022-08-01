@@ -4,6 +4,7 @@ import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { BehaviorSubject, take } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Message } from '../_models/message';
+import { TrackMessageThread } from '../_models/trackMessageThread';
 import { Pagination } from '../_models/pagination';
 import { User } from '../_models/user';
 import { UserTyping } from '../_models/userTyping';
@@ -23,14 +24,14 @@ export class MessageService {
   private _showRecipientIsTypingSource = new BehaviorSubject<UserTyping[]>([]);
   recipientIsTypingSource$ = this._showRecipientIsTypingSource.asObservable();
 
-  private _messageThreadPaginationSource = new BehaviorSubject<Pagination | null>(null);
-  messageThreadPagination$ = this._messageThreadPaginationSource.asObservable();
+  private _trackMessageThreadSource = new BehaviorSubject<TrackMessageThread[]>([]);
+  trackMessageThread$ = this._trackMessageThreadSource.asObservable();
 
   constructor(private _httpClient : HttpClient) { }
 
   createHubConnection(user : User, otherUser : string){
     this._hubConnection = new HubConnectionBuilder()
-    .withUrl(this.hubUrl + 'message?user=' + otherUser,{
+    .withUrl(this.hubUrl + 'message?user=' + otherUser+'&skipMessage=0&takeMessage=10',{
       accessTokenFactory: () => user.token
     })
     .withAutomaticReconnect()
@@ -39,22 +40,37 @@ export class MessageService {
     this._hubConnection.start().catch(error => console.log(error));
 
     this._hubConnection.on('ReceiveMessageThread', response => {
-      this._messageThreadPaginationSource.next(response.paginationHeader);
+      this._trackMessageThreadSource.next([response.trackMessageThread]);
       this._messageSource.next(response.messages);
       
     })
 
     this._hubConnection.on('ReceiveMessageThreadOnScroll', response => {
-      this._messageThreadPaginationSource.next(response.paginationHeader);
+
+      this.trackMessageThread$.pipe(take(1)).subscribe(res => {
+        let trackingInfoOfUser = res.filter(f => f.friendUsername != response.trackMessageThread.friendUsername);
+        
+        this._trackMessageThreadSource.next([...trackingInfoOfUser, response.trackMessageThread]);
+      })
       
       this.messageThread$.pipe(take(1)).subscribe(messages => {
-          this._messageSource.next([...messages, ...response.messages]);
+          this._messageSource.next([...response.messages, ...messages]);
       })
     })
 
     this._hubConnection.on('NewMessage', message => {
       this.messageThread$.pipe(take(1)).subscribe(messages => {
-        this._messageSource.next([message, ...messages]);
+        this._messageSource.next([...messages, message]);
+      })
+
+      this.trackMessageThread$.pipe(take(1)).subscribe(response => {
+        let trackingInfoOfUser = response.filter(f => f.friendUsername == message.recipientUsername);
+        
+        if(trackingInfoOfUser.length != 0){
+          trackingInfoOfUser[0].messageLoaded++;
+          trackingInfoOfUser[0].totalMessages++;
+          this._trackMessageThreadSource.next([...response, trackingInfoOfUser[0]]);
+        }
       })
 
     })
@@ -62,8 +78,8 @@ export class MessageService {
     this._hubConnection.on('UserIsTyping', username => {
       let userIsTyping = new UserTyping(username, true);
 
-      this.recipientIsTypingSource$.pipe(take(1)).subscribe(messages => {
-        this._showRecipientIsTypingSource.next([...messages, userIsTyping]);
+      this.recipientIsTypingSource$.pipe(take(1)).subscribe(userList => {
+        this._showRecipientIsTypingSource.next([...userList, userIsTyping]);
       })
     })
 
@@ -101,9 +117,7 @@ export class MessageService {
     return this._hubConnection.invoke("UserHasStoppedTyping", username)
   }
 
- async loadMessageThreadOnScroll(username : string, pagination : Pagination){
-    let pageNumber = pagination.currentPage + 1;
-    let pageSize = pagination.itemsPerPage;
-    return this._hubConnection.invoke("LoadMessageThreadOnScroll", {recipientUsername: username, pageNumber, pageSize})
+ async loadMessageThreadOnScroll(username : string, skipMessages : number, takeMessages: number){
+    return this._hubConnection.invoke("LoadMessageThreadOnScroll", {recipientUsername: username, skipMessages, takeMessages})
  }
 }

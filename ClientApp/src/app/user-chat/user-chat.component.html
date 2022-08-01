@@ -4,20 +4,13 @@
             <div class="left">
                 <img src="{{friendDetails.photoUrl || './assets/user.png'}}" class="pp">
                 <h2>{{friendDetails.name}}</h2>
-                <span  *ngIf = "(presenceService.onlineUsers$ | async)?.includes(friendUsername)">online</span>
+                <span  *ngIf = "(presenceService.onlineUsers$ | async)?.includes(friendUsername)">
+                    <ng-container *ngIf="!isRecipientTyping">online</ng-container> 
+                    <ng-container *ngIf="isRecipientTyping">typing...</ng-container>
+                </span>
             </div>
             
         </div>
-        <!-- <span class="chat-img float-right">
-            <img class="rounded-circle" src="{{friendDetails.photoUrl || './assets/user.png'}}" 
-                alt="{{friendDetails.name}}">
-        </span>
-        <div class="d-inline">
-            <span class="px-1">{{friendDetails.name}}</span>
-            <span  *ngIf = "(presenceService.onlineUsers$ | async)?.includes(friendUsername)">
-                <i class="fa fa-circle text-success online-icon" aria-hidden="true"></i>
-            </span>
-        </div> -->
     </div>
     
     
@@ -26,31 +19,30 @@
                 No messages yet... say hi by using the message box below
             </div>
     
-            <div #chatList *ngIf="(messageService.messageThread$ | async)?.length != 0">
+            <div class="chat-messages-container" #chatList *ngIf="(messageService.messageThread$ | async)?.length != 0">
                 <ng-container *ngFor="let message of (messageService.messageThread$ | async) as messages; let i = index">
-                    <div [ngClass] = "messages[messages.length-1-i].senderUsername != friendUsername ? 'chat-r' : 'chat-l'">
-                        <ng-container *ngIf="messages[messages.length-1-i].senderUsername == friendUsername" >
+                    <div [ngClass] = "message.senderUsername != friendUsername ? 'chat-r' : 'chat-l'">
+                        <ng-container *ngIf="message.senderUsername == friendUsername" >
                             <div class="mess">
-                                <p class="chat-message">{{messages[messages.length-1-i].content}}</p>
+                                <p class="chat-message">{{message.content}}</p>
                                 <div class="check">
-                                    <span>{{messages[messages.length-1-i].messageSent |  date : 'h:mm a'}}</span>
+                                    <span>{{message.messageSent |  date : 'h:mm a'}}</span>
                                 </div>
                             </div>
                             <div class="sp"></div>
                         </ng-container>
-                        <ng-container *ngIf="messages[messages.length-1-i].senderUsername != friendUsername">
+                        <ng-container *ngIf="message.senderUsername != friendUsername">
                             <div class="sp"></div>
                             <div class="mess mess-r">
-                                <p class="chat-message">{{messages[messages.length-1-i].content}}</p>
+                                <p class="chat-message">{{message.content}}</p>
                                 <div class="check">
-                                    <span>{{messages[messages.length-1-i].messageSent |  date : 'h:mm a'}}</span>
-                                    <i *ngIf="messages[messages.length-1-i].dateRead" class='fa fa-check fa-lg text-primary messages-read-check ms-1'></i>
+                                    <span>{{message.messageSent |  date : 'h:mm a'}}</span>
+                                    <i *ngIf="message.dateRead" class='fa fa-check fa-lg text-primary messages-read-check ms-1'></i>
                                 </div>
                             </div>
                         </ng-container>
                     </div>
                 </ng-container>
-                <div *ngIf="isRecipientTyping">Typing...</div>
             </div>
         </div>
     
