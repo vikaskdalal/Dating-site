@@ -10,5 +10,7 @@ namespace DotNetCoreAngular.Interfaces.Repository
         Task<PagedList<MessageDto>> GetMessagesForUserAsync(MessageParams messageParams);
 
         Task<Message> GetMessageAsync(int id);
+
+        void ClearUserChat(int senderId, int recipientId);
     }
 }

@@ -58,7 +58,7 @@ namespace DotNetCoreAngular.DAL.Repository
                     m.Recipient.Id == messageThreadParams.RecipientUserId
                     && m.Sender.Id == messageThreadParams.CurrentUserId && m.SenderDeleted == false
                 )
-                .MarkUnreadAsRead(messageThreadParams.CurrentUserId, _context)
+                .MarkUnreadAsRead(messageThreadParams.CurrentUserId)
                 .OrderByDescending(o => o.MessageSent)
                 .ProjectTo<MessageDto>(_mapper.ConfigurationProvider);
 
@@ -70,6 +70,14 @@ namespace DotNetCoreAngular.DAL.Repository
             int totalMessagesLoaded = GetTotalMessagesLoaded(totalCount, messageThreadParams.SkipMessages, messageThreadParams.TakeMessages);
 
             return new MessageThreadDto(totalCount, totalMessagesLoaded, result);
+        }
+
+        public void ClearUserChat(int senderId, int recipientId)
+        {
+            var messages = DbSet.Where(q => q.SenderId == senderId && q.RecipientId == recipientId && q.SenderDeleted == false);
+
+            foreach (var message in messages)
+                message.SenderDeleted = true;
         }
 
         private int GetTotalMessagesLoaded(int totalMessages, int skippedMessages, int takeMessages)

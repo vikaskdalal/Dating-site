@@ -52,6 +52,9 @@ namespace DotNetCoreAngular.SignalR
                 var messages = await _context.MessageRepository.GetMessageThreadAsync(messageThreadParams);
                 messages.TrackMessageThread.FriendUsername = otherUsername;
 
+                if (_context.HasChanges())
+                    await _context.SaveAsync();
+
                 await Clients.Group(groupName).SendAsync("ReceiveMessageThread", messages);
             }
             catch(Exception ex)
@@ -128,6 +131,9 @@ namespace DotNetCoreAngular.SignalR
             messages.TrackMessageThread.FriendUsername = messageThreadParams.RecipientUsername;
 
             var groupName = GetGroupName(Context.User.GetUsername(), messageThreadParams.RecipientUsername);
+
+            if (_context.HasChanges())
+                await _context.SaveAsync();
 
             await Clients.Group(groupName).SendAsync("ReceiveMessageThreadOnScroll", messages);
         }

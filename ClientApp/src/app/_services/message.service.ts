@@ -109,6 +109,16 @@ export class MessageService {
     return this._httpClient.delete(this.baseUrl + 'message/' + id);
   }
 
+  deleteUserChat(recipientUsername : string){
+    return this._httpClient.delete(this.baseUrl + 'message/delete-user-chat/' + recipientUsername);
+  }
+
+  clearChatMessageThread(){
+    this.messageThread$.pipe(take(1)).subscribe(messages => {
+      this._messageSource.next([]);
+    })
+  }
+
   async sendUserIsTypingEvent(username: string) {
     return this._hubConnection.invoke("UserIsTyping", username)
   }

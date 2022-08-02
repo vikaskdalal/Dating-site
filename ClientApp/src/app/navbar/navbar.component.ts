@@ -10,6 +10,7 @@ import { AccountService } from '../_services/account.service';
 export class NavbarComponent implements OnInit {
   loginModel : any = {};
   currentUsername? : string = undefined;
+  isShown = false;
 
   constructor(public accountService : AccountService, private _router: Router) { }
 

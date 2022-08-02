@@ -9,7 +9,14 @@
                     <ng-container *ngIf="isRecipientTyping">typing...</ng-container>
                 </span>
             </div>
-
+            <div class="right">
+                <div class="dropdown" dropdown>
+                    <a class="cursor-pointer text-light text-decoration-none" dropdownToggle><i class="fa fa-ellipsis-h menu-dots" aria-hidden="true"></i></a>
+                    <div class="dropdown-menu dropdown-menu-end shadow-sm" *dropdownMenu>
+                      <a class="dropdown-item" [class.disabled]="(messageService.messageThread$ | async)?.length === 0" (click)="clearChat()">Clear chat</a>
+                    </div>
+                  </div>
+            </div>
         </div>
     </div>
 

@@ -1,11 +1,13 @@
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { debounceTime, fromEvent, take } from 'rxjs';
 import { TrackMessageThread } from '../_models/trackMessageThread';
 import { User } from '../_models/user';
 import { UserDetail } from '../_models/userDetail';
 import { AccountService } from '../_services/account.service';
+import { ConfirmService } from '../_services/confirm.service';
 import { MessageService } from '../_services/message.service';
 import { PresenceService } from '../_services/presence.service';
 import { UserService } from '../_services/user.service';
@@ -33,7 +35,7 @@ export class UserChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(public messageService: MessageService, private _route: ActivatedRoute,
     private _userService: UserService, private _accountService: AccountService, public presenceService: PresenceService,
-    private _elRef: ElementRef) {
+    private _confirmService: ConfirmService, private _toastrService: ToastrService) {
 
     let username = this._route.snapshot.paramMap.get('username');
     if (username)
@@ -115,6 +117,18 @@ export class UserChatComponent implements OnInit, AfterViewInit, OnDestroy {
       })
     }
 
+  }
+
+  clearChat(){
+      this._confirmService.confirm().subscribe(result => {
+        if(result){
+            this.messageService.deleteUserChat(this.friendUsername).subscribe(() => {
+              this._toastrService.success("Chat deleted.");
+              this.messageService.clearChatMessageThread();
+            })
+        }
+          
+      })
   }
 
 }
