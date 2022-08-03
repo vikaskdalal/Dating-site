@@ -14,5 +14,7 @@ namespace DotNetCoreAngular.Interfaces
         bool Save();
 
         Task<bool> SaveAsync();
+
+        bool HasChanges();
     }
 }

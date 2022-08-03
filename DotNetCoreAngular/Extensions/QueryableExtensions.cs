@@ -1,4 +1,5 @@
-﻿using DotNetCoreAngular.Models.Entity;
+﻿using DotNetCoreAngular.DAL;
+using DotNetCoreAngular.Models.Entity;
 
 namespace DotNetCoreAngular.Extensions
 {

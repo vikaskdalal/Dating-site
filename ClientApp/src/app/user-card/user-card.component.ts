@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ToastrService } from 'ngx-toastr';
 import { UserDetail } from '../_models/userDetail';
 import { LikeService } from '../_services/like.service';
 import { PresenceService } from '../_services/presence.service';
@@ -10,31 +9,33 @@ import { PresenceService } from '../_services/presence.service';
   styleUrls: ['./user-card.component.css']
 })
 export class UserCardComponent implements OnInit {
-  @Input() user! : UserDetail | undefined;
-  @Input() showLikeButton : boolean = true;
-  onlineUsers : string[] = [];
+  @Input() user!: UserDetail | undefined;
+  @Input() showLikeButton: boolean = true;
+  onlineUsers: string[] = [];
 
-  constructor(private _likeService : LikeService, private _toastr : ToastrService, private _presenceService : PresenceService) { }
+  constructor(
+    private _likeService: LikeService,
+    private _presenceService: PresenceService) { }
 
   ngOnInit(): void {
     this.loadOnlineUsers();
   }
 
-  loadOnlineUsers(){
+  loadOnlineUsers() {
     this._presenceService.onlineUsers$.subscribe(u => {
       this.onlineUsers = u;
     });
   }
 
-  addLike(userDetail : UserDetail | undefined){
+  addLike(userDetail: UserDetail | undefined) {
     this._likeService.addLike(userDetail?.username as string).subscribe(() => {
-        this.showLikeButton = false;
+      this.showLikeButton = false;
     })
   }
 
-  removeLike(userDetail : UserDetail | undefined){
+  removeLike(userDetail: UserDetail | undefined) {
     this._likeService.removeLike(userDetail?.username as string).subscribe(() => {
-        this.showLikeButton = true;
+      this.showLikeButton = true;
     })
   }
 }

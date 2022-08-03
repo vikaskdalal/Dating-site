@@ -1,4 +1,4 @@
 <app-navbar></app-navbar>
-<div class="container" style="margin-top: 70px">
+<div class="container" [ngClass]="user.token != undefined ? 'margin70' : 'margin110'">
     <router-outlet></router-outlet>
 </div>

@@ -13,19 +13,19 @@ import { NavigationExtras, Router } from '@angular/router';
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
 
-  constructor(private _toastr : ToastrService, private _router : Router) {}
+  constructor(private _toastr: ToastrService, private _router: Router) { }
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     return next.handle(request)
       .pipe(
         catchError((error: HttpErrorResponse) => {
-          if(!error){
+          if (!error) {
             return throwError(() => error);
           }
 
-          switch(error.status){
+          switch (error.status) {
             case 400:
-              if(error.error.errors){
+              if (error.error.errors) {
                 throw this.extractModelErrors(error.error.errors);
               }
               else if (typeof error.error == 'object')
@@ -45,29 +45,28 @@ export class ErrorInterceptor implements HttpInterceptor {
             default:
               this._toastr.error('Something went wrong');
               break;
-            }
-          
+          }
+
           return throwError(() => error);
         })
       )
   }
 
-  extractModelErrors(errors : string[]) : string[]{
+  extractModelErrors(errors: string[]): string[] {
     const modelErrors = [];
-    for(const key in errors)
-    {
-      if(errors[key])
+    for (const key in errors) {
+      if (errors[key])
         modelErrors.push(errors[key]);
     }
     return modelErrors.flat();
   }
 
-  handle401(error : HttpErrorResponse){
+  handle401(error: HttpErrorResponse) {
     this._toastr.error(error.error);
   }
 
-  handle500(error : HttpErrorResponse){
-    const navigateExtra : NavigationExtras = {state : {error : error.error}};
+  handle500(error: HttpErrorResponse) {
+    const navigateExtra: NavigationExtras = { state: { error: error.error } };
     this._router.navigateByUrl('/server-error', navigateExtra);
   }
 }

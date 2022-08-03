@@ -1,4 +1,4 @@
-export interface SelectDropDown{
-    id : any;
-    value : any;
+export interface SelectDropDown {
+    id: any;
+    value: any;
 }

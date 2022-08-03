@@ -112,5 +112,13 @@ namespace DotNetCoreAngular.DAL
             }
             this.disposed = true;
         }
+
+        public bool HasChanges()
+        {
+            _context.ChangeTracker.DetectChanges();
+            var changes = _context.ChangeTracker.HasChanges();
+
+            return changes;
+        }
     }
 }

@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Pagination } from '../_models/pagination';
-import { User } from '../_models/user';
 import { UserDetail } from '../_models/userDetail';
-import { AccountService } from '../_services/account.service';
 import { LikeService } from '../_services/like.service';
 import { UserService } from '../_services/user.service';
 
@@ -12,14 +10,14 @@ import { UserService } from '../_services/user.service';
   styleUrls: ['./user-list.component.css']
 })
 export class UserListComponent implements OnInit {
-  users! : UserDetail[];
-  userLikedByme : string[] = [];
+  users!: UserDetail[];
+  userLikedByme: string[] = [];
 
-  pagination! : Pagination | null;
+  pagination!: Pagination | null;
   pageNumber = 1;
   pageSize = 2;
 
-  constructor(private _userService : UserService, private _likeService : LikeService) { 
+  constructor(private _userService: UserService, private _likeService: LikeService) {
   }
 
   ngOnInit(): void {
@@ -27,22 +25,22 @@ export class UserListComponent implements OnInit {
     this.getUserWhoLikedByMe();
   }
 
-  loadUsers(){
-    this._userService.getUsers(this.pageNumber, this.pageSize).subscribe(response =>{
-        this.users = response.result;
-        this.pagination = response.pagination;
-      })
+  loadUsers() {
+    this._userService.getUsers(this.pageNumber, this.pageSize).subscribe(response => {
+      this.users = response.result;
+      this.pagination = response.pagination;
+    })
   }
 
-  pageChanged(event : any){
+  pageChanged(event: any) {
     this.pageNumber = event.page;
     this.loadUsers();
   }
 
-  getUserWhoLikedByMe(){
-    this._likeService.getUserLikedByMe().subscribe(data =>{
+  getUserWhoLikedByMe() {
+    this._likeService.getUserLikedByMe().subscribe(data => {
       this.userLikedByme = data.map(u => {
-          return u?.username!
+        return u?.username!
       });
     })
   }

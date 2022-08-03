@@ -11,7 +11,7 @@ import { PresenceService } from './_services/presence.service';
 })
 export class AppComponent implements OnInit {
   title = 'ClientApp';
-
+  user!: User;
   constructor(private _accountService : AccountService, private _presenceService : PresenceService){}
 
   ngOnInit(): void {
@@ -19,14 +19,14 @@ export class AppComponent implements OnInit {
   }
 
   setCurrentUser(){
-    const user : User = JSON.parse(localStorage.getItem('user') || '{}');
+    this.user = JSON.parse(localStorage.getItem('user') || '{}');
     
-    if(user.token == undefined || this._accountService.isTokenExpired(user)){
+    if(this.user.token == undefined || this._accountService.isTokenExpired(this.user)){
       this._accountService.logout();
       return;
     }
 
-    this._accountService.setCurrentUser(user);
-    this._presenceService.createHubConnection(user);
+    this._accountService.setCurrentUser(this.user);
+    this._presenceService.createHubConnection(this.user);
   }
 }

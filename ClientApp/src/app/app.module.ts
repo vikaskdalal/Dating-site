@@ -28,6 +28,9 @@ import { DatePipe } from '@angular/common';
 import { UserChatComponent } from './user-chat/user-chat.component';
 import { TimeAgoPipe } from './_pipes/time-ago.pipe';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
+import { ChatDatePipe } from './_pipes/chat-date.pipe';
+import { ModalComponent } from './modal/modal.component';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 @NgModule({
   declarations: [
@@ -44,7 +47,9 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
     UserLikeComponent,
     PhotoEditorComponent,
     UserChatComponent,
-    TimeAgoPipe
+    TimeAgoPipe,
+    ChatDatePipe,
+    ModalComponent
   ],
   imports: [
     BrowserModule,
@@ -59,7 +64,8 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
     }),
     TabsModule.forRoot(),
     FileUploadModule,
-    PaginationModule.forRoot()
+    PaginationModule.forRoot(),
+    ModalModule.forRoot()
   ],
   providers: [
     DatePipe,
