@@ -1,5 +1,6 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { debounceTime, fromEvent, take } from 'rxjs';
@@ -19,7 +20,7 @@ import { UserService } from '../_services/user.service';
   templateUrl: './user-chat.component.html',
   styleUrls: ['./user-chat.component.css']
 })
-export class UserChatComponent implements OnInit, AfterViewInit, OnDestroy {
+export class UserChatComponent implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
 
   @ViewChild('messageForm') messageForm!: NgForm;
   @ViewChild('chatBox') chatBox!: ElementRef;
@@ -41,7 +42,7 @@ export class UserChatComponent implements OnInit, AfterViewInit, OnDestroy {
     public messageService: MessageService, private _route: ActivatedRoute,
     private _userService: UserService, private _accountService: AccountService, 
     public presenceService: PresenceService, private _confirmService: ConfirmService, 
-    private _toastrService: ToastrService) 
+    private _toastrService: ToastrService, private _title: Title) 
   {
 
     let username = this._route.snapshot.paramMap.get('username');
@@ -60,6 +61,10 @@ export class UserChatComponent implements OnInit, AfterViewInit, OnDestroy {
     this.sendEventWhenUserStopsTyping();
     this.checkIfRecipientTyping();
     this.loadChatPagination();
+  }
+
+  ngAfterViewChecked(): void {
+    this._title.setTitle('Chat with '+ this.friendDetails?.name);
   }
 
   ngOnDestroy(): void {

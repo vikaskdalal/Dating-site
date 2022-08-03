@@ -5,10 +5,12 @@ using DotNetCoreAngular.Helpers;
 using DotNetCoreAngular.Helpers.Pagination;
 using DotNetCoreAngular.Interfaces;
 using DotNetCoreAngular.Models.Entity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace DotNetCoreAngular.SignalR
 {
+    [Authorize]
     public class MessageHub : Hub
     {
         private readonly IUnitOfWork _context;
@@ -31,7 +33,6 @@ namespace DotNetCoreAngular.SignalR
                 var httpContext = Context.GetHttpContext();
 
                 var otherUsername = httpContext.Request.Query["user"].ToString();
-                var ty = httpContext.Request.Query["takeMessage"].ToString();
                 var skipMessage = Convert.ToInt32(httpContext.Request.Query["skipMessage"].ToString());
                 var takeMessage = Convert.ToInt32(httpContext.Request.Query["takeMessage"].ToString());
 
@@ -55,7 +56,7 @@ namespace DotNetCoreAngular.SignalR
                 if (_context.HasChanges())
                     await _context.SaveAsync();
 
-                await Clients.Group(groupName).SendAsync("ReceiveMessageThread", messages);
+                await Clients.Client(Context.ConnectionId).SendAsync("ReceiveMessageThread", messages);
             }
             catch(Exception ex)
             {
@@ -130,12 +131,10 @@ namespace DotNetCoreAngular.SignalR
             var messages = await _context.MessageRepository.GetMessageThreadAsync(messageThreadParams);
             messages.TrackMessageThread.FriendUsername = messageThreadParams.RecipientUsername;
 
-            var groupName = GetGroupName(Context.User.GetUsername(), messageThreadParams.RecipientUsername);
-
             if (_context.HasChanges())
                 await _context.SaveAsync();
 
-            await Clients.Group(groupName).SendAsync("ReceiveMessageThreadOnScroll", messages);
+            await Clients.Client(Context.ConnectionId).SendAsync("ReceiveMessageThreadOnScroll", messages);
         }
 
         #region Private Methods

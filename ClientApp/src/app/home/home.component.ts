@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { AccountService } from '../_services/account.service';
 
 @Component({
@@ -8,9 +9,10 @@ import { AccountService } from '../_services/account.service';
 })
 export class HomeComponent implements OnInit {
   registerMode: boolean = false;
-  constructor(public accountService: AccountService) { }
+  constructor(public accountService: AccountService, private _title: Title) { }
 
   ngOnInit(): void {
+    this._title.setTitle("Dating App");
   }
 
   registerToggle() {

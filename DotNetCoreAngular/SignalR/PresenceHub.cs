@@ -19,11 +19,9 @@ namespace DotNetCoreAngular.SignalR
 
             _tracker.UserConnected(username, Context.ConnectionId);
 
-            //await Clients.Others.SendAsync("UserIsOnline", username);
-
             var currentUsers = _tracker.GetOnlineUsers();
 
-            await Clients.All.SendAsync("GetOnlineUsers", currentUsers);
+            await Clients.Client(Context.ConnectionId).SendAsync("GetOnlineUsers", currentUsers);
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception)
@@ -32,11 +30,9 @@ namespace DotNetCoreAngular.SignalR
 
             _tracker.UserDisconnected(username, Context.ConnectionId);
 
-            //await Clients.Others.SendAsync("UserIsOffline", username);
-
             var currentUsers = _tracker.GetOnlineUsers();
 
-            await Clients.All.SendAsync("GetOnlineUsers", currentUsers);
+            await Clients.Others.SendAsync("GetOnlineUsers", currentUsers);
 
             await base.OnDisconnectedAsync(exception);
         }

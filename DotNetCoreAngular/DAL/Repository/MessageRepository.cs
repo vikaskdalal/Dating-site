@@ -74,10 +74,30 @@ namespace DotNetCoreAngular.DAL.Repository
 
         public void ClearUserChat(int senderId, int recipientId)
         {
-            var messages = DbSet.Where(q => q.SenderId == senderId && q.RecipientId == recipientId && q.SenderDeleted == false);
+            var messages = DbSet.Where(m =>
+                    m.Recipient.Id == senderId && m.RecipientDeleted == false
+                    && m.Sender.Id == recipientId
+                    ||
+                    m.Recipient.Id == recipientId
+                    && m.Sender.Id == senderId && m.SenderDeleted == false
+                );
 
-            foreach (var message in messages)
-                message.SenderDeleted = true;
+            foreach (var message in messages.Where(q => q.SenderId == senderId))
+            {
+                if (message.RecipientDeleted)
+                    DbSet.Remove(message);
+                else
+                    message.SenderDeleted = true;
+            }
+                
+
+            foreach (var message in messages.Where(q => q.RecipientId == senderId))
+            {
+                if (message.SenderDeleted)
+                    DbSet.Remove(message);
+                else
+                    message.RecipientDeleted = true;
+            }
         }
 
         private int GetTotalMessagesLoaded(int totalMessages, int skippedMessages, int takeMessages)

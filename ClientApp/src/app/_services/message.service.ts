@@ -103,9 +103,7 @@ export class MessageService {
   }
 
   clearChatMessageThread() {
-    this.messageThread$.pipe(take(1)).subscribe(messages => {
-      this._messageSource.next([]);
-    })
+    this._messageSource.next([]);
   }
 
   async sendUserIsTypingEvent(username: string) {
