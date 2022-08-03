@@ -5,7 +5,8 @@
 export const environment = {
   production: false,
   apiUrl : 'https://localhost:7117/api/',
-  hubUrl : 'https://localhost:7117/hubs/'
+  hubUrl : 'https://localhost:7117/hubs/',
+  loadMessageCount : 200
 };
 
 /*

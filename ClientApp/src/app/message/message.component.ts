@@ -10,38 +10,38 @@ import { MessageService } from '../_services/message.service';
   styleUrls: ['./message.component.css']
 })
 export class MessageComponent implements OnInit {
-  messages! : Message[] | null;
-  pagination! : Pagination | null;
+  messages!: Message[] | null;
+  pagination!: Pagination | null;
   container = 'Unread';
   pageNumber = 1;
   pageSize = 5;
 
-  constructor(private _messageService : MessageService, private _titleService : Title) { }
+  constructor(private _messageService: MessageService, private _titleService: Title) { }
 
   ngOnInit(): void {
     this.loadMessages();
     this._titleService.setTitle("Messages");
   }
 
-  loadMessages(){
+  loadMessages() {
     this._messageService.getMessages(this.pageNumber, this.pageSize, this.container).subscribe(res => {
       this.messages = res.result;
       this.pagination = res.pagination;
     })
   }
 
-  pageChanged(event : any){
+  pageChanged(event: any) {
     this.pageNumber = event.page;
     this.loadMessages()
   }
 
-  deleteMessage(id: number){
+  deleteMessage(id: number) {
     this._messageService.deleteMessage(id).subscribe(() => {
       this.messages?.splice(this.messages.findIndex(m => m.id == id), 1);
     })
 
   }
-  loadNewMessages(container : string){
+  loadNewMessages(container: string) {
     this.container = container;
     this.loadMessages();
   }

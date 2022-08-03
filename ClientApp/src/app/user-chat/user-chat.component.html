@@ -2,12 +2,14 @@
     <div class="chat-header" *ngIf="friendDetails">
         <div class="profile">
             <div class="left">
-                <img src="{{friendDetails.photoUrl || './assets/user.png'}}" class="pp">
-                <h2>{{friendDetails.name}}</h2>
-                <span *ngIf="(presenceService.onlineUsers$ | async)?.includes(friendUsername)">
-                    <ng-container *ngIf="!isRecipientTyping">online</ng-container>
-                    <ng-container *ngIf="isRecipientTyping">typing...</ng-container>
-                </span>
+                <div class="d-inline friend-profile user-select-none" routerLink="/user/{{friendUsername}}">
+                    <img src="{{friendDetails.photoUrl || './assets/user.png'}}" class="pp">
+                    <h2>{{friendDetails.name}}</h2>
+                    <span *ngIf="(presenceService.onlineUsers$ | async)?.includes(friendUsername)">
+                        <ng-container *ngIf="!isRecipientTyping">online</ng-container>
+                        <ng-container *ngIf="isRecipientTyping">typing...</ng-container>
+                    </span>
+                </div>
             </div>
             <div class="right">
                 <div class="dropdown" dropdown>
@@ -26,7 +28,7 @@
         </div>
 
         <div class="chat-messages-container" #chatList *ngIf="(messageService.messageThread$ | async)?.length != 0">
-            <ng-container *ngFor="let message of (messageService.messageThread$ | async) as messages; let i = index">
+            <ng-container *ngFor="let message of (messageService.messageThread$ | async) as messages; let i = index; trackBy: trackByMessageId;">
                 <div class="chat-group-by-date text-center" *ngIf="i == 0 || ((message.messageSent | date : 'MMM d, y') != (messages[i-1].messageSent | date : 'MMM d, y'))">
                     {{message.messageSent | chatDate : 'MMM d, y'}}
                 </div>

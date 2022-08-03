@@ -1,8 +1,10 @@
-import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { debounceTime, fromEvent, take } from 'rxjs';
+import { environment } from 'src/environments/environment';
+import { Message } from '../_models/message';
 import { TrackMessageThread } from '../_models/trackMessageThread';
 import { User } from '../_models/user';
 import { UserDetail } from '../_models/userDetail';
@@ -23,6 +25,7 @@ export class UserChatComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('chatBox') chatBox!: ElementRef;
   @ViewChild('chatContainer') chatContainer!: ElementRef;
   @ViewChild('chatList') chatList!: ElementRef;
+
   friendUsername!: string;
   messageContent!: string;
   sentTypingEvent: boolean = true;
@@ -31,11 +34,15 @@ export class UserChatComponent implements OnInit, AfterViewInit, OnDestroy {
   friendDetails!: UserDetail;
   trackChat!: TrackMessageThread;
   showChatDate: boolean = false;
+  loadMessageCount = environment.loadMessageCount;
   private keyCodeToSkipTypingEvent: number[] = [13];
 
-  constructor(public messageService: MessageService, private _route: ActivatedRoute,
-    private _userService: UserService, private _accountService: AccountService, public presenceService: PresenceService,
-    private _confirmService: ConfirmService, private _toastrService: ToastrService) {
+  constructor(
+    public messageService: MessageService, private _route: ActivatedRoute,
+    private _userService: UserService, private _accountService: AccountService, 
+    public presenceService: PresenceService, private _confirmService: ConfirmService, 
+    private _toastrService: ToastrService) 
+  {
 
     let username = this._route.snapshot.paramMap.get('username');
     if (username)
@@ -55,6 +62,10 @@ export class UserChatComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loadChatPagination();
   }
 
+  ngOnDestroy(): void {
+    this.messageService.stopHubConnection();
+  }
+
   loadFriendsDetails() {
     this._userService.getByUsername(this.friendUsername).subscribe(user => this.friendDetails = user);
   }
@@ -62,10 +73,6 @@ export class UserChatComponent implements OnInit, AfterViewInit, OnDestroy {
   loadChatPagination() {
     this.messageService.trackMessageThread$.subscribe(response => this.trackChat = response.filter(f => f.friendUsername ==
       this.friendUsername)[0]);
-  }
-
-  ngOnDestroy(): void {
-    this.messageService.stopHubConnection();
   }
 
   checkIfRecipientTyping() {
@@ -112,7 +119,7 @@ export class UserChatComponent implements OnInit, AfterViewInit, OnDestroy {
     let scroll = Math.ceil(chatContainerOffsetHeight - scrollTop);
 
     if (scroll == chatlistOffsetHeight && this.trackChat.messageLoaded < this.trackChat.totalMessages) {
-      this.messageService.loadMessageThreadOnScroll(this.friendUsername, this.trackChat.messageLoaded, 10).then(() => {
+      this.messageService.loadMessageThreadOnScroll(this.friendUsername, this.trackChat.messageLoaded, this.loadMessageCount).then(() => {
         this.chatContainer.nativeElement.scrollTop = scrollTop + 1;
       })
     }
@@ -129,6 +136,10 @@ export class UserChatComponent implements OnInit, AfterViewInit, OnDestroy {
         }
           
       })
+  }
+
+  trackByMessageId(index : any, item : Message){
+    return item.id;
   }
 
 }

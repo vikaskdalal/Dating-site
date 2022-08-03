@@ -5,7 +5,6 @@ import { BehaviorSubject, take } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Message } from '../_models/message';
 import { TrackMessageThread } from '../_models/trackMessageThread';
-import { Pagination } from '../_models/pagination';
 import { User } from '../_models/user';
 import { UserTyping } from '../_models/userTyping';
 import { getPaginatedResult, getPaginationHeaders } from './paginationHelper';
@@ -17,12 +16,13 @@ export class MessageService {
   baseUrl = environment.apiUrl;
   private _hubConnection!: HubConnection;
   hubUrl = environment.hubUrl;
+  loadMessageCount = environment.loadMessageCount;
 
   private _messageSource = new BehaviorSubject<Message[]>([]);
   messageThread$ = this._messageSource.asObservable();
 
-  private _showRecipientIsTypingSource = new BehaviorSubject<UserTyping[]>([]);
-  recipientIsTypingSource$ = this._showRecipientIsTypingSource.asObservable();
+  private _recipientIsTypingSource = new BehaviorSubject<UserTyping[]>([]);
+  recipientIsTypingSource$ = this._recipientIsTypingSource.asObservable();
 
   private _trackMessageThreadSource = new BehaviorSubject<TrackMessageThread[]>([]);
   trackMessageThread$ = this._trackMessageThreadSource.asObservable();
@@ -31,7 +31,7 @@ export class MessageService {
 
   createHubConnection(user: User, otherUser: string) {
     this._hubConnection = new HubConnectionBuilder()
-      .withUrl(this.hubUrl + 'message?user=' + otherUser + '&skipMessage=0&takeMessage=10', {
+      .withUrl(this.hubUrl + 'message?user=' + otherUser + '&skipMessage=0&takeMessage=' + this.loadMessageCount, {
         accessTokenFactory: () => user.token
       })
       .withAutomaticReconnect()
@@ -42,7 +42,6 @@ export class MessageService {
     this._hubConnection.on('ReceiveMessageThread', response => {
       this._trackMessageThreadSource.next([response.trackMessageThread]);
       this._messageSource.next(response.messages);
-
     })
 
     this._hubConnection.on('ReceiveMessageThreadOnScroll', response => {
@@ -53,40 +52,30 @@ export class MessageService {
         this._trackMessageThreadSource.next([...trackingInfoOfUser, response.trackMessageThread]);
       })
 
-      this.messageThread$.pipe(take(1)).subscribe(messages => {
-        this._messageSource.next([...response.messages, ...messages]);
-      })
+      this._messageSource.next([...response.messages, ...this._messageSource.getValue()]);
     })
 
     this._hubConnection.on('NewMessage', message => {
-      this.messageThread$.pipe(take(1)).subscribe(messages => {
-        this._messageSource.next([...messages, message]);
-      })
+      this._messageSource.next([...this._messageSource.getValue(), message]);
 
-      this.trackMessageThread$.pipe(take(1)).subscribe(response => {
-        let trackingInfoOfUser = response.filter(f => f.friendUsername == message.recipientUsername);
+      var getValue = this._trackMessageThreadSource.getValue();
+      let trackingInfoOfUser = getValue.filter(f => f.friendUsername == message.recipientUsername);
 
-        if (trackingInfoOfUser.length != 0) {
-          trackingInfoOfUser[0].messageLoaded++;
-          trackingInfoOfUser[0].totalMessages++;
-          this._trackMessageThreadSource.next([...response, trackingInfoOfUser[0]]);
-        }
-      })
-
+      if (trackingInfoOfUser.length != 0) {
+        trackingInfoOfUser[0].messageLoaded++;
+        trackingInfoOfUser[0].totalMessages++;
+        this._trackMessageThreadSource.next([...getValue, trackingInfoOfUser[0]]);
+      }
     })
 
     this._hubConnection.on('UserIsTyping', username => {
       let userIsTyping = new UserTyping(username, true);
 
-      this.recipientIsTypingSource$.pipe(take(1)).subscribe(userList => {
-        this._showRecipientIsTypingSource.next([...userList, userIsTyping]);
-      })
+      this._recipientIsTypingSource.next([...this._recipientIsTypingSource.getValue(), userIsTyping]);
     })
 
     this._hubConnection.on('UserHasStoppedTyping', username => {
-      this.recipientIsTypingSource$.pipe(take(1)).subscribe(users => {
-        this._showRecipientIsTypingSource.next(users.filter(f => f.username != username));
-      })
+      this._recipientIsTypingSource.next(this._recipientIsTypingSource.getValue().filter(f => f.username != username));
     })
   }
 
@@ -109,11 +98,11 @@ export class MessageService {
     return this._httpClient.delete(this.baseUrl + 'message/' + id);
   }
 
-  deleteUserChat(recipientUsername : string){
+  deleteUserChat(recipientUsername: string) {
     return this._httpClient.delete(this.baseUrl + 'message/delete-user-chat/' + recipientUsername);
   }
 
-  clearChatMessageThread(){
+  clearChatMessageThread() {
     this.messageThread$.pipe(take(1)).subscribe(messages => {
       this._messageSource.next([]);
     })

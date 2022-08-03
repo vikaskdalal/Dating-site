@@ -14,15 +14,16 @@ import { UserService } from '../_services/user.service';
   styleUrls: ['./photo-editor.component.css']
 })
 export class PhotoEditorComponent implements OnInit {
-  
-  @Input() userDetail! : UserDetail;
+
+  @Input() userDetail!: UserDetail;
 
   uploader!: FileUploader;
   hasBaseDropzoneOver = false;
   baseUrl = environment.apiUrl;
-  user! : User | null;
+  user!: User | null;
 
-  constructor(private _accountService : AccountService, private _userService : UserService, private _toastrService : ToastrService) { }
+  constructor(private _accountService: AccountService, private _userService: UserService,
+    private _toastrService: ToastrService) { }
 
   ngOnInit(): void {
     this._accountService.currentUser$.subscribe(user => this.user = user);
@@ -35,7 +36,7 @@ export class PhotoEditorComponent implements OnInit {
     this.hasBaseDropzoneOver = e;
   }
 
-  setMainPhoto(photo : Photo){
+  setMainPhoto(photo: Photo) {
     this._userService.setMainPhoto(photo.id).subscribe(() => {
       this._accountService.setCurrentUser(this.user);
       this.userDetail.photoUrl = photo.url;
@@ -73,12 +74,12 @@ export class PhotoEditorComponent implements OnInit {
       if (response) {
         const photo: Photo = JSON.parse(response);
         this.userDetail.photos.push(photo);
-         if (photo.isMain) {
-           this.userDetail.photoUrl = photo.url;
-           this.userDetail.photoUrl = photo.url;
-           this._accountService.setCurrentUser(this.user);
-         }
-         this._toastrService.success("Photo uploaded successfully.");
+        if (photo.isMain) {
+          this.userDetail.photoUrl = photo.url;
+          this.userDetail.photoUrl = photo.url;
+          this._accountService.setCurrentUser(this.user);
+        }
+        this._toastrService.success("Photo uploaded successfully.");
       }
     }
   }

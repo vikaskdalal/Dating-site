@@ -9,21 +9,21 @@ import { UserDetail } from '../_models/userDetail';
 export class LikeService {
   baseUrl = environment.apiUrl;
 
-  constructor(private _httpClient : HttpClient) { }
+  constructor(private _httpClient: HttpClient) { }
 
-  addLike(username : string){
+  addLike(username: string) {
     return this._httpClient.post(this.baseUrl + 'like/' + username, {});
   }
 
-  removeLike(username : string){
+  removeLike(username: string) {
     return this._httpClient.delete(this.baseUrl + 'like/remove-like/' + username, {});
   }
 
-  getUserWhoLikeMe(){
+  getUserWhoLikeMe() {
     return this._httpClient.get<Partial<UserDetail[]>>(this.baseUrl + 'like/like-me');
   }
 
-  getUserLikedByMe(){
+  getUserLikedByMe() {
     return this._httpClient.get<Partial<UserDetail[]>>(this.baseUrl + 'like/liked-by-me');
   }
 

@@ -1,12 +1,12 @@
 <div class="row" *ngIf="userDetails">
     <div class="col-4">
         <div class="card">
-            <img src="{{userDetails.photoUrl || './assets/user.png'}}" alt="{{userDetails.name}}" 
+            <img src="{{userDetails.photoUrl || './assets/user.png'}}" alt="{{userDetails.name}}"
                 class="card-img-top img-thumbnail">
             <div class="card-body">
-                <div class="mb-2" *ngIf = "(presenceService.onlineUsers$ | async)?.includes(userDetails.username)">
+                <div class="mb-2" *ngIf="(presenceService.onlineUsers$ | async)?.includes(userDetails.username)">
                     <i class="fa fa-user-circle text-success"></i> Online now
-                </div> 
+                </div>
                 <div>
                     <strong>Location:</strong>
                     <p>{{userDetails.city}}, {{userDetails.country}}</p>
@@ -30,22 +30,19 @@
 
     <div class="col-8">
         <tabset class="member-tabset" #userTabs>
-            <tab heading='About {{userDetails.name}}' >
+            <tab heading='About {{userDetails.name}}'>
                 <h4>Description</h4>
-                <p *ngIf="!userDetails.introduction" class="text-danger" >Not Mentioned</p>
+                <p *ngIf="!userDetails.introduction" class="text-danger">Not Mentioned</p>
                 <p>{{userDetails.introduction}}</p>
                 <h4>Looking for</h4>
-                <p *ngIf="!userDetails.lookingFor" class="text-danger" >Not Mentioned</p>
+                <p *ngIf="!userDetails.lookingFor" class="text-danger">Not Mentioned</p>
                 <p>{{userDetails.lookingFor}}</p>
             </tab>
             <tab heading='Interests'>
                 <h4>Interests</h4>
-                <p *ngIf="!userDetails.interests" class="text-danger" >Not Mentioned</p>
+                <p *ngIf="!userDetails.interests" class="text-danger">Not Mentioned</p>
                 <p>{{userDetails.interests}}</p>
             </tab>
-            <!-- <tab heading='Messages' (selectTab)="onTabActivated($event)">
-                <app-user-chat [username]="userDetails.username"></app-user-chat>
-            </tab> -->
         </tabset>
     </div>
 </div>

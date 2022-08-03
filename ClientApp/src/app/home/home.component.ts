@@ -7,17 +7,17 @@ import { AccountService } from '../_services/account.service';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  registerMode : boolean = false;
-  constructor(public accountService : AccountService) { }
+  registerMode: boolean = false;
+  constructor(public accountService: AccountService) { }
 
   ngOnInit(): void {
   }
 
-  registerToggle(){
+  registerToggle() {
     this.registerMode = true;
   }
 
-  cancelRegisterEvent(event : boolean){
+  cancelRegisterEvent(event: boolean) {
     this.registerMode = event;
   }
 

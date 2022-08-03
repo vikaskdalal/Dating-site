@@ -1,22 +1,25 @@
-<form #registerForm = "ngForm" (ngSubmit)="registerForm.valid && register()" autocomplete="off">
+<form #registerForm="ngForm" (ngSubmit)="registerForm.valid && register()" autocomplete="off">
     <h2 class="text-center text-primary">Signup</h2>
     <hr>
     <div class="mb-3">
-        <input type="text" #name="ngModel" class="form-control" name="name" placeholder="Name" [(ngModel)]="model.name" required>
+        <input type="text" #name="ngModel" class="form-control" name="name" placeholder="Name" [(ngModel)]="model.name"
+            required>
         <small class="text-danger" *ngIf="name.invalid && name.touched">Name is required.</small>
     </div>
     <div class="mb-3">
-        <input type="text" #username="ngModel" class="form-control" name="username" placeholder="Email" [(ngModel)]="model.email" required>
+        <input type="text" #username="ngModel" class="form-control" name="username" placeholder="Email"
+            [(ngModel)]="model.email" required>
         <small class="text-danger" *ngIf="username.invalid && username.touched">Email is required.</small>
     </div>
     <div class="mb-3">
-        <input type="password" #password="ngModel" class="form-control" name="password" placeholder="Password" [(ngModel)]="model.password" required>
+        <input type="password" #password="ngModel" class="form-control" name="password" placeholder="Password"
+            [(ngModel)]="model.password" required>
         <small class="text-danger" *ngIf="password.invalid && password.touched">Password is required.</small>
-        
+
     </div>
     <div class="mb-3">
-        <input type="text" #dob="ngModel" name="dob"  placeholder="Date of Birth" class="form-control" bsDatepicker [(ngModel)]="model.dateOfBirth" 
-            [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }" required>
+        <input type="text" #dob="ngModel" name="dob" placeholder="Date of Birth" class="form-control" bsDatepicker
+            [(ngModel)]="model.dateOfBirth" [bsConfig]="{ dateInputFormat: 'YYYY-MM-DD' }" required>
         <small id="emailHelp" class="form-text text-muted">You can not change date of birth after this.</small>
         <br>
         <small class="text-danger" *ngIf="dob.invalid && dob.touched">Date of birth is required.</small>
@@ -26,4 +29,3 @@
         <button class="btn btn-success" type="button" (click)="cancel()">Cancel</button>
     </div>
 </form>
-

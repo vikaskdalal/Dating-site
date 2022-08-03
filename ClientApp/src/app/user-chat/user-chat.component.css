@@ -47,7 +47,9 @@
 .menu-dots{
 	font-size: 23px;
 }
-
+.friend-profile{
+	cursor: pointer;
+}
 .profile {
 	width: 100%;
 	background: #036055;
@@ -126,7 +128,7 @@
 	max-width: 500px;
 	background: #F7FCF6;
 	padding: 10px;
-	border-radius: 10px;
+	border-radius: 10px 10px 10px 0;
 	margin: 7px 0px;
 }
 
@@ -138,6 +140,7 @@
 
 .chat-box .mess-r {
 	background: #E2FFC7;
+	border-radius: 10px 10px 0 10px;
 }
 
 .chat-box .check {
