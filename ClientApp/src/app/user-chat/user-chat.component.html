@@ -23,11 +23,10 @@
     </div>
 
     <div #chatContainer (scroll)="onScrollUp($event)" class="chat-box chat-container">
-        <div *ngIf="(messageService.messageThread$ | async)?.length === 0">
+        <div *ngIf="!messageLoading && (messageService.messageThread$ | async)?.length === 0">
             No messages yet... say hi by using the message box below
         </div>
         
-
         <div class="chat-messages-container" #chatList *ngIf="(messageService.messageThread$ | async)?.length != 0">
             <div *ngIf="messageLoading" class="message-loader-spinner">
                 <div class="spinner-border text-primary" role="status">

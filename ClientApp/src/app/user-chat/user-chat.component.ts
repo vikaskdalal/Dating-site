@@ -68,6 +68,7 @@ export class UserChatComponent implements OnInit, AfterViewInit, AfterViewChecke
 
   ngOnDestroy(): void {
     this.messageService.stopHubConnection();
+    this.messageService.clearChatMessageThread();
   }
 
   loadFriendsDetails() {
@@ -75,8 +76,9 @@ export class UserChatComponent implements OnInit, AfterViewInit, AfterViewChecke
   }
 
   loadChatPagination() {
-    this.messageService.trackMessageThread$.subscribe(response => this.trackChat = response.filter(f => f.friendUsername ==
-      this.friendUsername)[0]);
+    this.messageService.trackMessageThread$.subscribe(response => {
+      this.trackChat = response.filter(f => f.friendUsername == this.friendUsername)[0];
+    });
   }
 
   sendEventWhenUserStopsTyping() {
