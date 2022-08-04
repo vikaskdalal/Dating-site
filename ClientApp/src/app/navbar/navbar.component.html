@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+<nav class="navbar navbar-expand navbar-dark fixed-top bg-dark">
   <div class="container">
     <a class="navbar-brand" routerLink="/">Dating App</a>
     <button class="navbar-toggler" type="button" (click)="isShown=!isShown" data-bs-toggle="collapse"
@@ -6,7 +6,7 @@
       aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" [ngClass]="{ 'show': isShown }" id="navbarCollapse">
+    <div class="navbar-items" [ngClass]="{ 'show': isShown }" id="navbarCollapse">
       <ul class="navbar-nav me-auto" *ngIf="accountService.currentUser$ | async">
         <li class="nav-item">
           <a class="nav-link" routerLink="/friends" routerLinkActive="active">Matches</a>
@@ -21,7 +21,7 @@
 
       <div class="dropdown" *ngIf="(accountService.currentUser$ | async) as user" dropdown>
         <a class="dropdown-toggle text-light text-decoration-none" dropdownToggle>{{user.name | titlecase}}</a>
-        <div class="dropdown-menu" *dropdownMenu>
+        <div class="dropdown-menu dropdown-menu-end shadow-sm" *dropdownMenu>
           <a class="dropdown-item" routerLink="/user/edit">Edit Profile</a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" (click)="logout()">Logout</a>
