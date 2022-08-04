@@ -22,7 +22,11 @@ namespace DotNetCoreAngular.Helpers
                 .ForMember(dest => dest.SenderUsername, opt => opt.MapFrom(src =>
                     src.Sender.Username))
                 .ForMember(dest => dest.RecipientUsername, opt => opt.MapFrom(src =>
-                    src.Recipient.Username));
+                    src.Recipient.Username))
+            .ForMember(dest => dest.SenderName, opt => opt.MapFrom(src =>
+                    src.Sender.Name))
+                .ForMember(dest => dest.RecipientName, opt => opt.MapFrom(src =>
+                    src.Recipient.Name));
 
             CreateMap<Photo, PhotoDto>();
             CreateMap<UserUpdateDto, User>();

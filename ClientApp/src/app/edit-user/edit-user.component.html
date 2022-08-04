@@ -36,21 +36,42 @@
         <tabset class="member-tabset">
             <tab heading='About {{userDetail.name}}'>
                 <form #editForm="ngForm" id="editForm" (ngSubmit)="update(editForm)">
-                    <h4>Description</h4>
-                    <textarea class="form-control" [(ngModel)]="userDetail.introduction" name="introduction"
+                    <div class="mb-3">
+                        <label for="userEmail" class="form-label fw-bold">Email</label>
+                        <input type="text" #userEmail="ngModel" id = "userEmail" class="form-control" [(ngModel)]="userDetail.email" name="email" required>
+                        <small class="text-danger" *ngIf="userEmail.invalid && userEmail.touched">Email is required.</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="username" class="form-label fw-bold">Username</label>
+                        <input type="text" id="username" #username="ngModel" (blur)="checkUsername(username.value)" class="form-control" 
+                            [(ngModel)]="userDetail.username" name="username" required>
+                        <small class="text-danger" *ngIf="username.invalid && username.touched">Username is required.</small>
+                        <small class="text-danger" *ngIf="!isUsernameAvailable">Username is not available.</small>
+                        <small class="text-success" *ngIf="isUsernameAvailable && username.touched && username.dirty && username.valid">Username is available.</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="userIntro" class="form-label fw-bold">Description</label>
+                        <textarea id="userIntro" class="form-control" [(ngModel)]="userDetail.introduction" name="introduction"
                         rows="6"></textarea>
-                    <h4 class="mt-2">Looking for</h4>
-                    <textarea class="form-control" [(ngModel)]="userDetail.lookingFor" name="lookingFor"
+                    </div>
+                    <div class="mb-3">
+                        <label for="userLookingFor" class="form-label fw-bold">Looking for</label>
+                        <textarea id="userLookingFor" class="form-control" [(ngModel)]="userDetail.lookingFor" name="lookingFor"
                         rows="6"></textarea>
-                    <h4 class="mt-2">Interests</h4>
-                    <textarea class="form-control" [(ngModel)]="userDetail.interests" name="interests"
+                    </div>
+                    <div class="mb-3">
+                        <label for="userInterests" class="form-label fw-bold">Interests</label>
+                        <textarea id="userInterests" class="form-control" [(ngModel)]="userDetail.interests" name="interests"
                         rows="6"></textarea>
-                    <h4 class="mt-2">Location Details: </h4>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Location Details:</label>
                     <div class="form-inline">
                         <label for="city">City: </label>
                         <input [(ngModel)]="userDetail.city" type="text" name="city" class="form-control mx-2">
                         <label for="city">Country: </label>
                         <input [(ngModel)]="userDetail.country" type="text" name="country" class="form-control mx-2">
+                    </div>
                     </div>
                 </form>
 

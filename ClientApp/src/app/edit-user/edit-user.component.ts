@@ -77,7 +77,7 @@ export class EditUserComponent implements OnInit, AfterViewInit {
   }
 
   checkUsername(username: string) {
-    if (username == this.user?.username)
+    if (username == this.user?.username || username == '')
       return;
 
     this._userService.getByUsername(username).subscribe(data => {
