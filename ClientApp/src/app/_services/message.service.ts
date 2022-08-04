@@ -6,7 +6,6 @@ import { environment } from 'src/environments/environment';
 import { Message } from '../_models/message';
 import { TrackMessageThread } from '../_models/trackMessageThread';
 import { User } from '../_models/user';
-import { UserTyping } from '../_models/userTyping';
 import { getPaginatedResult, getPaginationHeaders } from './paginationHelper';
 
 @Injectable({
@@ -21,7 +20,8 @@ export class MessageService {
   private _messageSource = new BehaviorSubject<Message[]>([]);
   messageThread$ = this._messageSource.asObservable();
 
-  private _recipientIsTypingSource = new BehaviorSubject<UserTyping[]>([]);
+  private _typingSourceSet = new Set<string>();
+  private _recipientIsTypingSource = new BehaviorSubject<Set<string>>(new Set<string>());
   recipientIsTypingSource$ = this._recipientIsTypingSource.asObservable();
 
   private _trackMessageThreadSource = new BehaviorSubject<TrackMessageThread[]>([]);
@@ -68,14 +68,14 @@ export class MessageService {
       }
     })
 
-    this._hubConnection.on('UserIsTyping', username => {
-      let userIsTyping = new UserTyping(username, true);
-
-      this._recipientIsTypingSource.next([...this._recipientIsTypingSource.getValue(), userIsTyping]);
+    this._hubConnection.on('UserIsTyping', (username: string) => {
+      this._typingSourceSet.add(username);
+      this._recipientIsTypingSource.next(this._typingSourceSet);
     })
 
-    this._hubConnection.on('UserHasStoppedTyping', username => {
-      this._recipientIsTypingSource.next(this._recipientIsTypingSource.getValue().filter(f => f.username != username));
+    this._hubConnection.on('UserHasStoppedTyping', (username: string) => {
+      this._typingSourceSet.delete(username);
+      this._recipientIsTypingSource.next(this._typingSourceSet);
     })
   }
 

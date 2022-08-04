@@ -30,12 +30,12 @@ export class UserChatComponent implements OnInit, AfterViewInit, AfterViewChecke
   friendUsername!: string;
   messageContent!: string;
   sentTypingEvent: boolean = true;
-  isRecipientTyping: boolean = false;
   user!: User;
   friendDetails!: UserDetail;
   trackChat!: TrackMessageThread;
   showChatDate: boolean = false;
   loadMessageCount = environment.loadMessageCount;
+  messageLoading: boolean = false;
   private keyCodeToSkipTypingEvent: number[] = [13];
 
   constructor(
@@ -59,7 +59,6 @@ export class UserChatComponent implements OnInit, AfterViewInit, AfterViewChecke
 
   ngAfterViewInit() {
     this.sendEventWhenUserStopsTyping();
-    this.checkIfRecipientTyping();
     this.loadChatPagination();
   }
 
@@ -78,12 +77,6 @@ export class UserChatComponent implements OnInit, AfterViewInit, AfterViewChecke
   loadChatPagination() {
     this.messageService.trackMessageThread$.subscribe(response => this.trackChat = response.filter(f => f.friendUsername ==
       this.friendUsername)[0]);
-  }
-
-  checkIfRecipientTyping() {
-    this.messageService.recipientIsTypingSource$.subscribe(res => {
-      this.isRecipientTyping = res.filter(f => f.username == this.friendUsername).length != 0;
-    })
   }
 
   sendEventWhenUserStopsTyping() {
@@ -124,8 +117,10 @@ export class UserChatComponent implements OnInit, AfterViewInit, AfterViewChecke
     let scroll = Math.ceil(chatContainerOffsetHeight - scrollTop);
 
     if (scroll == chatlistOffsetHeight && this.trackChat.messageLoaded < this.trackChat.totalMessages) {
+      this.messageLoading = true;
       this.messageService.loadMessageThreadOnScroll(this.friendUsername, this.trackChat.messageLoaded, this.loadMessageCount).then(() => {
-        this.chatContainer.nativeElement.scrollTop = scrollTop + 1;
+        this.chatContainer.nativeElement.scrollTop = scrollTop;
+        this.messageLoading = false;
       })
     }
 

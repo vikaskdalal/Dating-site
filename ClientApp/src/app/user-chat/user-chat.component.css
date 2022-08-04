@@ -34,7 +34,11 @@
 	font-size: 13px;
 }
 
-
+.message-loader-spinner{
+	position: sticky;
+    top: 5px;
+    text-align: center;
+}
 .chat {
 	background: #f1f0e8;
 }

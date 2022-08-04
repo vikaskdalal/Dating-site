@@ -21,7 +21,7 @@ namespace DotNetCoreAngular.SignalR
 
             var currentUsers = _tracker.GetOnlineUsers();
 
-            await Clients.Client(Context.ConnectionId).SendAsync("GetOnlineUsers", currentUsers);
+            await Clients.All.SendAsync("GetOnlineUsers", currentUsers);
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception)
