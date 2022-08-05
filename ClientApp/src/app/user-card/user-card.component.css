@@ -1,9 +1,17 @@
 @keyframes fa-blink {
-    0% {opacity: 1;}
-    100% {opacity: 0.4;}
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.4;
+    }
 }
 
 .is-online {
     animation: fa-blink 1.5s linear infinite;
     color: rgb(1, 189, 42);
-} 
+}
+.card-footer button{
+    font-size: .900rem;
+}

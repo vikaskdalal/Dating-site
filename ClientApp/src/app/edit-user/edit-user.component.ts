@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ToastrService } from 'ngx-toastr';
@@ -14,75 +14,77 @@ import { UserService } from '../_services/user.service';
   templateUrl: './edit-user.component.html',
   styleUrls: ['./edit-user.component.css']
 })
-export class EditUserComponent implements OnInit {
+export class EditUserComponent implements OnInit, AfterViewInit {
 
-  @ViewChild('editForm') editForm! : NgForm;
+  @ViewChild('editForm') editForm!: NgForm;
   userDetail!: UserDetail;
-  user! : User | null;
+  user!: User | null;
   gender = Gender;
-  genderDropdown : SelectDropDown[] = [];
-  isUsernameAvailable : boolean = true;
+  genderDropdown: SelectDropDown[] = [];
+  isUsernameAvailable: boolean = true;
 
-  @HostListener('window:beforeunload', ['$event']) unloadNotification($event : any){
-    if(this.editForm?.dirty)
+  @HostListener('window:beforeunload', ['$event']) unloadNotification($event: any) {
+    if (this.editForm?.dirty)
       $event.returnValue = true;
   }
 
-  constructor(private _userService : UserService, private _accountService : AccountService, private _toastr : ToastrService,
-              private _titleService : Title) { 
+  constructor(private _userService: UserService, private _accountService: AccountService,
+    private _toastr: ToastrService, private _titleService: Title) {
     this._accountService.currentUser$.subscribe(user => this.user = user);
   }
-  
+
 
   ngOnInit(): void {
     this.loadUser();
     this.createGenderDropdown();
-    this._titleService.setTitle("User Profile");
   }
 
-  createGenderDropdown(){
-    let keys = Object.values(this.gender).map((key :any) => this.gender[key]).filter(value => typeof value === 'string') as string[];
-    
-    keys.forEach((element :any)=> {
-      this.genderDropdown.push({'value' : element ,'id' : this.gender[element]});
-     
+  ngAfterViewInit(): void {
+    this._titleService.setTitle("User Profile - " + this.user?.name);
+  }
+
+  createGenderDropdown() {
+    let keys = Object.values(this.gender).map((key: any) => this.gender[key]).filter(value => typeof value === 'string') as string[];
+
+    keys.forEach((element: any) => {
+      this.genderDropdown.push({ 'value': element, 'id': this.gender[element] });
+
     });
   }
 
-  loadUser(){
+  loadUser() {
     this._userService.getUser(this.user?.email).subscribe(
-      user =>{
+      user => {
         this.userDetail = user
       },
-      error =>{
+      error => {
         this._toastr.error('Could not fetch data. Please try again after some time.')
         console.log(error)
       }
-      );
+    );
   }
 
-  update(form : NgForm){
-    this._userService.updateUser(this.userDetail).subscribe(u => 
-      {
-        console.log(u)
-        form.form.markAsPristine();
-        form.form.markAsTouched();
-        this._toastr.success("Profile has been updated");
-      }
-    
+  update(form: NgForm) {
+    this._userService.updateUser(this.userDetail).subscribe(u => {
+      console.log(u)
+      form.form.markAsPristine();
+      form.form.markAsTouched();
+      this._toastr.success("Profile has been updated");
+    }
+
     );
     console.log(this.userDetail);
   }
 
-  checkUsername(username : string){
-    if(username == this.user?.username)
+  checkUsername(username: string) {
+    if (username == this.user?.username || username == '')
       return;
 
     this._userService.getByUsername(username).subscribe(data => {
-        if(data == null)
-          this.isUsernameAvailable = true;
-        else
-          this.isUsernameAvailable = false;
+      if (data == null)
+        this.isUsernameAvailable = true;
+      else
+        this.isUsernameAvailable = false;
     });
     console.log(username);
   }

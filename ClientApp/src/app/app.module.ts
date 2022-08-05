@@ -28,6 +28,11 @@ import { DatePipe } from '@angular/common';
 import { UserChatComponent } from './user-chat/user-chat.component';
 import { TimeAgoPipe } from './_pipes/time-ago.pipe';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
+import { ChatDatePipe } from './_pipes/chat-date.pipe';
+import { ModalComponent } from './modal/modal.component';
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { LoginComponent } from './login/login.component';
+import { HighlightSearchPipe } from './_pipes/highlight-search.pipe';
 
 @NgModule({
   declarations: [
@@ -44,7 +49,11 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
     UserLikeComponent,
     PhotoEditorComponent,
     UserChatComponent,
-    TimeAgoPipe
+    TimeAgoPipe,
+    ChatDatePipe,
+    ModalComponent,
+    LoginComponent,
+    HighlightSearchPipe
   ],
   imports: [
     BrowserModule,
@@ -59,7 +68,8 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
     }),
     TabsModule.forRoot(),
     FileUploadModule,
-    PaginationModule.forRoot()
+    PaginationModule.forRoot(),
+    ModalModule.forRoot()
   ],
   providers: [
     DatePipe,

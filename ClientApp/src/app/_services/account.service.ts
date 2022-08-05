@@ -12,52 +12,52 @@ import { PresenceService } from './presence.service';
 export class AccountService {
   baseUrl = environment.apiUrl;
 
-  private currentUserSource = new BehaviorSubject<User | null>(null);
-  
-  currentUser$ = this.currentUserSource.asObservable();
+  private _currentUserSource = new BehaviorSubject<User | null>(null);
 
-  constructor(private _http : HttpClient, private _presenceService : PresenceService) { }
+  currentUser$ = this._currentUserSource.asObservable();
 
-  login(model : any){
+  constructor(private _http: HttpClient, private _presenceService: PresenceService) { }
+
+  login(model: any) {
     return this._http.post<User>(this.baseUrl + 'account/login', model).pipe(
       map(response => {
-          const user = response;
-          if(user){
-            localStorage.setItem('user', JSON.stringify(user));
-            this.currentUserSource.next(user);
-            this._presenceService.createHubConnection(user);
-          }
+        const user = response;
+        if (user) {
+          localStorage.setItem('user', JSON.stringify(user));
+          this._currentUserSource.next(user);
+          this._presenceService.createHubConnection(user);
+        }
       })
     )
   }
 
-  register(model : any){
+  register(model: any) {
     return this._http.post<User>(this.baseUrl + 'account/register', model).pipe(
       map(response => {
-          const user = response;
-          if(user){
-            localStorage.setItem('user', JSON.stringify(user));
-            this.currentUserSource.next(user);
-            this._presenceService.createHubConnection(user);
-          }
-          return user;
+        const user = response;
+        if (user) {
+          localStorage.setItem('user', JSON.stringify(user));
+          this._currentUserSource.next(user);
+          this._presenceService.createHubConnection(user);
+        }
+        return user;
       })
     )
   }
 
-  setCurrentUser(user : User | null){
-    this.currentUserSource.next(user);
+  setCurrentUser(user: User | null) {
+    this._currentUserSource.next(user);
   }
 
-  isTokenExpired(user : User) : boolean {
-      const expires = new Date(user.tokenExpire);
-      const timeout = expires.getTime() - Date.now();
-      return timeout < 0;
+  isTokenExpired(user: User): boolean {
+    const expires = new Date(user.tokenExpire);
+    const timeout = expires.getTime() - Date.now();
+    return timeout < 0;
   }
 
-  logout(){
+  logout() {
     localStorage.removeItem("user");
-    this.currentUserSource.next(null);
+    this._currentUserSource.next(null);
     this._presenceService.stopHubConnection();
   }
 }

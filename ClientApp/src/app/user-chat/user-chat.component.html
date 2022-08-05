@@ -1,85 +1,97 @@
-<div class="bg-info p-1 rounded" *ngIf="friendDetails">
-    <span class="chat-img float-right">
-        <img class="rounded-circle" src="{{friendDetails.photoUrl || './assets/user.png'}}" 
-            alt="{{friendDetails.name}}">
-    </span>
-    <div class="d-inline">
-        <span class="px-1">{{friendDetails.name}}</span>
-        <span  *ngIf = "(presenceService.onlineUsers$ | async)?.includes(friendUsername)">
-            <i class="fa fa-circle text-success online-icon" aria-hidden="true"></i>
-        </span>
-    </div>
-</div>
-
-<div class="card mb-3">
-    <div #chatContainer (scroll)="onScrollUp($event)" class="card-body chat-container">
-        <div *ngIf="(messageService.messageThread$ | async)?.length === 0">
-            No messages yet... say hi by using the message box below
-        </div>
-
-        <ul #chatList *ngIf="(messageService.messageThread$ | async)?.length != 0" class="chat">
-            <li *ngFor="let message of (messageService.messageThread$ | async) as messages; let i = index">
-                <div [class.text-end] = "messages[messages.length-1-i].senderUsername != friendUsername">
-                    <div *ngIf="messages[messages.length-1-i].senderUsername == friendUsername">
-                        <span *ngIf="i == 0 || messages.length-i-2 < 0 || messages[messages.length-1-i].senderUsername != messages[messages.length-i-2].senderUsername" class="chat-img float-right">
-                            <img class="rounded-circle" src="{{messages[messages.length-1-i].senderPhotoUrl || './assets/user.png'}}" 
-                                alt="{{messages[messages.length-1-i].senderUsername}}">
-                        </span>
-                        <p class="mb-0 ms-2 d-inline">{{messages[messages.length-1-i].content}}</p>
-                        
-                        <small [class.d-inline]="showChatDate" [class.d-none]="!showChatDate" class="text-muted float-end">
-                            <span class="fa fa-clock-o">{{messages[messages.length-1-i].messageSent | timeAgo}}</span>
-                            <span class="text-danger" *ngIf="!messages[messages.length-1-i].dateRead 
-                                && messages[messages.length-1-i].senderUsername !== friendUsername">
-                                <!-- (unread) -->
-                            </span>
-                            <span class="text-success" *ngIf="messages[messages.length-1-i].dateRead 
-                                && messages[messages.length-1-i].senderUsername !== friendUsername">
-                                ({{messages[messages.length-1-i].dateRead }})
-                            </span>
-                        </small>
-                    </div>
-                    <div *ngIf="messages[messages.length-1-i].senderUsername != friendUsername">
-                        <small [class.d-inline]="showChatDate" [class.d-none]="!showChatDate" class="text-muted float-start">
-                            <span class="fa fa-clock-o">{{messages[messages.length-1-i].messageSent | timeAgo}}</span>
-                            <span class="text-danger" *ngIf="!messages[messages.length-1-i].dateRead 
-                                && messages[messages.length-1-i].senderUsername !== friendUsername">
-                                <!-- (unread) -->
-                            </span>
-                            <span class="text-success" *ngIf="messages[messages.length-1-i].dateRead 
-                                && messages[messages.length-1-i].senderUsername !== friendUsername">
-                                ({{messages[messages.length-1-i].dateRead }})
-                            </span>
-                        </small>
-
-                        <p class="mb-0 me-2 d-inline">{{messages[messages.length-1-i].content}}</p>
-                        <span *ngIf="i == 0 || messages.length-i-2 < 0 || messages[messages.length-1-i].senderUsername != messages[messages.length-i-2].senderUsername" class="chat-img float-right">
-                            <img class="rounded-circle" src="{{messages[messages.length-1-i].senderPhotoUrl || './assets/user.png'}}" 
-                                alt="{{messages[messages.length-1-i].senderUsername}}">
-                        </span>
-                    </div>
-                </div>
-            </li>
-            <li *ngIf="isRecipientTyping">Typing...</li>
-        </ul>
-    </div>
-
-    <div class="card-footer">
-        <form #messageForm="ngForm" (ngSubmit)="sendMessage()" autocomplete="off">
-            <div class="input-group">
-                <input 
-                    #chatBox 
-                    name="messageContent"
-                    required
-                    [(ngModel)]="messageContent"
-                    (keypress)="onKeyUpEvent($event)"
-                    type="text" 
-                    class="form-control input-sm" 
-                    placeholder="Send a private message">
-                <div class="input-group-append">
-                    <button [disabled]="!messageForm.valid" class="btn btn-primary" type="submit">Send</button>
+<div class="chat">
+    <div class="chat-header" *ngIf="friendDetails">
+        <div class="profile user-select-none">
+            <div class="left">
+                <div class="d-inline friend-profile" routerLink="/user/{{friendUsername}}">
+                    <img src="{{friendDetails.photoUrl || './assets/user.png'}}" class="pp">
+                    <h2>{{friendDetails.name}}</h2>
+                    <span *ngIf="(presenceService.onlineUsers$ | async)?.includes(friendUsername)">
+                        <ng-container *ngIf="!(messageService.recipientIsTypingSource$ | async)?.has(friendUsername)">online</ng-container>
+                        <ng-container *ngIf="(messageService.recipientIsTypingSource$ | async)?.has(friendUsername)">typing...</ng-container>
+                    </span>
                 </div>
             </div>
+            <div class="right ">
+                <span (click)="showSearchBox()" class="search-icon">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                </span>
+                <div class="dropdown d-inline " dropdown>
+                    <a class="cursor-pointer text-light text-decoration-none" dropdownToggle><img class="icon" src="./assets/more.png"></a>
+                    <div class="dropdown-menu dropdown-menu-end shadow-sm" *dropdownMenu>
+                      <a class="dropdown-item" [class.disabled]="(messageService.messageThread$ | async)?.length === 0" (click)="clearChat()">Clear chat</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="chat-body">
+        <div *ngIf="showSearchContainer" class="search-container col-4 shadow-sm">
+           
+            <div class="p-1 shadow-sm search-box-container">
+                <input [(ngModel)]="searchValue" type="text" (keyup.enter)="searchInChat(search)" #search class="form-control" placeholder="Type to search" >
+            </div>
+            
+            <!-- <button class="btn btn-primary mb-2" (click)="searchInChat(search)">Search</button> -->
+            
+            <ng-container *ngFor="let search of searchResult">
+                
+                <div class="search-result-list border-bottom" (click)="scrollToMessage('messages-container-'+search.id)">
+                    <small>{{search.messageDate | chatDate : 'MMM d, y'}}</small>
+                    <p class="p-0 m-0" [innerHTML]="search.text | highlightSearch: searchValue"></p>
+                </div>
+            </ng-container>
+        </div>
+        <div #chatContainer (scroll)="onScrollUp($event)" class="chat-box chat-container">
+            <div *ngIf="!messageLoading && (messageService.messageThread$ | async)?.length === 0">
+                No messages yet... say hi by using the message box below
+            </div>
+            
+            <div class="chat-messages-container" #chatList *ngIf="(messageService.messageThread$ | async)?.length != 0">
+                <div *ngIf="messageLoading" class="message-loader-spinner">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <ng-container *ngFor="let message of (messageService.messageThread$ | async) as messages; let i = index; trackBy: trackByMessageId;">
+                    <div class="chat-group-by-date text-center" *ngIf="i == 0 || ((message.messageSent | date : 'MMM d, y') != (messages[i-1].messageSent | date : 'MMM d, y'))">
+                        {{message.messageSent | chatDate : 'MMM d, y'}}
+                    </div>
+                    <div id="messages-container-{{i}}" [ngClass]="message.senderUsername != friendUsername ? 'chat-r' : 'chat-l'" class="single-message">
+                        <ng-container *ngIf="message.senderUsername == friendUsername">
+                            <div class="mess">
+                                <p id="{{i}}" attr.message-date="{{message.messageSent}}" class="chat-message">{{message.content}}</p>
+                                <div class="check">
+                                    <span>{{message.messageSent | date : 'h:mm a'}}</span>
+                                </div>
+                            </div>
+                            <div class="sp"></div>
+                        </ng-container>
+                        <ng-container *ngIf="message.senderUsername != friendUsername">
+                            <div class="sp"></div>
+                            <div class="mess mess-r">
+                                <p id="{{i}}" attr.message-date="{{message.messageSent}}" class="chat-message">{{message.content}}</p>
+                                <div class="check">
+                                    <span>{{message.messageSent | date : 'h:mm a'}}</span>
+                                    <i *ngIf="message.dateRead"
+                                        class='fa fa-check fa-lg text-primary messages-read-check ms-1'></i>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+
+    
+
+    <div class="chat-footer">
+        <form #messageForm="ngForm" (ngSubmit)="sendMessage()" autocomplete="off">
+
+            <input #chatBox name="messageContent" required [(ngModel)]="messageContent"
+                (keypress)="onKeyUpEvent($event)" type="text" placeholder="Send a private message">
+            <!-- <button [disabled]="!messageForm.valid" class="btn btn-primary d-none d-sm-inline" type="submit">Send</button> -->
         </form>
     </div>
+
 </div>

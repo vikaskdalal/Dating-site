@@ -96,5 +96,23 @@ namespace DotNetCoreAngular.Controllers
 
             return BadRequest("Problem deleting the message");
         }
+
+        [HttpDelete("delete-user-chat/{recipientUsername}")]
+        public async Task<IActionResult> ClearUserChat(string recipientUsername)
+        {
+            var userId = User.GetUserId();
+            var recipientUser = await _context.UserRepository.GetByUsernameAsync(recipientUsername);
+
+            if (recipientUser == null)
+                return BadRequest();
+
+            _context.MessageRepository.ClearUserChat(userId, recipientUser.Id);
+
+            if (_context.HasChanges())
+                await _context.SaveAsync();
+
+            return Ok();
+
+        }
     }
 }

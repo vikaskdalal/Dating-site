@@ -13,7 +13,7 @@
         <div *ngIf="users && users.length != 0">   
             <span class="text-success mt-4">{{headingText}}</span>
     </div>
-        <div class="row row-cols-2 row-cols-md-4 row-cols-lg-5 row-cols-xl-5 row-cols-sm-3 g-4 mb-5">
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 row-cols-xl-5 row-cols-sm-2 g-4 mb-5">
             
             <ng-container *ngFor="let user of users" class="col-6 col-sm-4 col-xl-2 col-lg-3 col-md-4">
                 <app-user-card [showLikeButton]="false" [user]="user"></app-user-card>

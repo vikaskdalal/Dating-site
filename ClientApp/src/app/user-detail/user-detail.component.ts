@@ -11,18 +11,17 @@ import { UserService } from '../_services/user.service';
   styleUrls: ['./user-detail.component.css']
 })
 export class UserDetailComponent implements OnInit {
-  userDetails! : UserDetail;
+  userDetails!: UserDetail;
 
-  constructor(private _userService : UserService, private _route : ActivatedRoute, 
-    public presenceService : PresenceService, private _titleService : Title) 
-    { 
-    }
+  constructor(private _userService: UserService, private _route: ActivatedRoute,
+    public presenceService: PresenceService, private _titleService: Title) {
+  }
   ngOnInit(): void {
     this.loadUser();
     this._titleService.setTitle("User Details");
   }
 
-  loadUser(){
+  loadUser() {
     this._userService.getByUsername(this._route.snapshot.paramMap.get('username')).subscribe(data => {
       this.userDetails = data;
     })

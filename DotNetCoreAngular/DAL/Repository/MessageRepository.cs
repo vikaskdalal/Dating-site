@@ -12,11 +12,12 @@ namespace DotNetCoreAngular.DAL.Repository
     public class MessageRepository : GenericRepository<Message>, IMessageRepository
     {
         private readonly IMapper _mapper;
-
+        private readonly DatabaseContext _context;
         public MessageRepository(DatabaseContext context, IMapper mapper) 
             : base(context)
         {
             _mapper = mapper;
+            _context = context;
         }
 
         public async Task<PagedList<MessageDto>> GetMessagesForUserAsync(MessageParams messageParams)
@@ -45,7 +46,7 @@ namespace DotNetCoreAngular.DAL.Repository
                 .SingleOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<PagedList<MessageDto>> GetMessageThreadAsync(MessageThreadParams messageThreadParams)
+        public async Task<MessageThreadDto> GetMessageThreadAsync(MessageThreadParams messageThreadParams)
         {
             var query = DbSet.AsQueryable()
                 .Include(u => u.Sender).ThenInclude(p => p.Photos)
@@ -60,9 +61,48 @@ namespace DotNetCoreAngular.DAL.Repository
                 .MarkUnreadAsRead(messageThreadParams.CurrentUserId)
                 .OrderByDescending(o => o.MessageSent)
                 .ProjectTo<MessageDto>(_mapper.ConfigurationProvider);
-                //.ToListAsync();
 
-            return await PagedList<MessageDto>.CreateAsync(query, messageThreadParams.PageNumber, messageThreadParams.PageSize);
+            var totalCount = await query.CountAsync();
+            
+            var result = await query.Skip(messageThreadParams.SkipMessages).Take(messageThreadParams.TakeMessages).ToListAsync();
+            result = result.OrderBy(o => o.MessageSent).ToList();
+
+            int totalMessagesLoaded = GetTotalMessagesLoaded(totalCount, messageThreadParams.SkipMessages, messageThreadParams.TakeMessages);
+
+            return new MessageThreadDto(totalCount, totalMessagesLoaded, result);
+        }
+
+        public void ClearUserChat(int senderId, int recipientId)
+        {
+            var messages = DbSet.Where(m =>
+                    m.Recipient.Id == senderId && m.RecipientDeleted == false
+                    && m.Sender.Id == recipientId
+                    ||
+                    m.Recipient.Id == recipientId
+                    && m.Sender.Id == senderId && m.SenderDeleted == false
+                );
+
+            foreach (var message in messages.Where(q => q.SenderId == senderId))
+            {
+                if (message.RecipientDeleted)
+                    DbSet.Remove(message);
+                else
+                    message.SenderDeleted = true;
+            }
+                
+
+            foreach (var message in messages.Where(q => q.RecipientId == senderId))
+            {
+                if (message.SenderDeleted)
+                    DbSet.Remove(message);
+                else
+                    message.RecipientDeleted = true;
+            }
+        }
+
+        private int GetTotalMessagesLoaded(int totalMessages, int skippedMessages, int takeMessages)
+        {
+            return skippedMessages + takeMessages >= totalMessages ? totalMessages : skippedMessages + takeMessages;
         }
     }
 }
