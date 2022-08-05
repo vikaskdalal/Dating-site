@@ -2,3 +2,8 @@
 .dropdown-item {
     cursor: pointer;
 }
+.navbar-items{
+    flex-grow: 1;
+    align-items: center;
+    display: flex;
+}

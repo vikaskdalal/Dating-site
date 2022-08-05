@@ -15,7 +15,7 @@ export class UserListComponent implements OnInit {
 
   pagination!: Pagination | null;
   pageNumber = 1;
-  pageSize = 2;
+  pageSize = 5;
 
   constructor(private _userService: UserService, private _likeService: LikeService) {
   }

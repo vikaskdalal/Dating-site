@@ -30,12 +30,15 @@ export class UserChatComponent implements OnInit, AfterViewInit, AfterViewChecke
   friendUsername!: string;
   messageContent!: string;
   sentTypingEvent: boolean = true;
-  isRecipientTyping: boolean = false;
   user!: User;
   friendDetails!: UserDetail;
   trackChat!: TrackMessageThread;
   showChatDate: boolean = false;
   loadMessageCount = environment.loadMessageCount;
+  messageLoading: boolean = false;
+  showSearchContainer = false;
+  searchResult : Array<{id: string, text: string, messageDate: string}> = [];
+  searchValue = '';
   private keyCodeToSkipTypingEvent: number[] = [13];
 
   constructor(
@@ -59,7 +62,6 @@ export class UserChatComponent implements OnInit, AfterViewInit, AfterViewChecke
 
   ngAfterViewInit() {
     this.sendEventWhenUserStopsTyping();
-    this.checkIfRecipientTyping();
     this.loadChatPagination();
   }
 
@@ -69,6 +71,7 @@ export class UserChatComponent implements OnInit, AfterViewInit, AfterViewChecke
 
   ngOnDestroy(): void {
     this.messageService.stopHubConnection();
+    this.messageService.clearChatMessageThread();
   }
 
   loadFriendsDetails() {
@@ -76,14 +79,9 @@ export class UserChatComponent implements OnInit, AfterViewInit, AfterViewChecke
   }
 
   loadChatPagination() {
-    this.messageService.trackMessageThread$.subscribe(response => this.trackChat = response.filter(f => f.friendUsername ==
-      this.friendUsername)[0]);
-  }
-
-  checkIfRecipientTyping() {
-    this.messageService.recipientIsTypingSource$.subscribe(res => {
-      this.isRecipientTyping = res.filter(f => f.username == this.friendUsername).length != 0;
-    })
+    this.messageService.trackMessageThread$.subscribe(response => {
+      this.trackChat = response.filter(f => f.friendUsername == this.friendUsername)[0];
+    });
   }
 
   sendEventWhenUserStopsTyping() {
@@ -124,8 +122,10 @@ export class UserChatComponent implements OnInit, AfterViewInit, AfterViewChecke
     let scroll = Math.ceil(chatContainerOffsetHeight - scrollTop);
 
     if (scroll == chatlistOffsetHeight && this.trackChat.messageLoaded < this.trackChat.totalMessages) {
+      this.messageLoading = true;
       this.messageService.loadMessageThreadOnScroll(this.friendUsername, this.trackChat.messageLoaded, this.loadMessageCount).then(() => {
-        this.chatContainer.nativeElement.scrollTop = scrollTop + 1;
+        this.chatContainer.nativeElement.scrollTop = scrollTop;
+        this.messageLoading = false;
       })
     }
 
@@ -145,6 +145,39 @@ export class UserChatComponent implements OnInit, AfterViewInit, AfterViewChecke
 
   trackByMessageId(index : any, item : Message){
     return item.id;
+  }
+
+  showSearchBox(){
+    this.showSearchContainer = !this.showSearchContainer;
+  }
+
+  searchInChat(search : any){
+    this.searchResult = [];
+    
+    if(this.searchValue.trim() == '')
+      return;
+    
+    var slides = document.getElementsByClassName("chat-message");
+    for (var i = 0; i < slides.length; i++) {
+      let item = slides.item(i);
+      if(item != null ){
+        let message = item?.textContent!;
+        if(message.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1){
+          this.searchResult.push({id :item.id, text :message, messageDate : item.getAttribute('message-date')!});
+        }
+     }
+    }
+  }
+
+  scrollToMessage(id: string){
+    const element = document.getElementById(id);
+    element?.classList.add('highlight');
+    document.getElementById(id)?.scrollIntoView({
+      behavior: 'smooth'
+    });
+    setTimeout(() => {
+      element?.classList.remove('highlight');
+    }, 1500);
   }
 
 }

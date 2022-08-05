@@ -8,7 +8,7 @@ import { AccountService } from '../_services/account.service';
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
-  loginModel: any = {};
+  
   currentUsername?: string = undefined;
   isShown = false;
 
@@ -16,13 +16,6 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit(): void {
     this.accountService.currentUser$.subscribe(q => this.currentUsername = q?.email);
-  }
-
-  login() {
-    this.accountService.login(this.loginModel).subscribe(res => {
-      this._router.navigateByUrl('/members');
-      console.log(res);
-    })
   }
 
   logout() {
