@@ -36,6 +36,9 @@ export class UserChatComponent implements OnInit, AfterViewInit, AfterViewChecke
   showChatDate: boolean = false;
   loadMessageCount = environment.loadMessageCount;
   messageLoading: boolean = false;
+  showSearchContainer = false;
+  searchResult : Array<{id: string, text: string, messageDate: string}> = [];
+  searchValue = '';
   private keyCodeToSkipTypingEvent: number[] = [13];
 
   constructor(
@@ -142,6 +145,39 @@ export class UserChatComponent implements OnInit, AfterViewInit, AfterViewChecke
 
   trackByMessageId(index : any, item : Message){
     return item.id;
+  }
+
+  showSearchBox(){
+    this.showSearchContainer = !this.showSearchContainer;
+  }
+
+  searchInChat(search : any){
+    this.searchResult = [];
+    
+    if(this.searchValue.trim() == '')
+      return;
+    
+    var slides = document.getElementsByClassName("chat-message");
+    for (var i = 0; i < slides.length; i++) {
+      let item = slides.item(i);
+      if(item != null ){
+        let message = item?.textContent!;
+        if(message.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1){
+          this.searchResult.push({id :item.id, text :message, messageDate : item.getAttribute('message-date')!});
+        }
+     }
+    }
+  }
+
+  scrollToMessage(id: string){
+    const element = document.getElementById(id);
+    element?.classList.add('highlight');
+    document.getElementById(id)?.scrollIntoView({
+      behavior: 'smooth'
+    });
+    setTimeout(() => {
+      element?.classList.remove('highlight');
+    }, 1500);
   }
 
 }

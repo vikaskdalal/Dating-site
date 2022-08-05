@@ -25,7 +25,11 @@
 	font-size: 12px;
 	font-weight: 600;
 }
-
+.right .icon {
+    display: inline-block;
+    width: 25px;
+    margin-left: 10px;
+}
 .chat-message {
 	margin: 0px;
 }
@@ -33,7 +37,32 @@
 .messages-read-check {
 	font-size: 13px;
 }
-
+.search-container{
+	position: sticky;
+    top: 0;
+    background: white;
+    height: 490px;
+    float: right;
+	overflow: scroll;
+}
+.search-box-container{
+	position: sticky;
+    top: 0;
+}
+.search-result-list{
+	cursor: pointer;
+	display: block;
+    padding: 5px 10px;
+}
+.search-result-list:hover{
+	background: #E7E9EB;
+}
+.search-icon{
+	font-size: 20px;
+    color: white;
+    margin-right: 5px;
+	cursor: pointer;
+}
 .message-loader-spinner{
 	position: sticky;
     top: 5px;
@@ -83,7 +112,7 @@
 	font-size: 20px;
 }
 
-.profile span {
+.profile .left span {
 	color: #ccc;
 	position: absolute;
 	top: 37px;
@@ -145,6 +174,9 @@
 .chat-box .mess-r {
 	background: #E2FFC7;
 	border-radius: 10px 10px 0 10px;
+}
+.mess{
+	transition: color 2s;
 }
 
 .chat-box .check {

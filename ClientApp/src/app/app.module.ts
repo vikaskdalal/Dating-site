@@ -32,6 +32,7 @@ import { ChatDatePipe } from './_pipes/chat-date.pipe';
 import { ModalComponent } from './modal/modal.component';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { LoginComponent } from './login/login.component';
+import { HighlightSearchPipe } from './_pipes/highlight-search.pipe';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import { LoginComponent } from './login/login.component';
     TimeAgoPipe,
     ChatDatePipe,
     ModalComponent,
-    LoginComponent
+    LoginComponent,
+    HighlightSearchPipe
   ],
   imports: [
     BrowserModule,
