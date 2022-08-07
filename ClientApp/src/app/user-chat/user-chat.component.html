@@ -15,6 +15,8 @@
                 <span (click)="showSearchBox()" class="search-icon">
                     <i class="fa fa-search" aria-hidden="true"></i>
                 </span>
+                <img src="./assets/video.png" (click)="callFriend(videoCallType)" class="cursor-pointer icon">
+                <img src="./assets/phone.png" (click)="callFriend(audioCallType)" class="cursor-pointer icon">
                 <div class="dropdown d-inline " dropdown>
                     <a class="cursor-pointer text-light text-decoration-none" dropdownToggle><img class="icon" src="./assets/more.png"></a>
                     <div class="dropdown-menu dropdown-menu-end shadow-sm" *dropdownMenu>
@@ -94,4 +96,27 @@
         </form>
     </div>
 
+</div>
+
+
+<div *ngIf="showCallingWindow" class="user-select-none calling-container d-flex align-items-center justify-content-center">
+    <div class="friend-profile-call-end-button text-center">
+        <div class="calling-friend mb-4">
+            <small id="calling_text" *ngIf="callingOrGettingCallToggle" class="d-block">Calling...</small>
+            <span class="friend-name">{{friendDetails.name}}</span>
+            <small *ngIf="!callingOrGettingCallToggle" class="d-block">is Calling...</small>
+        </div>
+        <img src="{{friendDetails.photoUrl || './assets/user.png'}}" class="friend-profile-img">
+        <span *ngIf="callingOrGettingCallToggle" class="call-end-btn" (click)="cancelCall()"  title="Cancel the call">
+            <i class="fa fa-phone" aria-hidden="true"></i>
+        </span>
+        <div *ngIf="!callingOrGettingCallToggle">
+            <span class="call-accept-btn me-3" (click)="callAcceptedOrRejected(true)" title="Accept the call">
+                <i class="fa fa-phone" aria-hidden="true"></i>
+            </span>
+            <span class="call-end-btn" (click)="callAcceptedOrRejected(false)" title="Reject the call">
+                <i class="fa fa-phone" aria-hidden="true"></i>
+            </span>
+        </div>
+    </div>
 </div>

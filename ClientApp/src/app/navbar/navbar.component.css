@@ -7,3 +7,6 @@
     align-items: center;
     display: flex;
 }
+.navbar{
+    z-index: 10;
+}
