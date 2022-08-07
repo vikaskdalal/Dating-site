@@ -137,6 +137,20 @@ namespace DotNetCoreAngular.SignalR
             await Clients.Client(Context.ConnectionId).SendAsync("ReceiveMessageThreadOnScroll", messages);
         }
 
+        public async Task SendCallNotification(string username, string callType, string callerName)
+        {
+            var connectionsOfFriend = await _context.ConnectionRepository.GetConnctionsOfUser(username);
+
+            var connectionIds = connectionsOfFriend.Select(s => s.ConnectionId);
+
+            await Clients.Clients(connectionIds).SendAsync("ReceiveCallNotification", new {Context.ConnectionId, notificationType = callType, callerName});
+        }
+
+        public async Task SendCallResponse(string callerConnectionId, string callResponse)
+        {
+            await Clients.Client(callerConnectionId).SendAsync("ReceiveCallNotification", new { Context.ConnectionId, notificationType = callResponse });
+        }
+
         #region Private Methods
 
         private async Task<bool> AddToGroup(string groupName)

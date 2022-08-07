@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
-import { BehaviorSubject, take } from 'rxjs';
+import { BehaviorSubject, Subject, take } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { CallNotification } from '../_models/callNotification';
 import { Message } from '../_models/message';
 import { TrackMessageThread } from '../_models/trackMessageThread';
 import { User } from '../_models/user';
@@ -26,6 +27,9 @@ export class MessageService {
 
   private _trackMessageThreadSource = new BehaviorSubject<TrackMessageThread[]>([]);
   trackMessageThread$ = this._trackMessageThreadSource.asObservable();
+
+  private callNotificationSource = new Subject<CallNotification>();
+  callNotification$ = this.callNotificationSource.asObservable();
 
   constructor(private _httpClient: HttpClient) { }
 
@@ -77,6 +81,10 @@ export class MessageService {
       this._typingSourceSet.delete(username);
       this._recipientIsTypingSource.next(this._typingSourceSet);
     })
+
+    this._hubConnection.on('ReceiveCallNotification', response => {
+      this.callNotificationSource.next(response);
+    })
   }
 
   stopHubConnection() {
@@ -116,5 +124,13 @@ export class MessageService {
 
   async loadMessageThreadOnScroll(username: string, skipMessages: number, takeMessages: number) {
     return this._hubConnection.invoke("LoadMessageThreadOnScroll", { recipientUsername: username, skipMessages, takeMessages })
+  }
+
+  async sendCallNotification(friendUsername: string, callType: string, callerName: string){
+    return this._hubConnection.invoke("SendCallNotification", friendUsername, callType, callerName);
+  }
+
+  async sendCallResponse(callerConnectionId: string, callResponse: string){
+    return this._hubConnection.invoke("SendCallResponse", callerConnectionId, callResponse);
   }
 }
