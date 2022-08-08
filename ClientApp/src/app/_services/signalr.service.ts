@@ -3,23 +3,27 @@ import { environment } from 'src/environments/environment';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { ToastrService } from 'ngx-toastr';
 import { User } from '../_models/user';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { CallNotification } from '../_models/callNotification';
 
 @Injectable({
   providedIn: 'root'
 })
-export class PresenceService {
+export class SignalRService {
   hubUrl = environment.hubUrl;
   private _hubConnection!: HubConnection;
 
   private _onlineUserSource = new BehaviorSubject<string[]>([]);
   onlineUsers$ = this._onlineUserSource.asObservable();
 
+  private callNotificationSource = new Subject<CallNotification>();
+  callNotification$ = this.callNotificationSource.asObservable();
+
   constructor(private _toastrService: ToastrService) { }
 
   createHubConnection(user: User) {
     this._hubConnection = new HubConnectionBuilder().
-      withUrl(this.hubUrl + 'presence', {
+      withUrl(this.hubUrl + 'signalR', {
         accessTokenFactory: () => user.token
       })
       .withAutomaticReconnect()
@@ -31,18 +35,22 @@ export class PresenceService {
         console.log(error)
       });
 
-    // this._hubConnection.on('UserIsOnline', username => {
-    //   this._toastrService.info(username + ' is online')
-    // });
-
-    // this._hubConnection.on('UserIsOffline', username => {
-    //   this._toastrService.warning(username + ' is offline')
-    // })
-
     this._hubConnection.on("GetOnlineUsers", (users: string[]) => {
       this._onlineUserSource.next(users);
     })
 
+    this._hubConnection.on('ReceiveCallNotification', response => {
+      this.callNotificationSource.next(response);
+    })
+
+  }
+
+  async sendCallNotification(friendUsername: string, callType: string, callerName: string){
+    return this._hubConnection.invoke("SendCallNotification", friendUsername, callType, callerName);
+  }
+
+  async sendCallResponse(callerConnectionId: string, callResponse: string){
+    return this._hubConnection.invoke("SendCallResponse", callerConnectionId, callResponse);
   }
 
   stopHubConnection() {

@@ -41,7 +41,7 @@ app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
 {
-    endpoints.MapHub<PresenceHub>("hubs/presence");
+    endpoints.MapHub<SignalRHub>("hubs/signalR");
     endpoints.MapHub<MessageHub>("hubs/message");
 });
 

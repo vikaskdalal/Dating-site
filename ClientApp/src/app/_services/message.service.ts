@@ -28,12 +28,9 @@ export class MessageService {
   private _trackMessageThreadSource = new BehaviorSubject<TrackMessageThread[]>([]);
   trackMessageThread$ = this._trackMessageThreadSource.asObservable();
 
-  private callNotificationSource = new Subject<CallNotification>();
-  callNotification$ = this.callNotificationSource.asObservable();
-
   constructor(private _httpClient: HttpClient) { }
 
-  createHubConnection(user: User, otherUser: string) {
+  createHubConnection(user: User, otherUser: string): Promise<any> {
     this._hubConnection = new HubConnectionBuilder()
       .withUrl(this.hubUrl + 'message?user=' + otherUser + '&skipMessage=0&takeMessage=' + this.loadMessageCount, {
         accessTokenFactory: () => user.token
@@ -41,8 +38,10 @@ export class MessageService {
       .withAutomaticReconnect()
       .build();
 
-    this._hubConnection.start().catch(error => console.log(error));
+      return this._hubConnection.start().catch(error => console.log(error));
+  }
 
+  registerEvents(){
     this._hubConnection.on('ReceiveMessageThread', response => {
       this._trackMessageThreadSource.next([response.trackMessageThread]);
       this._messageSource.next(response.messages);
@@ -80,10 +79,6 @@ export class MessageService {
     this._hubConnection.on('UserHasStoppedTyping', (username: string) => {
       this._typingSourceSet.delete(username);
       this._recipientIsTypingSource.next(this._typingSourceSet);
-    })
-
-    this._hubConnection.on('ReceiveCallNotification', response => {
-      this.callNotificationSource.next(response);
     })
   }
 
@@ -126,11 +121,4 @@ export class MessageService {
     return this._hubConnection.invoke("LoadMessageThreadOnScroll", { recipientUsername: username, skipMessages, takeMessages })
   }
 
-  async sendCallNotification(friendUsername: string, callType: string, callerName: string){
-    return this._hubConnection.invoke("SendCallNotification", friendUsername, callType, callerName);
-  }
-
-  async sendCallResponse(callerConnectionId: string, callResponse: string){
-    return this._hubConnection.invoke("SendCallResponse", callerConnectionId, callResponse);
-  }
 }

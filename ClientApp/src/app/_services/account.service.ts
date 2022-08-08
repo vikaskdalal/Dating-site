@@ -4,7 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { User } from '../_models/user';
 import { environment } from 'src/environments/environment';
-import { PresenceService } from './presence.service';
+import { SignalRService } from './signalr.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,10 +13,9 @@ export class AccountService {
   baseUrl = environment.apiUrl;
 
   private _currentUserSource = new BehaviorSubject<User | null>(null);
-
   currentUser$ = this._currentUserSource.asObservable();
 
-  constructor(private _http: HttpClient, private _presenceService: PresenceService) { }
+  constructor(private _http: HttpClient, private _signalrService: SignalRService) { }
 
   login(model: any) {
     return this._http.post<User>(this.baseUrl + 'account/login', model).pipe(
@@ -25,7 +24,7 @@ export class AccountService {
         if (user) {
           localStorage.setItem('user', JSON.stringify(user));
           this._currentUserSource.next(user);
-          this._presenceService.createHubConnection(user);
+          this._signalrService.createHubConnection(user);
         }
       })
     )
@@ -38,7 +37,7 @@ export class AccountService {
         if (user) {
           localStorage.setItem('user', JSON.stringify(user));
           this._currentUserSource.next(user);
-          this._presenceService.createHubConnection(user);
+          this._signalrService.createHubConnection(user);
         }
         return user;
       })
@@ -58,6 +57,6 @@ export class AccountService {
   logout() {
     localStorage.removeItem("user");
     this._currentUserSource.next(null);
-    this._presenceService.stopHubConnection();
+    this._signalrService.stopHubConnection();
   }
 }

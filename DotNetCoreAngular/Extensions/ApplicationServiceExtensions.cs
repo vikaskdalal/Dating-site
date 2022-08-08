@@ -12,7 +12,7 @@ namespace DotNetCoreAngular.Extensions
         {
             services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddSingleton<PresenceTracker>();
+            services.AddSingleton<UserTracker>();
             services.AddScoped<IPhotoService, PhotoService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<ICacheService, CacheService>();

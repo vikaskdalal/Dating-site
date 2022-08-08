@@ -20,7 +20,7 @@ import { UserDetail } from '../_models/userDetail';
 import { AccountService } from '../_services/account.service';
 import { ConfirmService } from '../_services/confirm.service';
 import { MessageService } from '../_services/message.service';
-import { PresenceService } from '../_services/presence.service';
+import { SignalRService } from '../_services/signalr.service';
 import { UserService } from '../_services/user.service';
 import { NotificationType } from '../_common/notificationType';
 import { CallNotification } from '../_models/callNotification';
@@ -53,11 +53,13 @@ export class UserChatComponent
   videoCallType = NotificationType.VideoCall;
   audioCallType = NotificationType.AudioCall;
   showCallingWindow = false;
-  // true means we are calling and false means we are getting the call.
-  callingOrGettingCallToggle!: boolean;
-  callerInfo!: CallNotification;
+  localStream!: MediaStream;
+  @ViewChild('localVideo') localVideo! : ElementRef;
+  callWindow: any;
 
-  audio = new Audio();
+  mediaConstraints = {};
+
+ 
   private keyCodeToSkipTypingEvent: number[] = [13];
 
   constructor(
@@ -65,10 +67,11 @@ export class UserChatComponent
     private _route: ActivatedRoute,
     private _userService: UserService,
     private _accountService: AccountService,
-    public presenceService: PresenceService,
+    public presenceService: SignalRService,
     private _confirmService: ConfirmService,
     private _toastrService: ToastrService,
-    private _title: Title
+    private _title: Title,
+    private _signalrService: SignalRService,
   ) {
     let username = this._route.snapshot.paramMap.get('username');
     if (username) this.friendUsername = username;
@@ -78,13 +81,29 @@ export class UserChatComponent
 
   ngOnInit(): void {
     this.loadFriendsDetails();
-    this.messageService.createHubConnection(this.user, this.friendUsername);
+    this.messageService.createHubConnection(this.user, this.friendUsername).then(() => {
+      this.messageService.registerEvents();
+    });
+
+    // this._videoCallService.createHubConnection(this.user, this.friendUsername).then(() => {
+    //   this._videoCallService.registerEvents();
+    // });
   }
 
   ngAfterViewInit() {
     this.sendEventWhenUserStopsTyping();
     this.loadChatPagination();
-    this.handleCallNotification();
+    //this.loadLocalStream();
+  }
+
+  async loadLocalStream(){
+    this.mediaConstraints= {
+      audio : true,
+      video: {width: 450, height: 450}
+    };
+
+    const stream = await navigator.mediaDevices.getUserMedia(this.mediaConstraints);
+    this.localVideo.nativeElement.srcObject = stream;
   }
 
   ngAfterViewChecked(): void {
@@ -228,77 +247,43 @@ export class UserChatComponent
   }
 
   callFriend(callType: string) {
-    this.messageService
-      .sendCallNotification(this.friendUsername, callType, this.user.name)
-      .then(() => {
-        this.showCallingWindow = true;
-        this.callingOrGettingCallToggle = true;
-      });
+    this.callWindow = window.open('./call/'+this.friendUsername+'/'+callType, '_blank', "toolbar=no,scrollbars=no,resizable=no,width=800,height=650,left=150");
+    // this.messageService
+    //   .sendCallNotification(this.friendUsername, callType, this.user.name)
+    //   .then(() => {
+    //     this.showCallingWindow = true;
+    //     this.callingOrGettingCallToggle = true;
+    //   });
   }
 
-  cancelCall() {
-    this.messageService
-      .sendCallNotification(
-        this.friendUsername,
-        NotificationType.CallCancelled,
-        this.user.name
-      )
-      .then(() => {
-        this.showCallingWindow = false;
-        this.callingOrGettingCallToggle = true;
-      });
-  }
+  // cancelCall() {
+  //   this._videoCallService
+  //     .sendCallNotification(
+  //       this.friendUsername,
+  //       NotificationType.CallCancelled,
+  //       this.user.name
+  //     )
+  //     .then(() => {
+  //       this.showCallingWindow = false;
+  //       this.callingOrGettingCallToggle = true;
+  //     });
+  // }
 
-  handleCallNotification() {
-    this.messageService.callNotification$.subscribe((response) => {
-      this.callerInfo = response;
-      if (
-        response.notificationType == NotificationType.VideoCall ||
-        response.notificationType == NotificationType.AudioCall
-      ) {
-        this.showCallingWindow = true;
-        this.callingOrGettingCallToggle = false;
-        this.playCallingRingtone();
-      } 
-      else if (response.notificationType == NotificationType.CallRejected){
-        this.handleCallRejected();
-      } 
-      else if (response.notificationType == NotificationType.CallCancelled) {
-        this.stopRingtone();
-        this.showCallingWindow = false;
-      } 
-      else if (response.notificationType == NotificationType.CallAccepted) {
-        alert('call accepted');
-      }
-    });
-  }
+  
 
-  private handleCallRejected() {
-    document.getElementById('calling_text')!.innerHTML = 'Call Rejected';
-    setTimeout(() => {
-      this.showCallingWindow = false;
-    }, 2000);
-  }
+  
 
-  callAcceptedOrRejected(isAccepted: boolean) {
-    const callResponse = isAccepted
-      ? NotificationType.CallAccepted
-      : NotificationType.CallRejected;
-    this.messageService
-      .sendCallResponse(this.callerInfo.connectionId, callResponse)
-      .then(() => {
-        this.stopRingtone();
-        if (!isAccepted) this.showCallingWindow = false;
-      });
-  }
+  // callAcceptedOrRejected(isAccepted: boolean) {
+  //   const callResponse = isAccepted
+  //     ? NotificationType.CallAccepted
+  //     : NotificationType.CallRejected;
+  //   this._signalrService
+  //     .sendCallResponse(this.callerInfo.connectionId, callResponse)
+  //     .then(() => {
+  //       this.stopRingtone();
+  //       if (!isAccepted) this.showCallingWindow = false;
+  //     });
+  // }
 
-  private playCallingRingtone() {
-    this.audio.src = './assets/audio/ringtone.mp3';
-    this.audio.load();
-    this.audio.play();
-  }
-
-  private stopRingtone() {
-    this.audio.pause();
-  }
+  
 }

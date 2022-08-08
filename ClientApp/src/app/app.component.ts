@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { User } from './_models/user';
 import { AccountService } from './_services/account.service';
-import { PresenceService } from './_services/presence.service';
+import { SignalRService } from './_services/signalr.service';
 
 @Component({
   selector: 'app-root',
@@ -12,7 +12,7 @@ import { PresenceService } from './_services/presence.service';
 export class AppComponent implements OnInit {
   title = 'ClientApp';
   user!: User;
-  constructor(private _accountService : AccountService, private _presenceService : PresenceService){}
+  constructor(private _accountService : AccountService, private _signalrService : SignalRService){}
 
   ngOnInit(): void {
     this.setCurrentUser();
@@ -27,6 +27,6 @@ export class AppComponent implements OnInit {
     }
 
     this._accountService.setCurrentUser(this.user);
-    this._presenceService.createHubConnection(this.user);
+    this._signalrService.createHubConnection(this.user);
   }
 }
