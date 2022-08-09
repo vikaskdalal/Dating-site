@@ -4,4 +4,5 @@ export class NotificationType{
     public static CallAccepted = 'CALL_ACCEPTED';
     public static CallRejected = 'CALL_REJECTED';
     public static CallCancelled = 'CALL_CANCELLED';
+    public static UserNotAvailable = 'USER_IS_NOT_AVAILABLE';
 }

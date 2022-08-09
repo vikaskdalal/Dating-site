@@ -1,4 +1,4 @@
-import {Component, OnInit } from '@angular/core';
+import {AfterViewInit, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NotificationType } from '../_common/notificationType';
 import { User } from '../_models/user';
@@ -12,7 +12,7 @@ import { UserService } from '../_services/user.service';
   templateUrl: './video-call.component.html',
   styleUrls: ['./video-call.component.css']
 })
-export class VideoCallComponent implements OnInit{
+export class VideoCallComponent implements OnInit, AfterViewInit{
   friendDetails!: UserDetail;
   friendUsername!: string;
   callType!: string;
@@ -32,14 +32,14 @@ export class VideoCallComponent implements OnInit{
 
   ngOnInit(): void {
     this.loadFriendsDetails();
-    // this._signalrService.createHubConnection(this.user, this.friendUsername).then(()=>{
-    //   this._videoCallService.registerEvents();
-    //   this.sendCallNotification();
-    //   this.handleCallNotification();
-    // });
+  }
 
-      this.sendCallNotification();
-      this.handleCallNotification();
+  ngAfterViewInit(): void {
+    this._signalrService.hubConnectionState$.subscribe(state => {
+      if(state)
+        this.sendCallNotification();
+    });
+    this.handleCallNotification();
   }
 
   handleCallNotification() {
@@ -50,11 +50,21 @@ export class VideoCallComponent implements OnInit{
       else if (response.notificationType == NotificationType.CallAccepted) {
         alert('call accepted');
       }
+      else if(response.notificationType == NotificationType.UserNotAvailable){
+        this.handleUserNotAvailable();
+      }
     });
   }
 
   private handleCallRejected() {
     document.getElementById('calling_text')!.innerHTML = 'Call Rejected';
+    setTimeout(() => {
+      window.close();
+    }, 2000);
+  }
+
+  private handleUserNotAvailable() {
+    document.getElementById('calling_text')!.innerHTML = 'User is not available';
     setTimeout(() => {
       window.close();
     }, 2000);

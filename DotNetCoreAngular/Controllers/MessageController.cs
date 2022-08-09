@@ -4,8 +4,10 @@ using DotNetCoreAngular.Extensions;
 using DotNetCoreAngular.Helpers.Pagination;
 using DotNetCoreAngular.Interfaces;
 using DotNetCoreAngular.Models.Entity;
+using DotNetCoreAngular.SignalR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace DotNetCoreAngular.Controllers
 {
@@ -16,11 +18,15 @@ namespace DotNetCoreAngular.Controllers
     {
         private readonly IUnitOfWork _context;
         private readonly IMapper _mapper;
+        private readonly IHubContext<SignalRHub> _signalRHub;
+        private readonly UserTracker _tracker;
 
-        public MessageController(IUnitOfWork unitOfWork, IMapper mapper)
+        public MessageController(IUnitOfWork unitOfWork, IMapper mapper, IHubContext<SignalRHub> hub, UserTracker tracker)
         {
             this._context = unitOfWork;
             _mapper = mapper;
+            _signalRHub = hub;
+            _tracker = tracker;
         }
 
         [HttpPost]
@@ -113,6 +119,21 @@ namespace DotNetCoreAngular.Controllers
 
             return Ok();
 
+        }
+
+        [HttpGet("SendCallNotification")]
+        public async Task<IActionResult> SendCallNotification(string username, string callType, string callerUsername, string connectionId)
+        {
+            var connectionsIdsOfFriend = _tracker.GetConnectionIdsOfUser(username);
+
+            if (connectionsIdsOfFriend == null)
+            {
+                await _signalRHub.Clients.Client(connectionId).SendAsync("ReceiveCallNotification", new { notificationType = "UserIsNotAvailable" });
+            }
+            else
+                await _signalRHub.Clients.Clients(connectionsIdsOfFriend).SendAsync("ReceiveCallNotification", new { connectionId, notificationType = callType, callerUsername });
+
+            return Ok();
         }
     }
 }

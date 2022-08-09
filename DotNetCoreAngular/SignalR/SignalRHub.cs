@@ -44,12 +44,10 @@ namespace DotNetCoreAngular.SignalR
         {
             var connectionsIdsOfFriend = _tracker.GetConnectionIdsOfUser(username);
 
-            if(connectionsIdsOfFriend == null)
+            if(connectionsIdsOfFriend != null)
             {
-                await Clients.Client(Context.ConnectionId).SendAsync("ReceiveCallNotification", new { notificationType = "UserIsNotAvailable" });
-            }
-            else
                 await Clients.Clients(connectionsIdsOfFriend).SendAsync("ReceiveCallNotification", new { Context.ConnectionId, notificationType = callType, callerUsername });
+            }
         }
 
         public async Task SendCallResponse(string callerConnectionId, string callResponse)

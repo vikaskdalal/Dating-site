@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { User } from './_models/user';
 import { AccountService } from './_services/account.service';
@@ -10,9 +9,12 @@ import { SignalRService } from './_services/signalr.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  title = 'ClientApp';
+  title = 'Dating App';
   user!: User;
-  constructor(private _accountService : AccountService, private _signalrService : SignalRService){}
+  constructor(
+    private _accountService : AccountService, 
+    private _signalrService : SignalRService
+    ){}
 
   ngOnInit(): void {
     this.setCurrentUser();
@@ -25,8 +27,11 @@ export class AppComponent implements OnInit {
       this._accountService.logout();
       return;
     }
-
+    
     this._accountService.setCurrentUser(this.user);
-    this._signalrService.createHubConnection(this.user);
+    this._signalrService.createHubConnection(this.user).then(()=>{
+      this._signalrService.registerEvents();
+      this._signalrService.changeHubState(true);
+    });
   }
 }
