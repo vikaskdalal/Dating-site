@@ -33,7 +33,9 @@ export class SignalRService {
       })
       .withAutomaticReconnect()
       .build();
-
+    
+    this.registerEvents();
+    
     return this._hubConnection
       .start()
       .catch(error => {
@@ -45,7 +47,7 @@ export class SignalRService {
     this._hubConnectionState.next(state);
   }
 
-  registerEvents(){
+  private registerEvents(){
     this._hubConnection.on("GetOnlineUsers", (users: string[]) => {
       this._onlineUserSource.next(users);
     })
@@ -55,12 +57,12 @@ export class SignalRService {
     })
   }
 
-  async sendCallNotification(friendUsername: string, callType: string, callerUsername: string){
-    return this._hubConnection?.invoke("SendCallNotification", friendUsername, callType, callerUsername);
+  async sendCallNotification(friendUsername: string, callType: string){
+    return this._hubConnection?.invoke("SendCallNotification", friendUsername, callType);
   }
 
-  async sendCallResponse(callerConnectionId: string, callResponse: string){
-    return this._hubConnection?.invoke("SendCallResponse", callerConnectionId, callResponse);
+  async sendResponse(callerConnectionId: string, response: string, data?: any){
+    return this._hubConnection?.invoke("SendCallResponse", callerConnectionId, response, data);
   }
 
   stopHubConnection() {

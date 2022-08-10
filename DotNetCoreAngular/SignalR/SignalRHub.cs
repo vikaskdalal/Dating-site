@@ -40,19 +40,21 @@ namespace DotNetCoreAngular.SignalR
             await base.OnDisconnectedAsync(exception);
         }
 
-        public async Task SendCallNotification(string username, string callType, string callerUsername)
+        public async Task SendCallNotification(string username, string callType)
         {
             var connectionsIdsOfFriend = _tracker.GetConnectionIdsOfUser(username);
 
             if(connectionsIdsOfFriend != null)
             {
-                await Clients.Clients(connectionsIdsOfFriend).SendAsync("ReceiveCallNotification", new { Context.ConnectionId, notificationType = callType, callerUsername });
+                await Clients.Clients(connectionsIdsOfFriend).SendAsync("ReceiveCallNotification", 
+                    new { Context.ConnectionId, notificationType = callType, callerUsername = Context.User.GetUsername() });
             }
         }
 
-        public async Task SendCallResponse(string callerConnectionId, string callResponse)
+        public async Task SendCallResponse(string callerConnectionId, string response, dynamic data)
         {
-            await Clients.Client(callerConnectionId).SendAsync("ReceiveCallNotification", new { Context.ConnectionId, notificationType = callResponse });
+            await Clients.Client(callerConnectionId).SendAsync("ReceiveCallNotification", 
+                new { Context.ConnectionId, notificationType = response, data, callerUsername = Context.User.GetUsername() });
         }
     }
 }

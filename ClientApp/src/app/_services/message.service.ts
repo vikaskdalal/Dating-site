@@ -38,10 +38,12 @@ export class MessageService {
       .withAutomaticReconnect()
       .build();
 
+      this.registerEvents()
+
       return this._hubConnection.start().catch(error => console.log(error));
   }
 
-  registerEvents(){
+  private registerEvents(){
     this._hubConnection.on('ReceiveMessageThread', response => {
       this._trackMessageThreadSource.next([response.trackMessageThread]);
       this._messageSource.next(response.messages);

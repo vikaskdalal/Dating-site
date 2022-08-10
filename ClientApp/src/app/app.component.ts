@@ -29,8 +29,8 @@ export class AppComponent implements OnInit {
     }
     
     this._accountService.setCurrentUser(this.user);
-    this._signalrService.createHubConnection(this.user).then(()=>{
-      this._signalrService.registerEvents();
+    this._signalrService.createHubConnection(this.user)
+    .then(()=>{
       this._signalrService.changeHubState(true);
     });
   }

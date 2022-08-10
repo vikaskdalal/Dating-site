@@ -53,13 +53,8 @@ export class UserChatComponent
   videoCallType = NotificationType.VideoCall;
   audioCallType = NotificationType.AudioCall;
   showCallingWindow = false;
-  localStream!: MediaStream;
-  @ViewChild('localVideo') localVideo! : ElementRef;
   callWindow: any;
 
-  mediaConstraints = {};
-
- 
   private keyCodeToSkipTypingEvent: number[] = [13];
 
   constructor(
@@ -82,28 +77,12 @@ export class UserChatComponent
   ngOnInit(): void {
     this.loadFriendsDetails();
     this.messageService.createHubConnection(this.user, this.friendUsername).then(() => {
-      this.messageService.registerEvents();
     });
-
-    // this._videoCallService.createHubConnection(this.user, this.friendUsername).then(() => {
-    //   this._videoCallService.registerEvents();
-    // });
   }
 
   ngAfterViewInit() {
     this.sendEventWhenUserStopsTyping();
     this.loadChatPagination();
-    //this.loadLocalStream();
-  }
-
-  async loadLocalStream(){
-    this.mediaConstraints= {
-      audio : true,
-      video: {width: 450, height: 450}
-    };
-
-    const stream = await navigator.mediaDevices.getUserMedia(this.mediaConstraints);
-    this.localVideo.nativeElement.srcObject = stream;
   }
 
   ngAfterViewChecked(): void {
@@ -247,43 +226,8 @@ export class UserChatComponent
   }
 
   callFriend(callType: string) {
-    this.callWindow = window.open('./call/'+this.friendUsername+'/'+callType, '_blank', "toolbar=no,scrollbars=no,resizable=no,width=800,height=650,left=150");
-    // this.messageService
-    //   .sendCallNotification(this.friendUsername, callType, this.user.name)
-    //   .then(() => {
-    //     this.showCallingWindow = true;
-    //     this.callingOrGettingCallToggle = true;
-    //   });
+    const requestVideo = callType == NotificationType.VideoCall;
+    this.callWindow = window.open('./call/'+this.friendUsername+'?requestVideo='+requestVideo+'&outgoingCall=true',
+     '_blank', "toolbar=no,scrollbars=no,resizable=no,width=500,height=720,left=150");
   }
-
-  // cancelCall() {
-  //   this._videoCallService
-  //     .sendCallNotification(
-  //       this.friendUsername,
-  //       NotificationType.CallCancelled,
-  //       this.user.name
-  //     )
-  //     .then(() => {
-  //       this.showCallingWindow = false;
-  //       this.callingOrGettingCallToggle = true;
-  //     });
-  // }
-
-  
-
-  
-
-  // callAcceptedOrRejected(isAccepted: boolean) {
-  //   const callResponse = isAccepted
-  //     ? NotificationType.CallAccepted
-  //     : NotificationType.CallRejected;
-  //   this._signalrService
-  //     .sendCallResponse(this.callerInfo.connectionId, callResponse)
-  //     .then(() => {
-  //       this.stopRingtone();
-  //       if (!isAccepted) this.showCallingWindow = false;
-  //     });
-  // }
-
-  
 }

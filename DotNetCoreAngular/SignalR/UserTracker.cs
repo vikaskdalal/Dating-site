@@ -2,8 +2,8 @@
 {
     public class UserTracker
     {
-        private static readonly Dictionary<string, HashSet<string>> _onlineUsers =
-            new Dictionary<string, HashSet<string>>();
+        private static readonly Dictionary<string, List<string>> _onlineUsers =
+            new Dictionary<string, List<string>>();
 
         public Task<bool> UserConnected(string username, string connectionId)
         {
@@ -16,7 +16,7 @@
                 }
                 else
                 {
-                    _onlineUsers.Add(username, new HashSet<string> { connectionId });
+                    _onlineUsers.Add(username, new List<string> { connectionId });
                     isOnline = true;
                 }
             }

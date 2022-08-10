@@ -24,7 +24,7 @@ const routes: Routes = [
   {path: 'messages', component: MessageComponent},
   {path: 'user/:username', component: UserDetailComponent, canActivate : [AuthGuard]},
   {path: 'chat/:username', component: UserChatComponent, canActivate : [AuthGuard, UserExistsGuard]},
-  {path: 'call/:username/:calltype', component: VideoCallComponent, canActivate : [AuthGuard, UserExistsGuard]},
+  {path: 'call/:username', component: VideoCallComponent, canActivate : [AuthGuard, UserExistsGuard]},
   {path: 'user-likes', component: UserLikeComponent, canActivate : [AuthGuard]},
   {path: 'server-error', component: ServerErrorComponent},
   {path: '**', component: HomeComponent, pathMatch: 'full'}

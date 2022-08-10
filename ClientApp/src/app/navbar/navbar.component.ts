@@ -42,11 +42,23 @@ export class NavbarComponent implements OnInit {
     const callResponse = isAccepted
       ? NotificationType.CallAccepted
       : NotificationType.CallRejected;
-    this._signalrService
-      .sendCallResponse(this.callerInfo.connectionId, callResponse)
+    
+      this.stopRingtone();
+      this.showCallingWindow = false;
+
+      if(isAccepted){
+        const requestVideo = this.callerInfo.notificationType == NotificationType.VideoCall;
+
+        window.open('./call/'+this.friendDetails.username+
+        '?requestVideo='+requestVideo+'&incomingCall=true&callAccepted=true&sendResponseTo='+this.callerInfo.connectionId,
+         '_blank', "toolbar=no,scrollbars=no,resizable=no,width=500,height=720,left=150");
+         return;
+      }
+
+      this._signalrService
+      .sendResponse(this.callerInfo.connectionId, callResponse)
       .then(() => {
-        this.stopRingtone();
-        if (!isAccepted) this.showCallingWindow = false;
+        
       });
   }
 
@@ -57,15 +69,18 @@ export class NavbarComponent implements OnInit {
         response.notificationType == NotificationType.VideoCall ||
         response.notificationType == NotificationType.AudioCall
       ) {
-        this.handleIncomingCall();
+        this.handleIncomingCallNotification();
       } 
       else if (response.notificationType == NotificationType.CallCancelled) {
         this.handleCallCancelledByCaller();
-      } 
+      }
+      else if(response.notificationType == NotificationType.Offer){
+
+      }
     });
   }
 
-  private handleIncomingCall(){
+  private handleIncomingCallNotification(){
     this._userService.getByUsername(this.callerInfo.callerUsername).subscribe(response => {
       this.friendDetails = response;
       this.showCallingWindow = true;
