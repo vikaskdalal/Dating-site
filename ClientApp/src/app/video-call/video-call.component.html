@@ -1,56 +1,97 @@
-<div *ngIf="friendDetails" class="user-select-none calling-container ">
-    
-    <div *ngIf="isOutgoingCall && !callAccepted" class="friend-profile-call-end-button d-flex align-items-center justify-content-center">
-        <div class="text-center">
-            <div class="calling-friend mb-4">
-                <small id="calling_text" class="d-block">Calling...</small>
-                <span class="friend-name">{{friendDetails.name}}</span>
-            </div>
-            <img src="{{friendDetails.photoUrl || './assets/user.png'}}" class="friend-profile-img">
-            <span class="call-end-btn" (click)="cancelCall()"  title="Cancel the call">
-                <i class="fa fa-phone" aria-hidden="true"></i>
-            </span>
-            <!-- <div *ngIf="!callingOrGettingCallToggle">
-                <span class="call-accept-btn me-3" (click)="callAcceptedOrRejected(true)" title="Accept the call">
-                    <i class="fa fa-phone" aria-hidden="true"></i>
-                </span>
-                <span class="call-end-btn" (click)="callAcceptedOrRejected(false)" title="Reject the call">
-                    <i class="fa fa-phone" aria-hidden="true"></i>
-                </span>
-            </div> -->
-        </div>
-        
+<div class="user-select-none calling-container">
+  <div
+    *ngIf="loading || !mediaPermissionGranted"
+    class="d-flex align-items-center justify-content-center loading-container"
+  >
+    <div *ngIf="loading" class="text-center">We are loading Please wait</div>
+    <div *ngIf="!mediaPermissionGranted && !loading" class="text-center">
+      You did not grant permission for camera and mic
+      <svg class="video-closed-svg" viewBox="0 0 576 512">
+        <path
+          d="M32 399.1c0 26.51 21.49 47.1 47.1 47.1h287.1c19.57 0 36.34-11.75 43.81-28.56L32 121.8L32 399.1zM630.8 469.1l-89.21-69.92l15.99 11.02c21.22 14.59 50.41-.2971 50.41-25.8V127.5c0-25.41-29.07-40.37-50.39-25.76l-109.6 75.56l.0001 148.5l-32-25.08l.0001-188.7c0-26.51-21.49-47.1-47.1-47.1H113.9L38.81 5.111C34.41 1.673 29.19 0 24.03 0C16.91 0 9.84 3.158 5.121 9.189C-3.066 19.63-1.249 34.72 9.189 42.89l591.1 463.1c10.5 8.203 25.57 6.328 33.69-4.078C643.1 492.4 641.2 477.3 630.8 469.1z"
+        />
+      </svg>
+      <i class="fa fa-microphone-slash"></i>
     </div>
-    
-    <!-- <div class="video-chat-container" style="background-color: red;width:95%;height:95%">
-        <div>
-            <video #localVideo [autoplay]="true" [muted]="true" class="videoInsert"></video>
+  </div>
+  <div
+    *ngIf="friendDetails"
+    class="h100"
+    [ngClass]="loading ? 'd-none' : 'd-block'"
+  >
+    <div
+      *ngIf="(isOutgoingCall && !callAccepted) || !requestVideo"
+      class="friend-profile-call-end-button d-flex align-items-center justify-content-center"
+    >
+      <div class="text-center">
+        <div class="calling-friend mb-4">
+          <small id="calling_text" class="d-block">Calling...</small>
+          <span class="friend-name">{{ friendDetails.name }}</span>
         </div>
-        <video #remoteVideo [autoplay]="true" [muted]="true"></video>
-    </div> -->
-    <div class="videos-container">
-        <video [ngClass]="callAccepted ? 'd-block' : 'd-none'" #remoteVideo [autoplay]="true" [muted]="true" class="remote-video"></video>
-        <div class="local-video-container">
-            <video #localVideo [autoplay]="true" [muted]="true" class="local-video"></video>
-        </div>
-        <div class="text-center control-btn-container">
-            <span class="control-icon-span" (click)="audioToggle()">
-                <i class="fa microphone-icon" [ngClass]="isAudioMute ? 'fa-microphone-slash' : 'fa-microphone'" ></i>
-            </span>
-            <span class="call-hangup-btn"  title="Hangup the call">
-                <i class="fa fa-phone" aria-hidden="true"></i>
-            </span>
-            <span class="control-icon-span" (click)="videoToggle()">
-                <svg *ngIf="!isVideoStopped" class="video-open-svg" viewBox="0 0 576 512">
-                    <path d="M384 112v288c0 26.51-21.49 48-48 48h-288c-26.51 0-48-21.49-48-48v-288c0-26.51 21.49-48 48-48h288C362.5 64 384 85.49 384 112zM576 127.5v256.9c0 25.5-29.17 40.39-50.39 25.79L416 334.7V177.3l109.6-75.56C546.9 87.13 576 102.1 576 127.5z"/>
-                </svg>
-                <svg *ngIf="isVideoStopped" class="video-closed-svg" viewBox="0 0 576 512">
-                    <path d="M32 399.1c0 26.51 21.49 47.1 47.1 47.1h287.1c19.57 0 36.34-11.75 43.81-28.56L32 121.8L32 399.1zM630.8 469.1l-89.21-69.92l15.99 11.02c21.22 14.59 50.41-.2971 50.41-25.8V127.5c0-25.41-29.07-40.37-50.39-25.76l-109.6 75.56l.0001 148.5l-32-25.08l.0001-188.7c0-26.51-21.49-47.1-47.1-47.1H113.9L38.81 5.111C34.41 1.673 29.19 0 24.03 0C16.91 0 9.84 3.158 5.121 9.189C-3.066 19.63-1.249 34.72 9.189 42.89l591.1 463.1c10.5 8.203 25.57 6.328 33.69-4.078C643.1 492.4 641.2 477.3 630.8 469.1z"/>
-                </svg>
-            </span>
-        </div>
+        <img
+          src="{{ friendDetails.photoUrl || './assets/user.png' }}"
+          class="friend-profile-img"
+        />
+        <span
+          *ngIf="!callAccepted"
+          class="call-end-btn"
+          (click)="cancelCall()"
+          title="Cancel the call"
+        >
+          <i class="fa fa-phone" aria-hidden="true"></i>
+        </span>
+      </div>
     </div>
-    
-    
-    
+    <div *ngIf="callAccepted" class="videos-container">
+      <video
+        *ngIf="requestVideo"
+        [ngClass]="callAccepted ? 'd-block' : 'd-none'"
+        #remoteVideo
+        [autoplay]="true"
+        [muted]="true"
+        class="remote-video"
+      ></video>
+
+      <div class="text-center control-btn-container">
+        <span class="control-icon-span" (click)="audioToggle()">
+          <i
+            class="fa microphone-icon"
+            [ngClass]="isAudioMute ? 'fa-microphone-slash' : 'fa-microphone'"
+          ></i>
+        </span>
+        <span class="call-hangup-btn" title="Hangup the call">
+          <i class="fa fa-phone" aria-hidden="true"></i>
+        </span>
+        <span class="control-icon-span" (click)="videoToggle()">
+          <svg
+            *ngIf="!isVideoStopped"
+            class="video-open-svg"
+            viewBox="0 0 576 512"
+          >
+            <path
+              d="M384 112v288c0 26.51-21.49 48-48 48h-288c-26.51 0-48-21.49-48-48v-288c0-26.51 21.49-48 48-48h288C362.5 64 384 85.49 384 112zM576 127.5v256.9c0 25.5-29.17 40.39-50.39 25.79L416 334.7V177.3l109.6-75.56C546.9 87.13 576 102.1 576 127.5z"
+            />
+          </svg>
+          <svg
+            *ngIf="isVideoStopped"
+            class="video-closed-svg"
+            viewBox="0 0 576 512"
+          >
+            <path
+              d="M32 399.1c0 26.51 21.49 47.1 47.1 47.1h287.1c19.57 0 36.34-11.75 43.81-28.56L32 121.8L32 399.1zM630.8 469.1l-89.21-69.92l15.99 11.02c21.22 14.59 50.41-.2971 50.41-25.8V127.5c0-25.41-29.07-40.37-50.39-25.76l-109.6 75.56l.0001 148.5l-32-25.08l.0001-188.7c0-26.51-21.49-47.1-47.1-47.1H113.9L38.81 5.111C34.41 1.673 29.19 0 24.03 0C16.91 0 9.84 3.158 5.121 9.189C-3.066 19.63-1.249 34.72 9.189 42.89l591.1 463.1c10.5 8.203 25.57 6.328 33.69-4.078C643.1 492.4 641.2 477.3 630.8 469.1z"
+            />
+          </svg>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="requestVideo" class="local-video-container">
+    <video
+      style="transform: scale(-1, 1)"
+      #localVideo
+      [autoplay]="true"
+      [muted]="true"
+      class="local-video"
+    ></video>
+  </div>
 </div>

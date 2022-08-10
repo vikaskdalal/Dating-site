@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NotificationType } from '../_common/notificationType';
 import { CallNotification } from '../_models/callNotification';
@@ -30,12 +30,12 @@ export class VideoCallComponent implements OnInit, AfterViewInit, OnDestroy{
   requestVideo = false;
   isAudioMute = false;
   isVideoStopped = false;
+  mediaPermissionGranted = false;
+  loading =true;
 
   mediaConstraints = {};
-  offerOption = {
-    offerToReceiveAudio : true,
-    offerToReceiveVideo : true
-  };
+  
+  offerOption = {};
 
   constructor(
     private _route: ActivatedRoute,
@@ -55,26 +55,30 @@ export class VideoCallComponent implements OnInit, AfterViewInit, OnDestroy{
     this._accountService.currentUser$.subscribe((user) => (this.user = user!));
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.loadFriendsDetails();
     this.prepareMediaConstraints();
+    this.isVideoStopped = !this.requestVideo;
+    await this.getLocalPreview();
   }
 
+  @HostListener('window:beforeunload')
   ngOnDestroy(): void {
       this.sendCancelCallSignal();
   }
 
-  private sendAcceptedNotification(){
-    if(this.callAccepted){
-      this._signalrService
-      .sendResponse(this.sendResponseTo, NotificationType.CallAccepted)
-      .then(() => {
-        //this.requestMediaDevices();
-      });
-    }
+  ngAfterViewInit(): void {
+    this.sendOnLoadNotification();
+    this.handleCallNotification();
   }
 
-  ngAfterViewInit(): void {
+  loadFriendsDetails() {
+    this._userService
+      .getByUsername(this.friendUsername)
+      .subscribe((user) => (this.friendDetails = user));
+  }
+
+  private sendOnLoadNotification() {
     this._signalrService.hubConnectionState$.subscribe(state => {
       if(!state){
         return;
@@ -82,43 +86,81 @@ export class VideoCallComponent implements OnInit, AfterViewInit, OnDestroy{
       if(this.isOutgoingCall)
         this.sendCallNotification();
       
-      this.sendAcceptedNotification();
+      else if(this.isIncomingCall)
+        this.sendAcceptedNotification();
     });
-    this.handleCallNotification();
-    this.requestMediaDevices();
   }
 
-  private async requestMediaDevices() {
-    this.localStream = await navigator.mediaDevices.getUserMedia(this.mediaConstraints);
-    this.startLocalStream();
+  private sendAcceptedNotification(){
+    if(this.callAccepted){
+      this._signalrService
+      .sendResponse(this.sendResponseTo, NotificationType.CallAccepted);
+    }
   }
 
-  startLocalStream(){
-    this.localStream.getTracks().forEach(element => {
-      element.enabled = true;
+  private async getLocalPreview() {
+    await navigator.mediaDevices.getUserMedia(this.mediaConstraints)
+    .then(stream => {
+      if(this.requestVideo)
+        this.updateLocalVideo(stream);
+
+      this.updateLocalStream(stream);
+      this.mediaPermissionGranted = true;
+      this.loading = false;
+    })
+    .catch(error => {
+      this.loading = false;
+      console.log(error)
+      if(error.code == 0)
+        this.mediaPermissionGranted = false;
     });
-
-    this.localVideo.nativeElement.srcObject = this.localStream;
+  }
+  updateLocalStream(stream: MediaStream) {
+    this.localStream = stream;
+  }
+  
+  updateLocalVideo(stream: MediaStream): any {
+    this.localVideo.nativeElement.srcObject = stream;
   }
 
-  private async makeCall(){
-    this.createPeerConnection();
-    if(!this.localStream)
-      await this.requestMediaDevices();
+  prepareMediaConstraints(){
+    this.mediaConstraints= {
+      audio : true,
+      video: this.requestVideo
+    };
+  }
 
-    this.callAccepted = true;
-    this.localStream.getTracks().forEach(track => this.peerConnection.addTrack(track, this.localStream));
+  prepareOfferOptions(){
+    this.offerOption = {
+      offerToReceiveAudio : true,
+      offerToReceiveVideo : this.requestVideo
+    };
+  }
 
+  private async SendCallOffer(){
+    this.addStreamTrackToPeerConnection(this.localStream);
+    this.prepareOfferOptions();
     try{
       const offer = await this.peerConnection.createOffer(this.offerOption);
-      this.peerConnection.setLocalDescription(offer);
+      await this.peerConnection.setLocalDescription(offer);
 
-      this._signalrService.sendResponse(this.callerInfo.connectionId, NotificationType.Offer, offer);
+      this._signalrService
+      .sendResponse(this.callerInfo.connectionId, NotificationType.Offer, offer)
+      .then(() => {
+        console.log('sent offer');
+        this.callAccepted = true;
+      });
     }
     catch(ex){
       console.log(ex);
     }
   }
+
+  private addStreamTrackToPeerConnection(stream: MediaStream){
+    stream.getTracks().forEach(track => 
+      this.peerConnection.addTrack(track, stream));
+  }
+
   createPeerConnection() {
     this.peerConnection = new RTCPeerConnection({
       iceServers:[{
@@ -134,11 +176,9 @@ export class VideoCallComponent implements OnInit, AfterViewInit, OnDestroy{
   }
 
   private handleICECandidateEvent =  (event : RTCPeerConnectionIceEvent): void => {
-    //console.log(event);
-
     if(event.candidate){
-      this._signalrService.sendResponse(this.callerInfo.connectionId, NotificationType.IceCandidate, 
-        event.candidate);
+      this._signalrService.
+      sendResponse(this.callerInfo.connectionId, NotificationType.IceCandidate, event.candidate);
     }
   }
 
@@ -161,74 +201,58 @@ export class VideoCallComponent implements OnInit, AfterViewInit, OnDestroy{
     this.remoteVideo.nativeElement.srcObject = event.streams[0];
   }
 
-  handleIceCandidateMessage(data: any) {
-    console.log('ice candidate received');
-    this.peerConnection.addIceCandidate(data)
+  async handleIceCandidateMessage(data: any) {
+    await this.peerConnection.addIceCandidate(data)
     .catch(error => console.log(error));
   }
-  handleAnswerMessage(data: any) {
-    console.log('answer received');
-    this.peerConnection.setRemoteDescription(data);
-  }
 
-  prepareMediaConstraints(){
-    this.mediaConstraints= {
-      audio : true,
-      video: this.requestVideo
-    };
+  async handleAnswerMessage(data: any) {
+    await this.peerConnection.setRemoteDescription(data);
   }
 
   handleCallNotification() {
     this._signalrService.callNotification$.subscribe((response) => {
-      this.callerInfo = response;
-      // console.log('video compo response');
-      // console.log(response);
-      if (response.notificationType == NotificationType.CallRejected){
-        this.handleCallRejected();
-      } 
-      else if (response.notificationType == NotificationType.CallAccepted) {
-        this.makeCall();
-      }
-      else if(response.notificationType == NotificationType.UserNotAvailable){
-        this.handleUserNotAvailable();
-      }
-      else if(response.notificationType == NotificationType.Offer){
-        this.handleOfferMessage(response.data);
-      }
-      else if(response.notificationType == NotificationType.Answer){
-        this.handleAnswerMessage(response.data);
-      }
-      else if(response.notificationType == NotificationType.IceCandidate){
-        this.handleIceCandidateMessage(response.data);
-      }
+      this.handleNotificationResponse(response);
     });
   }
 
+  handleNotificationResponse(response: CallNotification) {
+    this.callerInfo = response;
+    
+    switch(response.notificationType){
+      case NotificationType.CallRejected:
+        this.handleCallRejected();
+        break;
+      case NotificationType.CallAccepted:
+        this.createPeerConnection();
+        this.SendCallOffer();
+        break;
+      case NotificationType.Offer:
+        this.handleOfferMessage(response.data);
+        break;
+      case NotificationType.Answer:
+        this.handleAnswerMessage(response.data);
+        break;
+      case NotificationType.IceCandidate:
+        this.handleIceCandidateMessage(response.data);
+        break;
+    }
+  }
+
   async handleOfferMessage(data: RTCSessionDescriptionInit) {
-    console.log('offer received');
     if(!this.peerConnection)
       this.createPeerConnection();
 
     if(!this.localStream)
-      await this.requestMediaDevices();
+      await this.getLocalPreview();
 
-    this.peerConnection.setRemoteDescription(new RTCSessionDescription(data))
-    .then(()=>{
-      this.localVideo.nativeElement.srcObject = this.localStream;
+    await this.peerConnection.setRemoteDescription(new RTCSessionDescription(data));
+    this.addStreamTrackToPeerConnection(this.localStream);
+    const answer = await this.peerConnection.createAnswer();
+    await this.peerConnection.setLocalDescription(answer);
 
-      this.localStream.getTracks().forEach(track => this.peerConnection.addTrack(track, this.localStream));
-    })
-    .then(()=> {
-      return this.peerConnection.createAnswer();
-    })
-    .then(answer => {
-      return this.peerConnection.setLocalDescription(answer);
-    })
-    .then(() => {
-      console.log('answer sent');
-      this._signalrService.sendResponse(this.callerInfo.connectionId, NotificationType.Answer, 
-        this.peerConnection.localDescription);
-    })
+    this._signalrService.sendResponse(this.callerInfo.connectionId, NotificationType.Answer, 
+      this.peerConnection.localDescription);
   }
 
   private handleCallRejected() {
@@ -238,26 +262,9 @@ export class VideoCallComponent implements OnInit, AfterViewInit, OnDestroy{
     }, 2000);
   }
 
-  private handleUserNotAvailable() {
-    document.getElementById('calling_text')!.innerHTML = 'User is not available';
-    setTimeout(() => {
-      window.close();
-    }, 2000);
-  }
-
-  loadFriendsDetails() {
-    this._userService
-      .getByUsername(this.friendUsername)
-      .subscribe((user) => (this.friendDetails = user));
-  }
-
   sendCallNotification(){
-    console.log('sent notification for call');
     this._signalrService
-      .sendCallNotification(this.friendUsername, this.callType)
-      .then(() => {
-        
-      });
+      .sendCallNotification(this.friendUsername, this.callType);
   }
 
   cancelCall(){
