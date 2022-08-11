@@ -227,7 +227,12 @@ export class UserChatComponent
 
   callFriend(callType: string) {
     const requestVideo = callType == NotificationType.VideoCall;
+    const height = window.innerHeight;
+    const width = window.innerWidth;
+    var left = (screen.width/2)-(width/2);
+    var top = (screen.height/2)-(height/2);
+
     this.callWindow = window.open('./call/'+this.friendUsername+'?requestVideo='+requestVideo+'&outgoingCall=true',
-     '_blank', "toolbar=no,scrollbars=no,resizable=no,width=500,height=720,left=150");
+     '_blank', "toolbar=no,scrollbars=no,resizable=no,width="+width+",height="+height+",left="+left+",top="+top);
   }
 }

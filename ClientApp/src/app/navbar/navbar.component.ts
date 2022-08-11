@@ -48,18 +48,19 @@ export class NavbarComponent implements OnInit {
 
       if(isAccepted){
         const requestVideo = this.callerInfo.notificationType == NotificationType.VideoCall;
+        const height = window.innerHeight;
+        const width = window.innerWidth;
+        var left = (screen.width/2)-(width/2);
+        var top = (screen.height/2)-(height/2);
 
         window.open('./call/'+this.friendDetails.username+
         '?requestVideo='+requestVideo+'&incomingCall=true&callAccepted=true&sendResponseTo='+this.callerInfo.connectionId,
-         '_blank', "toolbar=no,scrollbars=no,resizable=no,width=500,height=720,left=150");
+         '_blank', "toolbar=no,scrollbars=no,resizable=no,width="+width+",height="+height+",left="+left+",top="+top);
          return;
       }
 
       this._signalrService
-      .sendResponse(this.callerInfo.connectionId, callResponse)
-      .then(() => {
-        
-      });
+      .sendResponse(this.callerInfo.connectionId, callResponse);
   }
 
   handleCallNotification() {
