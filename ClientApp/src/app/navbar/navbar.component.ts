@@ -48,8 +48,8 @@ export class NavbarComponent implements OnInit {
 
       if(isAccepted){
         const requestVideo = this.callerInfo.notificationType == NotificationType.VideoCall;
-        const height = window.innerHeight;
-        const width = window.innerWidth;
+        const height = screen.height;
+        const width = screen.width;
         var left = (screen.width/2)-(width/2);
         var top = (screen.height/2)-(height/2);
 
