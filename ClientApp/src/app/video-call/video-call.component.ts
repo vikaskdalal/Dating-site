@@ -236,6 +236,9 @@ export class VideoCallComponent implements OnInit, AfterViewInit, OnDestroy{
       case NotificationType.IceCandidate:
         this.handleIceCandidateMessage(response.data);
         break;
+      case NotificationType.CallEnded:
+        this.handkeClosePeerConnection();
+        break;
     }
   }
 
@@ -269,6 +272,20 @@ export class VideoCallComponent implements OnInit, AfterViewInit, OnDestroy{
 
   cancelCall(){
     this.sendCancelCallSignal();
+  }
+
+  hangupCall(){
+    this._signalrService
+      .sendResponse(this.callerInfo.connectionId, NotificationType.CallEnded).then(() => {
+        this.handkeClosePeerConnection();
+      });
+  }
+
+  private handkeClosePeerConnection(){
+    if(this.peerConnection){
+      this.peerConnection.close();
+    }
+    window.close();
   }
 
   private sendCancelCallSignal(){

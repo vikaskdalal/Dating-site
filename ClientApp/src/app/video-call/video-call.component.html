@@ -59,7 +59,7 @@
             [ngClass]="isAudioMute ? 'fa-microphone-slash' : 'fa-microphone'"
           ></i>
         </span>
-        <span class="call-hangup-btn" title="Hangup the call">
+        <span class="call-hangup-btn" (click)="hangupCall()" title="Hangup the call">
           <i class="fa fa-phone" aria-hidden="true"></i>
         </span>
         <span class="control-icon-span" (click)="videoToggle()">
