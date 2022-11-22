@@ -54,3 +54,4 @@ ClientApp/Thumbs.db
 /IntegrationTests/bin/Debug/net6.0
 /IntegrationTests/obj
 ClientApp/.angular/
+/DotNetCoreAngular/wwwroot
