@@ -3,11 +3,12 @@ import { Injectable } from '@angular/core';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { BehaviorSubject, Subject, take } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { CallNotification } from '../_models/callNotification';
 import { Message } from '../_models/message';
 import { TrackMessageThread } from '../_models/trackMessageThread';
 import { User } from '../_models/user';
+import { EncryptionService } from './encryption.service';
 import { getPaginatedResult, getPaginationHeaders } from './paginationHelper';
+
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,7 @@ export class MessageService {
   private _hubConnection!: HubConnection;
   hubUrl = environment.hubUrl;
   loadMessageCount = environment.loadMessageCount;
+  
 
   private _messageSource = new BehaviorSubject<Message[]>([]);
   messageThread$ = this._messageSource.asObservable();
@@ -28,7 +30,7 @@ export class MessageService {
   private _trackMessageThreadSource = new BehaviorSubject<TrackMessageThread[]>([]);
   trackMessageThread$ = this._trackMessageThreadSource.asObservable();
 
-  constructor(private _httpClient: HttpClient) { }
+  constructor(private _httpClient: HttpClient, private _encryptionService: EncryptionService) { }
 
   createHubConnection(user: User, otherUser: string): Promise<any> {
     this._hubConnection = new HubConnectionBuilder()
@@ -43,14 +45,21 @@ export class MessageService {
       return this._hubConnection.start().catch(error => console.log(error));
   }
 
+  private decryptMessageThread(messages: Message[]){
+    messages.forEach(item => {
+      item.content = this._encryptionService.decrypt(item.content);
+    })
+  }
+
   private registerEvents(){
     this._hubConnection.on('ReceiveMessageThread', response => {
+      this.decryptMessageThread(response.messages);
       this._trackMessageThreadSource.next([response.trackMessageThread]);
       this._messageSource.next(response.messages);
     })
 
     this._hubConnection.on('ReceiveMessageThreadOnScroll', response => {
-
+      this.decryptMessageThread(response.messages);
       this.trackMessageThread$.pipe(take(1)).subscribe(res => {
         let trackingInfoOfUser = res.filter(f => f.friendUsername != response.trackMessageThread.friendUsername);
 
@@ -61,6 +70,7 @@ export class MessageService {
     })
 
     this._hubConnection.on('NewMessage', message => {
+      message.content = this._encryptionService.decrypt(message.content);
       this._messageSource.next([...this._messageSource.getValue(), message]);
 
       var getValue = this._trackMessageThreadSource.getValue();
@@ -96,7 +106,7 @@ export class MessageService {
   }
 
   async sendMessage(username: string, content: string) {
-    return this._hubConnection.invoke("SendMessage", { recipientUsername: username, content })
+    return this._hubConnection.invoke("SendMessage", { recipientUsername: username, content: this._encryptionService.encrypt(content) })
   }
 
   deleteMessage(id: number) {
@@ -122,5 +132,7 @@ export class MessageService {
   async loadMessageThreadOnScroll(username: string, skipMessages: number, takeMessages: number) {
     return this._hubConnection.invoke("LoadMessageThreadOnScroll", { recipientUsername: username, skipMessages, takeMessages })
   }
+
+  
 
 }
