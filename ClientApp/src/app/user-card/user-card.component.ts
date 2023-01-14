@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UserDetail } from '../_models/userDetail';
 import { LikeService } from '../_services/like.service';
-import { PresenceService } from '../_services/presence.service';
+import { SignalRService } from '../_services/signalr.service';
 
 @Component({
   selector: 'app-user-card',
@@ -15,14 +15,14 @@ export class UserCardComponent implements OnInit {
 
   constructor(
     private _likeService: LikeService,
-    private _presenceService: PresenceService) { }
+    private _signalrService: SignalRService) { }
 
   ngOnInit(): void {
     this.loadOnlineUsers();
   }
 
   loadOnlineUsers() {
-    this._presenceService.onlineUsers$.subscribe(u => {
+    this._signalrService.onlineUsers$.subscribe(u => {
       this.onlineUsers = u;
     });
   }

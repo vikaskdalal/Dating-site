@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { UserDetail } from '../_models/userDetail';
-import { PresenceService } from '../_services/presence.service';
+import { SignalRService } from '../_services/signalr.service';
 import { UserService } from '../_services/user.service';
 
 @Component({
@@ -14,7 +14,7 @@ export class UserDetailComponent implements OnInit {
   userDetails!: UserDetail;
 
   constructor(private _userService: UserService, private _route: ActivatedRoute,
-    public presenceService: PresenceService, private _titleService: Title) {
+    public presenceService: SignalRService, private _titleService: Title) {
   }
   ngOnInit(): void {
     this.loadUser();

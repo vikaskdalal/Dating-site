@@ -33,6 +33,7 @@ import { ModalComponent } from './modal/modal.component';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { LoginComponent } from './login/login.component';
 import { HighlightSearchPipe } from './_pipes/highlight-search.pipe';
+import { VideoCallComponent } from './video-call/video-call.component';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { HighlightSearchPipe } from './_pipes/highlight-search.pipe';
     ChatDatePipe,
     ModalComponent,
     LoginComponent,
-    HighlightSearchPipe
+    HighlightSearchPipe,
+    VideoCallComponent
   ],
   imports: [
     BrowserModule,

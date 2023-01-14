@@ -39,10 +39,14 @@ app.UseCors(x => x.AllowAnyHeader().AllowCredentials().AllowAnyMethod().WithOrig
 
 app.UseAuthorization();
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.UseEndpoints(endpoints =>
 {
-    endpoints.MapHub<PresenceHub>("hubs/presence");
+    endpoints.MapHub<SignalRHub>("hubs/signalR");
     endpoints.MapHub<MessageHub>("hubs/message");
+    endpoints.MapFallbackToController("index", "Fallback");
 });
 
 app.MapControllers();

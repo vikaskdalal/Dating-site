@@ -1,0 +1,108 @@
+.calling-container{
+	background-color: rgba(0, 0, 0, 0.8); 
+	width:      100%;
+	height:     100%; 
+	z-index:    11;
+	top:        0; 
+	left:       0; 
+	position:   fixed; 
+}
+.friend-profile-img{
+	width: 150px;
+	border-radius: 50%;
+	display: block;
+}
+.call-end-btn{
+	font-size: 30px;
+    color: white;
+    background: red;
+    padding: 7px 17px;
+    border-radius: 50%;
+    margin-top: 20px;
+    display: inline-block;
+	cursor: pointer;
+}
+.call-accept-btn{
+	font-size: 30px;
+    color: white;
+    background: green;
+    padding: 7px 17px;
+    border-radius: 50%;
+    margin-top: 20px;
+    display: inline-block;
+	cursor: pointer;
+}
+.calling-friend{
+	color: white;
+}
+.friend-name{
+	font-weight: 600;
+}
+.local-video-container{
+	position: absolute;
+    width: 200px;
+    height: 200px;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 15px;
+    background: rgba(196, 196, 196, 0.2);
+    top: 15px;
+    left: 15px;
+}
+.local-video, .remote-video{
+	width: 100%;
+	height: 100%;
+}
+.videos-container{
+    position: initial;
+    height: calc(100% - 70px);
+    margin-top: 10px;
+}
+.friend-profile-call-end-button{
+    height: 100%;
+}
+.microphone-icon, .video-icon{
+    font-size: 25px;
+    cursor: pointer;
+    color: #fff;
+}
+.control-btn-container{
+    padding: 5px;
+    position: absolute;
+    bottom: 21px;
+    left: calc(50% - 100px);
+    display: block;
+    justify-content: space-between;
+    align-items: center;
+}
+.control-icon-span{
+    background: red;
+    display: inline-block;
+    padding: 11px 10px;
+    border-radius: 50%;
+    width: 50px;
+}
+.video-open-svg , .video-closed-svg{
+    width: 25px;
+    filter: brightness(0) invert(1);
+}
+.call-hangup-btn{
+    font-size: 25px;
+    color: white;
+    background: red;
+    padding: 7px 17px;
+    border-radius: 50%;
+    margin-top: 20px;
+    display: inline-block;
+	cursor: pointer;
+    margin: 0 10px;
+}
+nav.navbar.navbar-expand.navbar-dark.fixed-top.bg-dark{
+    display: none!important;
+}
+.loading-container{
+    height: 100%;
+    color: white;
+}
+.h100{
+    height: 100%;
+}

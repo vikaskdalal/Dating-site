@@ -4,8 +4,10 @@ using DotNetCoreAngular.Extensions;
 using DotNetCoreAngular.Helpers.Pagination;
 using DotNetCoreAngular.Interfaces;
 using DotNetCoreAngular.Models.Entity;
+using DotNetCoreAngular.SignalR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace DotNetCoreAngular.Controllers
 {

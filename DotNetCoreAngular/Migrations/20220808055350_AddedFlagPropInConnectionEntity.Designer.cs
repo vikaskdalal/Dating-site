@@ -4,6 +4,7 @@ using DotNetCoreAngular.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DotNetCoreAngular.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20220808055350_AddedFlagPropInConnectionEntity")]
+    partial class AddedFlagPropInConnectionEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,6 +31,9 @@ namespace DotNetCoreAngular.Migrations
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Flag")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("GroupName")
                         .HasColumnType("nvarchar(450)");
@@ -194,13 +199,13 @@ namespace DotNetCoreAngular.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2022, 8, 8, 18, 11, 6, 833, DateTimeKind.Local).AddTicks(1627),
-                            DateOfBirth = new DateTime(2022, 8, 8, 18, 11, 6, 833, DateTimeKind.Local).AddTicks(1674),
+                            Created = new DateTime(2022, 8, 8, 11, 23, 50, 365, DateTimeKind.Local).AddTicks(488),
+                            DateOfBirth = new DateTime(2022, 8, 8, 11, 23, 50, 365, DateTimeKind.Local).AddTicks(542),
                             Email = "vikaskdalal@gmail.com",
-                            LastActive = new DateTime(2022, 8, 8, 18, 11, 6, 833, DateTimeKind.Local).AddTicks(1620),
+                            LastActive = new DateTime(2022, 8, 8, 11, 23, 50, 365, DateTimeKind.Local).AddTicks(481),
                             Name = "Vikas",
-                            PasswordHash = new byte[] { 193, 53, 92, 94, 201, 151, 157, 111, 132, 115, 37, 107, 59, 51, 95, 54, 146, 152, 201, 103, 184, 222, 93, 82, 67, 75, 5, 101, 9, 26, 192, 4, 168, 241, 90, 101, 91, 115, 236, 234, 37, 110, 153, 153, 192, 163, 89, 72, 1, 135, 241, 37, 197, 101, 173, 168, 147, 199, 157, 148, 31, 139, 31, 174 },
-                            PasswordSalt = new byte[] { 19, 5, 150, 112, 126, 214, 195, 215, 207, 45, 207, 182, 158, 17, 113, 139, 179, 10, 74, 134, 146, 227, 84, 207, 187, 212, 254, 138, 166, 135, 169, 199, 101, 74, 236, 53, 49, 247, 106, 220, 34, 45, 7, 48, 180, 147, 116, 250, 243, 62, 70, 167, 240, 155, 18, 210, 17, 122, 161, 135, 59, 5, 221, 32, 77, 131, 178, 112, 128, 170, 128, 25, 176, 140, 141, 128, 153, 2, 143, 210, 51, 93, 237, 172, 99, 41, 171, 43, 80, 183, 73, 152, 185, 137, 89, 73, 192, 160, 134, 11, 83, 133, 52, 43, 186, 147, 51, 130, 15, 252, 14, 189, 15, 210, 247, 6, 36, 173, 127, 8, 66, 157, 239, 8, 223, 45, 29, 90 },
+                            PasswordHash = new byte[] { 63, 198, 172, 68, 52, 28, 110, 166, 242, 74, 27, 90, 197, 25, 38, 228, 189, 96, 91, 133, 181, 78, 205, 109, 191, 154, 132, 3, 105, 12, 50, 120, 58, 126, 200, 208, 155, 91, 86, 55, 193, 126, 207, 55, 230, 65, 38, 2, 99, 47, 226, 175, 90, 168, 190, 231, 101, 17, 59, 186, 84, 169, 5, 221 },
+                            PasswordSalt = new byte[] { 181, 156, 91, 95, 109, 88, 107, 124, 23, 27, 133, 73, 33, 54, 226, 62, 9, 200, 30, 200, 143, 128, 145, 157, 198, 72, 248, 20, 146, 59, 156, 242, 112, 168, 228, 118, 126, 77, 63, 182, 70, 136, 221, 253, 11, 147, 60, 236, 239, 215, 189, 99, 52, 186, 194, 2, 144, 169, 15, 151, 116, 5, 82, 57, 111, 185, 241, 75, 50, 159, 114, 118, 166, 170, 227, 26, 6, 146, 173, 178, 67, 173, 129, 200, 91, 47, 4, 20, 9, 52, 38, 177, 184, 172, 144, 101, 85, 16, 5, 193, 177, 100, 99, 182, 102, 180, 239, 40, 140, 83, 86, 26, 190, 83, 20, 94, 99, 66, 161, 143, 52, 254, 174, 128, 8, 239, 246, 248 },
                             Username = "mdhmpjucooq5clmqiqsfg"
                         });
                 });
